@@ -1,0 +1,368 @@
+<!---
+  --- database
+  --- --------
+  ---
+  --- author: mindfire
+  --- date:   3/10/17
+  --->
+<cfcomponent accessors="true" output="false" persistent="false">
+
+<!--- Insert data of customer while registering user --->
+	<cffunction access="public" name="registerUser" >
+		<cfargument name="name" required="true" type="string"/>
+		<cfargument name="mobileNumber" required="true" type="numeric" />
+		<cfargument name="password" required="true" type="string" />
+		<cfargument name="email" required="true" type="string" />
+		<cfargument name="profilePicture" required="false" default="./assets/image/profile/default.jpg" />
+		<cfset datetime = now()/>
+		<cfquery>
+			INSERT INTO [dbo].[Customer]
+	           ([CustomerName]
+	           ,[Email]
+	           ,[MobileNumber]
+	           ,[Password]
+	           ,[LastModifiedDate]
+	           ,[ProfilePicture])
+    		 VALUES
+	           	( '#ARGUMENTS.name#'
+	           ,'#ARGUMENTS.email#'
+	           , #ARGUMENTS.mobileNumber#
+	           ,'#ARGUMENTS.password#'
+	           ,#datetime#
+	           ,'#profilePicture#')
+		</cfquery>
+	</cffunction>
+
+
+<!--- Fetch user details from database while login--->
+	<cffunction access="public" name="retrieveUserInfo" return="Any" returnformat="json">
+		<cfargument name="email" type="string" required="true" />
+		<cfargument name="password" type="string" required="true" />
+
+		<cfquery name="userInfo">
+			SELECT [CustomerId]
+			      ,[CustomerName]
+			      ,[Email]
+			      ,[MobileNumber]
+			      ,[Password]
+			      ,[ProfilePicture]
+			  FROM
+			  		[dbo].[Customer]
+			  WHERE
+			  	[Email] = '#ARGUMENTS.email#' AND
+			  	[Password] = '#ARGUMENTS.password#'
+		</cfquery>
+		<cfreturn userInfo />
+	</cffunction>
+
+<!--- Fetch inventory items form database --->
+	<cffunction access="public" name="retrieveFromInventory" returntype="Any">
+		<cfargument name="productId" require="true" type="numeric" />
+		<cfargument name="quantity" require="true" type="numeric" />
+		<cfquery name="result">
+			SELECT  [InventoryId]
+					,[SellingCompanyId]
+      				,[ProductId],
+					[AvailableQuantity]
+      				,[SellingPrice]
+      				,[DiscountPercent]
+					,[SellingPrice]-([SellingPrice]*[DiscountPercent]/100) as DiscountPrice
+ 			 FROM MyShoppingZone.[dbo].[Inventory]
+			 WHERE
+			 	AvailableQuantity >= #quantity# AND
+			 	ProductId = #productId#
+			 ORDER BY
+			 	DiscountPrice ASC,AvailableQuantity DESC;
+		</cfquery>
+		<cfreturn result />
+	</cffunction>
+
+<!--- Retrieve Products from database --->
+	<cffunction access="public" name="retrieveProducts" returntype="Any">
+		<cfargument name="productId" require="true" type="numeric" />
+		<cfargument name="quantity" require="true" type="numeric" />
+		<cfquery name="result">
+			SELECT TOP 10 p.ProductId
+		      ,[LeastPrice]
+		      ,[ProductCategoryId]
+		      ,[ProductName]
+		      ,[ProductRating]
+		      ,[ProductBrand]
+		      ,[ProductImageLocation]
+		      ,[ProductSubCategoryId]
+		      ,[ProductDescription]
+ 			 FROM
+				[dbo].[Product] as p
+			INNER JOIN
+				[dbo].[Inventory] as i
+			ON
+				p.ProductId = i.ProductId
+			 ORDER BY
+			 	[ProductRating]
+		</cfquery>
+		<cfreturn result />
+	</cffunction>
+
+<!--- Retrieve Products category from database --->
+	<cffunction access="public" name="retrieveProductCategory" retuntype="Any">
+		<cfquery name="productCategory">
+			SELECT
+				ProductCategoryId,ProductCategory
+			FROM
+				dbo.ProductCategory
+		</cfquery>
+
+		<cfreturn productCategory/>
+	</cffunction>
+
+<!--- Retrieve Sub Products from Database --->
+	<cffunction access="public" name="retrieveProductSubCategory" returntype="Any">
+		<cfargument
+			name="productCategoryId"
+			required="true"
+			type="numeric">
+
+		<cfquery name="productSubCategory">
+			SELECT
+				ProductSubCategoryId,ProductSubCategoryName
+			FROM
+				dbo.ProductSubCategory
+			WHERE
+				 ProductCategoryId = #ProductCategoryId#
+		</cfquery>
+
+		<cfreturn productSubCategory/>
+	</cffunction>
+
+<!--- Retrieve Products by sub category --->
+	<cffunction access="public" name="retrieveProductBySubCategory" returntype="Any">
+
+		<cfargument
+					name="productSubCategoryId"
+					type="numeric"
+					required="true" />
+
+		<cfquery name='productBySubCategory'>
+			SELECT
+				p.ProductId,
+				ProductName,
+				ProductBrand,
+				ProductImageLocation,
+				SellingPrice,
+				DiscountPercent,
+				[SellingPrice]-([SellingPrice]*ISNULL([DiscountPercent],0)/100) as DiscountPrice
+			FROM
+				Product p
+			INNER JOIN
+				Inventory i
+			ON
+				p.ProductId = i.ProductId
+			WHERE
+				productSubCategoryId = #productSubCategoryId#
+
+		</cfquery>
+		<cfreturn productBySubCategory />
+	</cffunction>
+
+<!--- Product Detail --->
+	<cffunction access="public" name="retrieveProductDetail" returntype="Any">
+		<cfargument
+				name="productId"
+				type="numeric"
+				required="true">
+
+		<cfquery name="productDetail">
+			SELECT
+				p.ProductId,
+				ProductName,
+				ProductBrand,
+				ProductImageLocation,
+				ProductDescription
+			FROM
+				Product p
+			INNER JOIN
+				Inventory i
+			ON
+				p.ProductId = i.ProductId
+			WHERE
+				i.ProductId = #productId#
+		</cfquery>
+
+		<cfreturn productDetail/>
+	</cffunction>
+
+<!--- Insert Into Address --->
+	<cffunction
+			access="public"
+			name="insertIntoAddress"
+			returntype="Any">
+		<cfargument
+			name="customerId"
+			required="true" />
+		<cfargument
+			name="addressLine1"
+			required="true" />
+		<cfargument
+			name="addressLine2"
+			required="false"
+			default="" />
+		<cfargument
+			name="city"
+			required="true" />
+		<cfargument
+			name="state"
+			required="true" />
+		<cfargument
+			name="addressType"
+			required="true"/>
+		<cfargument
+			name="pincode"
+			required="true" />
+		<cfset dateTime = now() />
+		<cfquery name="address">
+		 INSERT INTO [dbo].[Address]
+           ([CustomerId]
+           ,[AddressLine1]
+           ,[AddressLine2]
+           ,[City]
+           ,[State]
+           ,[AddressType]
+           ,[LastModifiedDate]
+           ,[pincode])
+    	 VALUES (#customerId#
+           , #ARGUMENTS.addressLine1#
+           , #ARGUMENTS.addressLine2#
+           , #ARGUMENTS.city#
+           , #ARGUMENTS.state#
+           , #ARGUMENTS.addressType#
+           , #dateTime#
+           , #ARGUMENTS.pincode#)
+		</cfquery>
+	</cffunction>
+
+<!--- insertOrder into database --->
+	<cffunction
+			name="insertOrder"
+			access="public" >
+
+			<cfargument
+					name="customerId"
+					required = "true" />
+			<cfset todayDate = now() />
+			<cfset currentDate = DateFormat(todayDate, "mm/dd/yyyy") />
+			<cfset currentTime = TimeFormat(todayDate, "HH:nn:ss") />
+		<!--- insert order in database --->
+			<cfquery name="order">
+				INSERT INTO [dbo].[Order]
+			           ([CustomerId]
+			           ,[OrderDate]
+			           ,[OrderTime]
+			           ,[LastModifiedDate])
+			     VALUES
+			           (#ARGUMENTS.customerId#
+			           ,#currentDate#
+			           ,#currentTime#
+			           ,#todayDate#)
+			</cfquery>
+	</cffunction>
+
+
+<!--- retrieve order id by customer id--->
+	<cffunction
+			name="retrieveOrderId"
+			access="public"
+			hint = "get order id for a customer" >
+
+			<cfargument
+					name="customerId"
+					required="true" />
+
+			<cfquery name="orderInfo">
+				SELECT TOP 1 [OrderId]
+				      ,[CustomerId]
+				      ,[OrderDate]
+				      ,[OrderTime]
+				  FROM
+				  	  [dbo].[Order]
+				  WHERE
+				  	  [CustomerId] = #ARGUMENTS.customerId#
+				  ORDER BY
+				  	  [OrderDate] DESC, [OrderTime] DESC
+
+			</cfquery>
+			<cfreturn orderInfo />
+	 </cffunction>
+
+
+<!--- insertOrderDetail into database --->
+	<cffunction
+			name="insertOrderDetail"
+			access="public">
+
+			<cfargument
+					name="orderId"
+					required="true" />
+			<cfargument
+					name="productId"
+					required="true" />
+			<cfargument
+					name="orderQuantity"
+					required="true" />
+			<cfargument
+					name="shippingAddressId"
+					required="true" />
+
+			<cfset datetime = now() />
+		<!--- insert order detail in database --->
+			<cfquery>
+				INSERT INTO [dbo].[OrderDetail]
+			           ([OrderId]
+			           ,[ProductId]
+			           ,[LastModifiedDate]
+			           ,[OrderQuantity]
+			           ,[ShippingAddressId])
+			     VALUES
+			           (#ARGUMENTS.orderId#
+			           ,#ARGUMENTS.productId#
+			           ,#datetime#
+			           ,#ARGUMENTS.orderQuantity#
+			           ,#ARGUMENTS.shippingAddressId#)
+			</cfquery>
+
+	</cffunction>
+
+
+<!--- retrieve order details (items) by order id --->
+	<cffunction
+			name="retrieveOrderDetail"
+			access="public"
+			hint="get order detail by order id">
+
+			<cfargument
+				name="orderId"
+				required="true" />
+
+			<cfquery name="orderDetail">
+				SELECT [OrderDetailId]
+					      ,[OrderId]
+					      ,[Product]
+					      ,[OrderQuantity]
+					      ,[ShippingAddressId]
+				FROM
+					  	[dbo].[OrderDetail]
+				WHERE
+						[OrderId] = #ARGUMENTS.orderId#
+			</cfquery>
+
+			<cfreturn orderDetail />
+	</cffunction>
+
+</cfcomponent>
+
+
+
+
+
+
+	
+	

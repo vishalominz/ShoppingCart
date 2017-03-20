@@ -1,0 +1,305 @@
+.modal-backdrop{
+	z-index: 100;
+}
+
+.container{
+	margin-top: 150px;
+}
+
+/* search bar design */
+.suggestionBox {
+    border: 1px solid black;
+    display: none;
+    background-color: white;
+    color: black;
+    height: 200px;
+    position: absolute;
+    width: 91%;
+    margin-top: 35px;
+}
+
+/*labels in form */
+.formLabel{
+	width : 10em;
+	height : 1em;
+	font-size : 1.5em;
+}
+#search{
+    display:block;
+    text-align:center;
+}
+
+#searchBox li {
+    /* text-decoration: none; */
+    list-style-type: none;
+    text-align: left;
+    padding-left: 10px;
+    font-size: 1.1em;
+}
+
+#searchBox {
+	width : 50%;
+}
+.input-group-btn:last-child>.btn, .input-group-btn:last-child>.btn-group {
+    z-index: 2;
+    margin-left: -22px;
+}
+/* search bar design */
+
+/*Register user form and Log In user form */
+#registerUser, #loginUser{
+	position : absolute;
+	margin-left : 10%;
+	margin-right : 10%;
+	border : 0.1em solid black;
+	padding-left : 10em;
+	padding-right : 10em;
+	padding-top : 2em;
+	padding-bottom : 2em;
+	z-index= 45;
+}
+.legend{
+	font-size : 2em;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.inputfield{
+	background-color: lightblue;
+	width : 30em;
+	height : 3em;
+}
+/*buttons in form */
+#register,#reset,#login,#resetPassword,#cardPay,#addressSubmit{
+	width : 15em;
+	height : 3em;
+}
+
+#resetPassword{
+	border : transparent;
+	color : blue;
+}
+
+div.productItem{
+	margin: 5px 0;
+    height: 250px;
+}
+
+img.productImage{
+	display: inline;
+    position: absolute;
+    margin-left: 100px;
+    margin-top: 0px;
+}
+
+span.productName {
+    margin-left: 120px;
+    margin-top: 120px;
+    display: inline;
+    position: absolute;
+    font-size: 1.5em;
+}
+
+span.productBrand {
+    display: block;
+    position: absolute;
+    margin-left: 120px;
+    margin-top: 150px;
+    font-size: 1.5em;
+}
+
+span#logInError {
+    margin-left: 220px;
+    margin-top: -60px;
+    font-size: 1.5em;
+    line-height: 2em;
+    color: red;
+}
+
+/* registration form errors */
+span#name {
+    position: absolute;
+    margin-left: 645px;
+    margin-top: -45px;
+    font-size: 1.5em;
+    line-height: 2em;
+}
+
+span#email {
+    margin-left: 645px;
+    margin-top: -45px;
+}
+
+span#mobileNumber {
+    margin-left: 645px;
+    margin-top: -45px;
+}
+
+span#password {
+    margin-left: 645px;
+    margin-top: -45px;
+}
+
+button.removeItem {
+    display: inline;
+    position: absolute;
+    margin-top: 200px;
+    margin-left: 490px;
+}
+input.productCount{
+	display: inline;
+    float: none;
+    position: absolute;
+    margin-top: 15px;
+    width: 50px;
+    height: 30px;
+    margin-left: 485px;
+    background-color: lightgray;
+}
+span.productDescription {
+    display: inline;
+    position: absolute;
+    margin-top: 175px;
+    margin-left: 120px;
+    font-size: 1.2em;
+    line-height: 2em;
+}
+
+input.checkbox {
+    margin-left: 20px;
+    margin-top: 15px;
+    position: absolute;
+    /* position: absolute; */
+}
+
+div#creditCard,div#cash{
+	display: none;
+}
+
+div#registerMessage {
+    display : none;
+    position: relative;
+    margin-left: 245px;
+    font-size: 1.3em;
+    line-height: 2em;
+    font-weight: bold;
+
+}
+span.radio{
+	line-height : 2em;
+	font-size : 1.5em;
+    display: inline;
+    margin: 1em 18em 1em 0;
+}
+
+span.error{
+	display : none;
+	position : absolute;
+	font-size : 1.5em;
+	line-height: 2em;
+	color : red;
+}
+textarea{
+	width : 30em
+}
+
+img.productImage{
+	width : 100px;
+	height : 100px;
+}
+img.productDetailImage{
+	width : 300px;
+	height : 300px;
+}
+
+
+div.col{
+	margin : 5px;
+}
+
+/*invoice design */
+	div.invoiceBox{
+		padding-bottom: 20px;
+	}
+	div#invoice {
+	    width: 80%;
+	    /* height: 100%; */
+	}
+	
+	div.invoice {
+	   
+	    display: inline;
+	    position: absolute;
+	}
+	
+	div.invoiceHeading {
+	    width: 250px;
+	    height: 150px;
+	}
+	
+	div.invoice.orderNumber {
+    margin-top: 30px;
+    margin-left: -30px;
+	}
+	
+	div.invoice.orderDate {
+    margin-top: 85px;
+    margin-left: -30px;
+	}
+	
+	div.contact {
+	    margin-left: 800px;
+	    width: 350px;
+	    height: 150px;
+	}
+	div.userInfo {
+	    width: 80%;
+	    margin-top: 150px;
+	}
+	
+	div.invoice.billTo {
+	    height: 150px;
+	    margin-top: 0px;
+	    margin-left: 0px;
+	}
+	
+	div.invoice.shipTo {
+	    margin-left: 370px;
+	    height: 150px;
+	}
+	
+	table#invoiceContent {
+    margin-top: 300px;
+    width: 100%;
+    border: 1px solid black;
+	}
+	
+	table#invoiceContent td {
+    padding: 10px;
+	}
+	table#invoiceContent tr {
+	
+	}
+	
+/*invoice design end */
+/*Carousel Design */
+  .carousel-inner > .item > img,
+  .carousel-inner > .item > a > img {
+      width: 70%;
+      margin: auto;
+  }
+
+ .carousel-inner>.item>a>img, 
+ .carousel-inner>.item>img,
+ .img-responsive, .thumbnail a>img,
+ .thumbnail>img{
+ 	height : 450px;
+ }
+@media screen and (min-width : 1200px) {
+	#register,#login,#cardPay{
+		margin-left : 15em;
+	}
+	#reset{
+		margin-left : 5;
+	}
+}
