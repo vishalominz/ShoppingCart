@@ -518,6 +518,116 @@
 	</cffunction>
 
 
+<!--- retrieve orderHistory --->
+	<cffunction name="retrieveOrderHistory"
+			access="public"
+			returnformat="json"
+			returntype="any">
+		<cfset userId = session.user.userId />
+
+		<cfinvoke component="Database"
+					method="retrieveOrderHistory"
+					returnvariable="orderHistory">
+				<cfinvokeargument name="userId"
+							value="#userId#" />
+		</cfinvoke>
+
+		<cfreturn orderHistory />
+	</cffunction>
+
+
+<!--- retrieveOrderHistoryDetail --->
+	<cffunction name="retrieveOrderHistoryDetail"
+				access="public"
+				returnformat="json"
+				returntype="any">
+
+			<cfargument name="orderId"
+					required="true" />
+
+			<cfinvoke component="Database"
+						method="retrieveOrderHistoryDetail"
+						returnvariable="orderItems">
+					<cfinvokeargument name="orderId"
+									value="#ARGUMENTS.orderid#" />
+			</cfinvoke>
+
+			<cfreturn orderItems />
+	</cffunction>
+
+<!--- retrieveUserInformation --->
+	<cffunction name="retrieveUserInformation"
+				access="public"
+				returnformat="json"
+				returntype="any">
+			<cfargument name="userId"
+						required="false"
+						default="#Session.user.userId#" />
+
+			<cfinvoke component="Database"
+						method="retrieveUserInformation"
+						returnvariable="userInformation">
+				<cfinvokeargument name="userId"
+								value="#ARGUMENTS.userId#" />
+			</cfinvoke>
+			<cfreturn userInformation />
+	</cffunction>
+
+
+<!--- updateUserProfilePicture --->
+	<cffunction name="updateUserProfilePicture"
+				access="public"
+				returnformat="json"
+				returntype="any">
+
+		<cfargument name="formData"
+					required="true"/>
+
+	<!--- Get a new API response --->
+		<cfset var LOCAL = {} />
+
+		<!--- Get a new API response --->
+		<cfset LOCAL.Response = THIS.GetNewResponse() />
+
+		<!--- Check to see if all the data is defined. --->
+		<cfif NOT Len(SESSION.user.userId)>
+			<cfset ArrayAppend(
+				LOCAL.Response.Errors,
+				"No ID Found"
+				) />
+		</cfif>
+		<cfset session.form="#ARGUMENTS.formData#">
+		<cfif len(trim(ARGUMENTS.formData))>
+			<cfset ArrayAppend(
+				LOCAL.Response.Errors,
+				"File size is 0"
+				) />
+		</cfif>
+		<cfset destination = "/assets/images/Profile/#Session.user.userId#.jpg" />
+		<cfif NOT ArrayLen( LOCAL.Response.Errors)>
+		<!--- Setting arguments for database call --->
+			  <cffile action="upload"
+			  			destination= "#destination#"
+			  			fileField="#ARGUMENTS.formData#">
+
+		<!--- database call --->
+			<cfinvoke component="Database"
+					method="updateUserProfilePicture">
+					<cfinvokeargument name="pictureLocation"
+								value= "#destination#" />
+			</cfinvoke>
+
+			<cfset LOCAL.Response.url = destination />
+		</cfif>
+
+		<cfif ArrayLen( LOCAL.Response.Errors)>
+			<cfset LOCAL.Response.Success = false />
+		</cfif>
+
+		<cfreturn LOCAL.Response />
+	</cffunction>
+
+
 </cfcomponent>
 
 

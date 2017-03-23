@@ -66,6 +66,30 @@
 		<cfreturn userInfo />
 	</cffunction>
 
+<!--- retrieveUserInformation by Id --->
+		<cffunction name="retrieveUserInformation"
+				access="public"
+				return="Any"
+				returnformat="json">
+		<cfargument
+			name="userId"
+			required="true" />
+
+		<cfquery name="userInformation">
+			SELECT [CustomerId]
+			      ,[CustomerName]
+			      ,[Email]
+			      ,[MobileNumber]
+			      ,[Password]
+			      ,[ProfilePicture]
+			  FROM
+			  		[dbo].[Customer]
+			  WHERE
+			  	[CustomerId] = #userId#
+		</cfquery>
+		<cfreturn userInformation />
+	</cffunction>
+
 <!--- Fetch inventory items by productId and quantity form database --->
 	<cffunction name="retrieveFromInventory"
 				access="public"
@@ -732,6 +756,129 @@
 			<cfreturn sellingCompany />
 	</cffunction>
 
+
+<!--- retrieveOrderHistory --->
+	<cffunction name="retrieveOrderHistory"
+				access="public"
+				returnformat="json"
+				returntype="any">
+
+			<cfargument name="userId"
+						required="true" />
+
+			<cfquery name="orderDetail">
+				  SELECT [OrderId]
+				      ,[CustomerId]
+				      ,[OrderDate]
+				      ,[OrderTime]
+				      ,ISNULL([Total],0) as Total
+				      ,[LastModifiedDate]
+				  FROM [dbo].[Order]
+			</cfquery>
+
+			<cfreturn orderDetail />
+	</cffunction>
+
+<!--- retrieveOrderHistoryDetail --->
+	<cffunction name="retrieveOrderHistoryDetail"
+				access="public"
+				returnformat="json"
+				returntype="any">
+
+		<cfargument name="orderId"
+				required="true" />
+
+		<cfquery name="orderDetail">
+			SELECT od.[OrderDetailId]
+			      ,od.[OrderId]
+			      ,od.[ProductId]
+			      ,od.[OrderQuantity]
+			      ,od.[ShippingAddressId]
+			      ,od.[SellingCompanyId]
+			      ,od.[UnitPrice]
+			      ,od.[DiscountPercent]
+			      ,p.[ProductCategoryId]
+			      ,p.[ProductName]
+			      ,p.[ProductRating]
+			      ,p.[ProductBrand]
+			      ,p.[ProductImageLocation]
+			      ,p.[ProductSubCategoryId]
+			      ,p.[ProductDescription]
+			  FROM [dbo].[OrderDetail] od
+			  INNER JOIN
+			  		[dbo].[Product] p
+			  ON
+			   p.productId = od.productId
+			  WHERE
+			  	OrderId = #orderId#
+		</cfquery>
+
+		<cfreturn orderDetail />
+	</cffunction>
+
+<!--- updateUserProfilePicture --->
+	<cffunction name="updateUserProfilePicture"
+				access="public"
+				returnformat="json"
+				returntype="any">
+
+			<cfargument name="pictureLocation"
+					required="true"/>
+			<cfargument name="userId"
+					required="true"/>
+			<cfquery name="profilePicture">
+					 UPDATE [dbo].[Customer]
+					 SET
+					 	[ProfilePicture] = #ARGUMENTS.pictureLocation#
+					 WHERE
+						[CustomerId] = #ARGUMENTS.userId#
+			</cfquery>
+	</cffunction>
+
+
+<!--- insertProduct --->
+	<cffunction name="insertProduct"
+				access="public"
+				returnformat="json"
+				returntype="any">
+			<cfargument name="productName"
+						required ="true"/>
+			<cfargument name="productCategoryId"
+						required = "true"/>
+			<cfargument name="productSubCategoryId"
+						required = "true"/>
+			<cfargument name="productBrand"
+						required="true"/>
+			<cfargument name="productDescription"
+						required="false"
+						default="" />
+			<cfargument name="productImageLocation"
+						required="false"
+						default="/images/product/default.jpg"/>
+			<cfargument name="leastPrice"
+						required="true"/>
+			<cfset lastModifiedDate = now() />
+		<cfquery>
+			INSERT INTO [dbo].[Product]
+		           ([LeastPrice]
+		           ,[ProductCategoryId]
+		           ,[ProductName]
+		           ,[ProductBrand]
+		           ,[LastModifiedDate]
+		           ,[ProductImageLocation]
+		           ,[ProductSubCategoryId]
+		           ,[ProductDescription])
+		     VALUES
+		           (<LeastPrice, int,>
+		           ,#ARGUMENTS.productCategoryId#
+		           ,#ARGUMETNS.productName#
+		           ,#ARGUMETNS.productBrand#
+		           ,#lastModifiedDate#
+		           ,#ARGUMETNS.productImageLocation#
+		           ,#ARGUMETNS.productSubCategoryId#
+		           ,#ARGUMETNS.productDescription#
+		</cfquery>
+	</cffunction>
 
 </cfcomponent>
 

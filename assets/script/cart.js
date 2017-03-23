@@ -52,10 +52,12 @@ AddToCart.prototype.OnClickAdd = function(element){
 					
 					//show that the product has been added to the cart
 					if(objResponse.DATA[2] === true){
+						$("#Message").show();
 						$('#Message').html("Product Added To Cart");
 						var count = objResponse.DATA[1];
 						$('#cartItemCount').html(count);
 					} else {
+						$("#Message").show();
 						$('#Message').html("No more product available");
 					}
 				} else if(objResponse.SUCCESS && element.id === "buyNow"){

@@ -303,5 +303,74 @@
 		<cfreturn orderDetails />
 	</cffunction>
 
+<!--- retrieveOrderHistory --->
+	<cffunction name="retrieveOrderHistory"
+				access="remote"
+				returnformat="json"
+				returntype="any">
+
+			<cfinvoke component="model.User"
+						method="retrieveOrderHistory"
+						returnvariable="orderHistory">
+			</cfinvoke>
+
+			<cfreturn orderHistory />
+	</cffunction>
+
+<!--- retrieveOrderHistoryDetail --->
+	<cffunction name="retrieveOrderHistoryDetail"
+				access="remote"
+				returntype="any"
+				returnformat="json">
+
+			<cfargument name="orderId"
+						required="true" />
+
+			<cfinvoke component="model.User"
+					method="retrieveOrderHistoryDetail"
+					returnvariable="orderItems">
+					<cfinvokeargument name="orderId"
+							value="#ARGUMENTS.orderId#">
+			</cfinvoke>
+
+			<cfreturn orderItems />
+	</cffunction>
+
+<!--- retieveUserInformation --->
+	<cffunction name="retrieveUserInformation"
+				access="remote"
+				returnformat="json"
+				returntype="any">
+			<cfinvoke component="model.User"
+						method="retrieveUserInformation"
+						returnvariable="userInformation">
+			</cfinvoke>
+			<cfreturn userInformation />
+	</cffunction>
+
+
+<!--- updateUserProfilePicture --->
+	<cffunction name="updateUserProfilePicture"
+				access="remote"
+				returnformat="json"
+				returntype="any"
+				output="true">
+			<cfargument name="formData"
+						required="false"
+						default=""/>
+			<cfoutput>
+				<cfdump var="#form#"/>
+				<cfset session.formvalue="#form#"/>
+			</cfoutput>
+			<cfset session.controller = "#formData#" />
+			<cfinvoke component="model.User"
+						method="updateUserProfilePicture"
+						returnvariable="ResponseObject">
+					<cfinvokeargument name="formData"
+									value="#ARGUMENTS.formData#">
+			</cfinvoke>
+
+			<cfreturn ResponseObject>
+	</cffunction>
 
 </cfcomponent>

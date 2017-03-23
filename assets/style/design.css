@@ -46,6 +46,46 @@
 }
 /* search bar design */
 
+
+/* product and product description */
+
+p {
+	margin: 0px;
+	
+}
+div.product{
+    font-size: 1.2em;
+    color: black;
+    text-decoration: none;
+}
+
+img.productImage{
+	width : 100px;
+	height : 100px;
+}
+
+img.productDetailImage{
+	width : 200px;
+	height : 200px;
+}
+
+
+span#Message {
+    color: red;
+    background: greenyellow;
+    font-size: 1.2em;
+    display: none;
+    padding: 5px 5px;
+    position: absolute;
+    margin-top: 10px;
+    font-family: cursive;
+    border-radius: 5px;
+    font-weight: bold;
+}
+
+/* product description end */
+
+
 /*Register user form and Log In user form */
 #registerUser, #loginUser{
 	position : absolute;
@@ -91,6 +131,12 @@ img.productImage{
     margin-left: 100px;
     margin-top: 0px;
 }
+
+img.purchaseHistory{
+	width: 100px;
+	height: 100px;	
+}
+
 
 span.productName {
     margin-left: 120px;
@@ -203,16 +249,6 @@ textarea{
 	width : 30em
 }
 
-img.productImage{
-	width : 100px;
-	height : 100px;
-}
-img.productDetailImage{
-	width : 300px;
-	height : 300px;
-}
-
-
 div.col{
 	margin : 5px;
 }
@@ -220,6 +256,8 @@ div.col{
 /*invoice design */
 	div.invoiceBox{
 		padding-bottom: 20px;
+		position: relative;
+		height: 800px;
 	}
 	div#invoice {
 	    width: 80%;
@@ -270,7 +308,7 @@ div.col{
 	
 	table#invoiceContent {
     margin-top: 300px;
-    width: 100%;
+    width: 275%;
     border: 1px solid black;
 	}
 	
@@ -282,6 +320,85 @@ div.col{
 	}
 	
 /*invoice design end */
+/* product purchase history */
+span.span-Value {
+    position: absolute;
+    margin-top: 0px;
+    margin-left: 20px;
+}
+
+div.col-1,div.col-2,div.col-3,div.col-4{
+	font-weight: bold;
+	padding-top: 5px;
+}
+.row.order-header {
+    background: lightgrey;
+    height: 50px;
+    border-radius: 10px;
+    font-size: 1.2em
+}
+.row.order-sub-header {
+    background: aqua;
+    height: 30px;
+    font-size: 1.1em;
+    font-weight: 10px;
+    border-radius: 5px;
+    margin-bottom: 5px;
+}
+.row.order-content {
+    width: 90%;
+    margin-left: 5%;
+    margin-top: 10px;
+}
+
+/*end of product purchase history */
+	
+/* Profile page */
+form#img-upload {
+    margin-top: 0px;
+    margin-left: 20px;
+    display: none;
+}
+
+p#img-change {
+    margin-left: 20px;
+}
+
+
+/* Profile page end */
+
+/*search filter bar setting */
+
+.search-filters {
+    margin-left: -50px;
+    position: fixed;
+}
+
+.header {
+    margin-left: -20px;
+}
+
+.content {
+    margin-bottom: 50px;
+}
+
+input#price {
+    border: 0;
+    color: #f6931f;
+    position: absolute;
+    margin-top: -25px;
+    margin-left: 75px;
+    font-weight: bold;
+}
+
+div#search-slider {
+    margin-right: -100px;
+}
+
+
+/*search filter bar setting end */
+
+
 /*Carousel Design */
   .carousel-inner > .item > img,
   .carousel-inner > .item > a > img {
@@ -295,6 +412,51 @@ div.col{
  .thumbnail>img{
  	height : 450px;
  }
+ /*Carousel Designn end */
+ 
+ 
+ /*admin page design */
+select#productCategory {
+    /* position: absolute; */
+    margin-left: 30px;
+    margin-top: 20px;
+    width: 250px;
+    height: 40px;
+    padding: 10px;
+    font-size: 1.1em;
+}
+select#productSubCategory {
+    width: 325px;
+    height: 40px;
+    padding: 10px;
+    margin-left: 50px;
+    font-size: 1.1em;
+}
+
+input.insertProduct, textarea.insertProduct {
+    display: block;
+    margin-left: 335px;
+    margin-top: 25px;
+    height: 40px;
+    width: 325px;
+    border: 1px solid lightblue;
+}
+
+input#productImageLocation {
+    border: 1px solid transparent;
+}
+
+label.insertProduct {
+    position: absolute;
+    margin-left: 30px;
+}
+
+div.box {
+    display: block;
+    margin-top: 5px;
+}
+
+ /*admin page end */
 @media screen and (min-width : 1200px) {
 	#register,#login,#cardPay{
 		margin-left : 15em;

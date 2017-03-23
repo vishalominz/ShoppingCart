@@ -21,7 +21,7 @@
 						</div>
 						<input type="text" id="searchField" class="form-control" placeholder="Search">
 						<div class="input-group-btn">
-							<button class="btn btn-default" type="submit">
+							<button class="btn btn-default" id="searchButton" type="submit">
 								<i class="glyphicon glyphicon-search"></i>
 							</button>
 						</div>
@@ -57,8 +57,8 @@
 						        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><cfoutput>#session.user.userName#</cfoutput>
 						        <span class="caret"></span></a>
 						        <ul class="dropdown-menu">
-						          <li><a id="profile" href="#">Profile</a></li>
-						          <li><a id="buyHistory"href="#">Buy History</a></li>
+						          <li><a id="profile">Profile</a></li>
+						          <li><a id="buyHistory">Buy History</a></li>
 						          <li><a id="logout">Log Out</a></li>
 						        </ul>
 						      </li>

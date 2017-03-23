@@ -7,11 +7,11 @@
 <cfinclude template="menubar.cfm"/>
 <cfloop from="1" to="#arraylen(productDetail)#" index="location">
 <cfoutput>
-	<div class="invoiceBox" id="invoice#productDetail[location].orderDetailId#">
+	<div class="row invoiceBox" id="invoice#productDetail[location].orderDetailId#">
 	  <div class="invoice invoiceHeading"> Invoice
 		<div class="invoice orderNumber"> Order ID : #productDetail[location].orderId# </div>
 	 	<div class="invoice orderDate"> Order Date : #DATEFORMAT(productDetail[location].orderDate, "m/d/yyyy")# </div>
-	 </div>
+	  </div>
 	 <div class="invoice contact"> Contact :
 		 	<p> #productDetail[location].SellingCompanyName# </p>
 	 </div>

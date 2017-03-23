@@ -7,7 +7,7 @@ function User(){
 	this.logInButton.submit(
 			function( objEvent ){
 				$(".error").hide();
-				var valid = objSelf.LogIn(objSelf);
+				var valid = objSelf.LogIn(objSelf); 
 				if(!valid){
 					event.preventDefault();
 				}
@@ -82,6 +82,39 @@ function User(){
 	//bind click to cashPayButton
 	this.cashPayButton.click(function(){
 		objSelf.insertOrderDetail(objSelf);
+	});
+	
+	//Get a jQuery reference for profile
+	this.profile = $("#profile");
+	
+	//bind click to orderHistory 
+	this.profile.click(function(){
+		var url = window.location.origin+"/view/profile.cfm";
+		$(location).attr('href',url);
+	});
+	//Get a jQuery reference for orderHistoy
+	this.orderHistory = $("#buyHistory");
+	
+	//bind click to orderHistory 
+	this.orderHistory.click(function(){
+		objSelf.retrieveOrderHistory();
+	});
+	
+	//Get a jQuery reference for image change link
+	this.changeImage = $("#imageChangeLink");
+	
+	//bind click to changeImage
+	this.changeImage.click(function(){
+		$("form#img-upload").show();
+		$("p#img-change").hide();
+	});
+	
+	//Get a jQuery reference for upload image button
+	this.uploadImage = $("input#fileUpload");
+	
+	//bind click to uploadImage
+	this.uploadImage.click(function(){
+		objSelf.uploadProfileImage();
 	});
 }
 
@@ -335,8 +368,41 @@ User.prototype.insertOrderDetail = function(objSelf){
 	);
 	
 }
+ 
 
+//Retrieve order history
+User.prototype.retrieveOrderHistory = function(){
+	var url = "http://www.shopsworld.net/view/orderHistory.cfm";
+	$(location).attr('href',url);
+}
 
+//upload image
+User.prototype.uploadProfileImage = function(){
+		$.ajax({
+			url : "http://www.shopsworld.net/controller/controller.cfc",
+			type : "post",
+			dataType: "json",
+			data : {
+				method  : "updateUserProfilePicture"
+			},
+			success: function(ResponseObj){
+				alert(ResponseObj.SUCCESS);
+				if(ResponseObj.SUCCESS){
+					$("form#img-upload").hide();
+					$("p#img-change").show();
+					var url = ResponseObj.URL;
+					$('#profilePicture').attr('src', url);
+				}else{
+					
+				}
+			},
+			error: function(RequestObj, error){
+				alert("error "+error);
+				console.log(RequestObj);
+			}
+		});
+	
+}
 
 $(document).ready(function(){
 	var objUser = new User();		 
