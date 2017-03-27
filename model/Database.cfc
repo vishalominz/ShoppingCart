@@ -7,7 +7,7 @@
   --->
 <cfcomponent accessors="true" output="false" persistent="false">
 
-<!--- Insert data of customer while registering user --->
+<!--- registerUser() --->
 	<cffunction name="registerUser"
 				access="public"
 				returntype="any">
@@ -36,7 +36,7 @@
 	</cffunction>
 
 
-<!--- Fetch user details from database while login--->
+<!--- retrieveUserInfo() while login--->
 	<cffunction name="retrieveUserInfo"
 				access="public"
 				return="Any"
@@ -64,6 +64,52 @@
 			  	[Password] = '#ARGUMENTS.password#'
 		</cfquery>
 		<cfreturn userInfo />
+	</cffunction>
+
+<!--- retrieveSellerInfo()  while login--->
+	<cffunction name="retrieveSellerInfo"
+				access="public"
+				returnformat="json"
+				returntype="any">
+
+			<cfargument
+				name="email"
+				type="string"
+				required="true" />
+			<cfargument
+				name="password"
+				type="string"
+				required="true" />
+			<cfargument
+				name="company"
+				type="string"
+				required="true" />
+
+			<cfquery name="userInfo" result="sqlinfo">
+				SELECT c.[CustomerId]
+			      ,c.[CustomerName]
+			      ,c.[Email]
+			      ,c.[MobileNumber]
+			      ,c.[Password]
+			      ,c.[ProfilePicture]
+			      ,c.[CustomerType]
+			  FROM
+			  		[dbo].[Customer] as c
+			  INNER JOIN
+			  		[dbo].[Seller] as s
+			  ON
+			  		c.[CustomerId] = s.[CustomerId]
+			  INNER JOIN
+			  		[dbo].[SellingCompany] as sc
+			  ON
+			  		sc.[SellingCompanyId] = s.[sellingCompanyId]
+			  WHERE
+			  	c.[Email] = '#ARGUMENTS.email#' AND
+			  	c.[Password] = '#ARGUMENTS.password#' AND
+			  	UPPER(sc.[SellingCompanyName]) = UPPER('#ARGUMENTS.company#')
+
+			</cfquery>
+			<cfreturn userInfo/>
 	</cffunction>
 
 <!--- retrieveUserInformation by Id --->

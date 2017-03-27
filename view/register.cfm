@@ -24,10 +24,20 @@
 		<input class="inputfield" name="password" id="password" type="password" />
 		<span class="error" id="password">Required</span>
 	</div>
+	<cfif session.isSeller>
+		<div class="form-group">
+			<label class="formLabel">Company</label>
+			<input class="inputfield" name="company" id="company" type="text" />
+			<span class="error" id="company">Required</span>
+		</div>
+	</cfif>
 	<div class="form-group">
 		<input type="submit" name="register" id="register" class="btn btn-primary" value="Register">
 		<input type="reset" name="reset" id="reset" class="btn" value="Reset">
 	</div>
+	<cfoutput>
+		<input type="hidden" name="sellerValue" id="sellerValue" value="#Session.isSeller#">
+	</cfoutput>
 	</fieldset>
 </form>
 	<cfinclude template="footer.cfm"/>

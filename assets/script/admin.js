@@ -12,8 +12,9 @@ function Admin(){
 
 Admin.prototype.populateProductSubCategory = function(){
 	var productCategoryId =  $( "select#productCategory").val();
-	if(productCategoryId === "")
+	if(productCategoryId === ""){
 		//alert(true);
+	}
 	else{
 		$.ajax({
 			url: "http://www.shopsworld.net/controller/controller.cfc",

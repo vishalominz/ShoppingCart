@@ -16,10 +16,8 @@ function User(){
 	this.logInButton.submit(
 			function( objEvent ){
 				$(".error").hide();
-				var valid = objSelf.LogIn(objSelf); 
-				if(!valid){
-					event.preventDefault();
-				}
+				objSelf.LogIn(objSelf); 
+				return false;
 			}
 		);
 	
@@ -36,13 +34,10 @@ function User(){
 	this.RegisterButton = $("form#registerUser");
 	
 	//Bind the register button to RegisterUser function
-	this.RegisterButton.submit(
+	this.RegisterButton.click(
 			function( objEvent ){
 				$(".error").hide();
-				var valid = objSelf.RegisterUser(objSelf);
-				if(!valid){
-					event.preventDefault();
-				}
+				objSelf.RegisterUser(objSelf);
 				return false;
 			}
 		);
@@ -147,9 +142,11 @@ function User(){
 User.prototype.LogIn = function(objSelf){
 	var email = $("#email").val();
 	var password = $("#password").val();
+	var sessionSeller = $("#sellerValue").val();
+	var company = sessionSeller == "true" ?  $("#company").val() : "" ;
 	var valid = false;
-	
-	valid = objSelf.LogInValidate(email,password);
+	alert(company +" company");
+	valid = objSelf.LogInValidate(email,password,company,sessionSeller);
 	//Call login controller
 	console.log(valid);
 	if(valid){
@@ -160,13 +157,17 @@ User.prototype.LogIn = function(objSelf){
 			data : {
 				method : "logIn",
 				email : email,
-				password : password
+				password : password,
+				company : company
+				
 			},
 			dataType: "json",
 			success: function( objResponse ){
 				//Check to see if request was successful
+				console.log(objResponse.URL);
+				console.log(objResponse.DATA);
 				if(objResponse.SUCCESS){
-					window.location.replace(objResponse.URL);
+					$(location).attr('href',objResponse.URL);
 				}else{
 					valid = false;
 				}
@@ -178,11 +179,18 @@ User.prototype.LogIn = function(objSelf){
 		});
 	}
 	if(!valid){
+		$("#logInError").text("");
+		if(!sessionSeller){
+			$("#logInError").text("Invalid email or password.");
+		}else {
+			$("#logInError").text("Invalid email or password or compnay.");
+		}
 		$("#logInError").show();
 		$("#email").val("");
 		$("#password").val("");
+		$("#company").val("");
 	}
-
+	return valid;
 }
 
 
@@ -209,9 +217,9 @@ User.prototype.LogOut = function(){
 }
 
 
-User.prototype.LogInValidate = function(email, password){
+User.prototype.LogInValidate = function(email, password, company, sessionSeller){
 	var valid = true;
-	email = email.trim();	
+	var email = email.trim();	
 	//check if email is null
 	if(email === ""){
 		valid = false;
@@ -223,7 +231,15 @@ User.prototype.LogInValidate = function(email, password){
 		valid = false;
 		$("#logInPasswordError").show();
 	}
+	if(sessionSeller == "true"){
+		company = company.trim();
+		if(company === ""){
+			valid = false;
+			$("#logInCompanyError").show();
+		}
+	}
 	
+
 	return valid;
 }
 
@@ -234,9 +250,11 @@ User.prototype.RegisterUser = function( objSelf ){
 	var password = $("#password").val();
 	var name= $("#name").val();
 	var mobileNumber = $("#mobileNumber").val();
+	var sessionSeller = $("#sellerValue").val();
+	var company = sessionSeller=="true" ? $("#company").val() : "" ;
 	var valid = false;
-	
-	valid = objSelf.userInfoValidate(email, password, name, mobileNumber);
+	alert(sessionSeller+" "+company);
+	valid = objSelf.userInfoValidate(email, password, name, mobileNumber, company, sessionSeller);
 	//Call login controller
 	console.log(valid);
 	if(valid){
@@ -257,6 +275,7 @@ User.prototype.RegisterUser = function( objSelf ){
 			success: function( objResponse ){
 				//Check to see if request was successful
 				if(objResponse.SUCCESS){
+					alert(success);
 					window.location.href = objResponse.URL;
 				}
 					valid = false;
@@ -272,12 +291,14 @@ User.prototype.RegisterUser = function( objSelf ){
 }
 
 //user info validation while registering
-User.prototype.userInfoValidate = function(email, password, name, mobileNumber){
+User.prototype.userInfoValidate = function(email, password, name, mobileNumber, company, sessionSeller){
 	var valid = true;
+	alert(email+" email");
 	if(email.trim() === ""){
 		valid = false;
 		$("span#email").show();
 	}
+	alert(password);
 	if(password === ""){
 		valid = false;
 		$("span#password").show();
@@ -290,6 +311,13 @@ User.prototype.userInfoValidate = function(email, password, name, mobileNumber){
 	if(mobileNumber < 1000000000 || mobileNumber > 9999999999 || isNaN(mobileNumber)){
 		valid = false;
 		$("span#mobileNumber").show();
+	}
+	if(sessionSeller == "true"){
+		company = company.trim();
+		if(company === ""){
+			valid = false;
+			$("span#company").show();
+		}		
 	}
 	
 	return valid;

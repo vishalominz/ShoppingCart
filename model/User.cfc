@@ -14,7 +14,7 @@
 
 <!--- User switchUser() function --->
 	<cffunction name="switchUser"
-				access="public"
+				access="remote"
 				returnformat="json"
 				returntype="any">
 		<!--- Get a new API response --->
@@ -27,10 +27,10 @@
 		<cfif !session.loggedIn>
 			<cfif session.isSeller>
 				<cfset session.isSeller = false />
-				<cfset link="http://www.shopsworld.net/view/admin.cfm">
+				<cfset link="http://www.shopsworld.net/index.cfm">
 			<cfelse>
 				<cfset session.isSeller = true />
-				<cfset link="http://www.shopsworld.net/index.cfm">
+				<cfset link="http://www.shopsworld.net/view/login.cfm">
 			</cfif>
 		<cfelse>
 			<cfset LOCAL.Response.errors = "User is logged in" />
@@ -40,10 +40,11 @@
 		<cfreturn LOCAL.Response />
 	</cffunction>
 
+
 <!--- User logIn() function --->
 	<cffunction	name="logIn"
 			returntype="any"
-			access="public"
+			access="remote"
 			returnformat="JSON"
 			output="false"
 			hint="Check login information.">
@@ -59,10 +60,20 @@
 				type="string"
 				required="true"
 				hint="Password of the user" />
+			<cfargument
+				name="company"
+				required="false"
+				type="string"
+				default=""
+				hint="Company of the user"/>
 
 			<cfparam
 				name="isLoggedIn"
 				default="false" />
+
+			<cfparam
+				name="isSeller"
+				default="#SESSION.isSeller#" />
 
 		<!--- Get a new API response --->
 		<cfset var LOCAL = {} />
@@ -76,6 +87,7 @@
 				"Email not Found"
 				) />
 		</cfif>
+
 		<cfif NOT Len(ARGUMENTS.password)>
 			<cfset ArrayAppend(
 				LOCAL.Response.Errors,
@@ -89,89 +101,114 @@
 			<cfparam name="isItemPresent" default=false />
 			<cfparam name="itemIndex" default=1 />
 			<cfset LOCAL.Item = {} />
-		<!--- Call database to retrieve user info --->
-			<cfinvoke
-				component="Database"
-				method="retrieveUserInfo"
-				returnvariable="userInfo">
 
-				<cfinvokeargument
-					name="email"
-					value="#ARGUMENTS.email#" />
+			<!--- Call database to retrieve user info --->
+			<cfif !isSeller >
+				<cfinvoke	component="Database"
+					method="retrieveUserInfo"
+					returnvariable="userInfo">
 
-				<cfinvokeargument
-					name="password"
-					value="#ARGUMENTS.password#" />
-			</cfinvoke>
+					<cfinvokeargument
+						name="email"
+						value="#ARGUMENTS.email#" />
 
-		<!--- If user is present then perform --->
-			<cfif userInfo.recordcount eq 1>
-				<cfset session.user.userName = userInfo.CustomerName />
-				<cfset session.loggedIn = true />
-				<cfset session.user.userId = userInfo.CustomerId />
-				<cfset session.user.email = userInfo.Email />
-				<cfset session.user.mobileNumber = userInfo.MobileNumber />
-				<cfset isLoggedIn = "true" />
-				<cfset LOCAL.Item ={
-					username = userInfo.CustomerName,
-					userId = userInfo.CustomerId,
-					email = userInfo.Email,
-					mobileNumber = userInfo.MobileNumber
-				 	} />
-				 <cfset LOCAL.Response.Data = LOCAL.Item />
+					<cfinvokeargument
+						name="password"
+						value="#ARGUMENTS.password#" />
+				</cfinvoke>
+			<!--- if user is a seller --->
+			<cfelse>
+				<cfinvoke component="Database"
+							method="retrieveSellerInfo"
+							returnvariable="userInfo">
+						<cfinvokeargument name="email"
+								value="#ARGUMENTS.email#" />
+						<cfinvokeargument name="password"
+								value="#ARGUMENTS.password#" />
+						<cfinvokeargument name="company"
+								value="#ARGUMENTS.company#" />
+				</cfinvoke>
+			</cfif>
 
-					<cfinvoke
-						component="Database"
-						method="retrieveCart"
-						returnvariable="cart">
-							<cfinvokeargument
-									name="customerId"
-									value="#session.user.userId#"	/>
-					</cfinvoke>
+			<!--- If user is present then perform --->
+				<cfif userInfo.recordcount eq 1>
+					<cfset session.user.userName = userInfo.CustomerName />
+					<cfset session.loggedIn = true />
+					<cfset session.user.userId = userInfo.CustomerId />
+					<cfset session.user.email = userInfo.Email />
+					<cfset session.user.mobileNumber = userInfo.MobileNumber />
+					<cfset session.user.userType = userInfo.CustomerType />
+					<cfset isLoggedIn = "true" />
+					<cfset LOCAL.Item ={
+						username = userInfo.CustomerName,
+						userId = userInfo.CustomerId,
+						email = userInfo.Email,
+						mobileNumber = userInfo.MobileNumber,
+						CustomerType = userInfo.CustomerType
+					 	} />
+					<cfset LOCAL.Response.Data = LOCAL.Item />
 
-					<cfif cart.recordcount gt 0>
-						<cfloop query="#cart#">
-							<cfset cartId = "#CartId#" />
-							<cfbreak/>
-						</cfloop>
-
+					<cfif !isSeller>
 						<cfinvoke
 							component="Database"
-							method="retrieveCartItemDetail"
-							returnvariable="cartItemDetail">
-
-							<cfinvokeargument
-									name="cartId"
-									value="#cartId#" />
+							method="retrieveCart"
+							returnvariable="cart">
+								<cfinvokeargument
+										name="customerId"
+										value="#session.user.userId#"	/>
 						</cfinvoke>
 
-						<cfloop query="cartItemDetail">
-							<cfset product = {
-									DISCOUNT = #DiscountPercent#,
-									INVENTORYID	= #InventoryId#,
-									MAXCOUNT = #AvailableQuantity#,
-									PRICE = #SellingPrice#,
-									PRODUCTBRAND = #ProductBrand#,
-									PRODUCTCOUNT = #Quantiy#,
-									PRODUCTDESCRIPTION = #ProductDescription#,
-									PRODUCTID = #ProductId#,
-									PRODUCTIMAGELOCATION = #ProductImageLocation#,
-									PRODUCTNAME	= #ProductName#,
-									SELLINGCOMPANYID = #SellingCompanyId#
-										} />
-							<cfset arrayAppend(session.cart,product) />
-						</cfloop>
-					</cfif>
+						<cfif cart.recordcount gt 0>
+							<cfloop query="#cart#">
+								<cfset cartId = "#CartId#" />
+								<cfbreak/>
+							</cfloop>
 
-		<!--- else when user is not present --->
-			<cfelse>
-				<cfset LOCAL.Response.Success = "false" />
-			</cfif>
+							<cfinvoke
+								component="Database"
+								method="retrieveCartItemDetail"
+								returnvariable="cartItemDetail">
+
+								<cfinvokeargument
+										name="cartId"
+										value="#cartId#" />
+							</cfinvoke>
+
+							<cfloop query="cartItemDetail">
+								<cfset product = {
+										DISCOUNT = #DiscountPercent#,
+										INVENTORYID	= #InventoryId#,
+										MAXCOUNT = #AvailableQuantity#,
+										PRICE = #SellingPrice#,
+										PRODUCTBRAND = #ProductBrand#,
+										PRODUCTCOUNT = #Quantiy#,
+										PRODUCTDESCRIPTION = #ProductDescription#,
+										PRODUCTID = #ProductId#,
+										PRODUCTIMAGELOCATION = #ProductImageLocation#,
+										PRODUCTNAME	= #ProductName#,
+										SELLINGCOMPANYID = #SellingCompanyId#
+											} />
+								<cfset arrayAppend(session.cart,product) />
+							</cfloop>
+						</cfif>
+					</cfif>
+			<!--- else when user is not present --->
+				<cfelse>
+					<cfset LOCAL.Response.Success = "false" />
+				</cfif>
 		</cfif>
 
-		<cfset LOCAL.Response.url = "#SESSION.lastpage#" />
+
+		<cfif !isSeller>
+			<cfset LOCAL.Response.url = "#SESSION.lastpage#" />
+		<cfelse>
+			<cfset LOCAL.Response.url = "http://www.shopsworld.net/view/seller.cfm" />
+		</cfif>
+
 		<cfreturn LOCAL.Response />
 	</cffunction>
+
+
 
 <!--- user logOut() function --->
 	<cffunction	name="logOut"

@@ -31,10 +31,12 @@
 	<!--- arguments defination --->
 		<cfargument	name="email"
 		 	required="true" />
-		<cfargument
-			name="password"
+		<cfargument	name="password"
 			required="true" />
-
+		<cfargument
+			name="company"
+			required="false"
+			default="">
 	<!--- call login function from model.user --->
 		<cfinvoke
 			component="model.User"
@@ -47,6 +49,11 @@
 			<cfinvokeargument
 				name="password"
 				value="#HASH(ARGUMENTS.password)#" />
+			<cfif session.isSeller>
+				<cfinvokeargument
+					name="company"
+					value="#ARGUMENTS.company#" />
+			</cfif>
 		</cfinvoke>
 		<cfreturn logInInfo />
 	</cffunction>

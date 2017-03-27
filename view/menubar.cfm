@@ -46,7 +46,7 @@
 				<cfif !session.loggedIn>
 				 <ul class="nav navbar-nav navbar-left">
 					<span id="seller">
-						<cfif session.isSeller>
+						<cfif !session.isSeller>
 							<cfoutput>
 								Switch to Seller
 							</cfoutput>
