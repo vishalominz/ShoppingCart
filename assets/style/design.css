@@ -3,8 +3,33 @@
 }
 
 .container{
-	margin-top: 150px;
+	margin-top: 100px;
+	width: 100%;
 }
+/*---------- header design ----------------*/
+.navbar-default{
+	width:100%;
+}
+.navbar-inverse {
+    background-color: #222;
+    margin-bottom: 0px;
+    border-color: #080808;
+}
+
+span#seller {
+    position: absolute;
+    margin: 0 30%;
+    font-size: 1.5em;
+    font-variant: small-caps;
+    font-weight: 700;
+    font-style: italic;
+    background: #ffc3c3;
+    padding: 5px;
+    border-radius: 5px;
+    color: brown;
+    cursor: pointer;
+}
+
 
 /* search bar design */
 .suggestionBox {
@@ -59,11 +84,6 @@ div.product{
     text-decoration: none;
 }
 
-img.productImage{
-	width : 100px;
-	height : 100px;
-}
-
 img.productDetailImage{
 	width : 200px;
 	height : 200px;
@@ -87,10 +107,11 @@ span#Message {
 
 
 /*Register user form and Log In user form */
-#registerUser, #loginUser{
-	position : absolute;
+form#registerUser, form#loginUser{
+	position : relative;
 	margin-left : 10%;
 	margin-right : 10%;
+	margin-bottom : 50px;
 	border : 0.1em solid black;
 	padding-left : 10em;
 	padding-right : 10em;
@@ -120,15 +141,11 @@ span#Message {
 	color : blue;
 }
 
-div.productItem{
-	margin: 5px 0;
-    height: 250px;
-}
 
 img.productImage{
 	display: inline;
     position: absolute;
-    margin-left: 100px;
+    margin-left: 0;
     margin-top: 0px;
 }
 
@@ -137,22 +154,6 @@ img.purchaseHistory{
 	height: 100px;	
 }
 
-
-span.productName {
-    margin-left: 120px;
-    margin-top: 120px;
-    display: inline;
-    position: absolute;
-    font-size: 1.5em;
-}
-
-span.productBrand {
-    display: block;
-    position: absolute;
-    margin-left: 120px;
-    margin-top: 150px;
-    font-size: 1.5em;
-}
 
 span#logInError {
     margin-left: 220px;
@@ -186,30 +187,98 @@ span#password {
     margin-top: -45px;
 }
 
+
+/*----------------------------- cart ------------------------- */
+
+div.productItem {
+    margin-top: 25px;
+    margin-bottom: 25px;
+    border-bottom: 1px solid grey;
+    /* margin: 5px 0; */
+    height: 200px;
+}
 button.removeItem {
     display: inline;
     position: absolute;
-    margin-top: 200px;
-    margin-left: 490px;
+        margin-top: 40px;
+    margin-left: 605px;
 }
-input.productCount{
-	display: inline;
+button.updateButton {
+    position: absolute;
+    margin-left: 605px;
+    height: 2em;
+    margin-top: -55px;
+    border: 1px solid transparent;
+    border-radius: 5px;
+    display:none;
+}
+
+img.productImage{
+	width : 150px;
+	height : 150px;
+}
+
+input.productCount {
+    display: inline;
     float: none;
     position: absolute;
-    margin-top: 15px;
-    width: 50px;
-    height: 30px;
-    margin-left: 485px;
+    margin-top: -107px;
+    width: 135px;
+    height: 40px;
+    margin-left: 605px;
     background-color: lightgray;
+    text-align: center;
+    font-size: 1.2em;
+    border: 1px solid lightblue;
+    background: #dddbe2;
 }
+
+div.product {
+    font-size: 1.2em;
+    color: black;
+    margin-left: 200px;
+    text-decoration: none;
+}
+
+span.productName {
+    margin-left: 0px;
+    margin-top: 0;
+    display: inline;
+    position: relative;
+    font-size: 1.5em;
+}
+
+span.productBrand {
+    display: block;
+    position: relative;
+    margin-left: 0px;
+    margin-top: 0;
+    font-size: 1.5em;
+}
+
+
 span.productDescription {
     display: inline;
-    position: absolute;
-    margin-top: 175px;
-    margin-left: 120px;
+    position: relative;
+    margin-top: 0;
+    margin-left: 0;
     font-size: 1.2em;
     line-height: 2em;
 }
+
+input#orderProducts {
+    width: 100%;
+    margin-bottom: 25px;
+    background: #3599a5;
+}
+
+span.error.productError {
+    position: absolute;
+    margin-top: 25px;
+    margin-left: 100px;
+}
+
+/* --------------------cart end ---------------------------*/
 
 input.checkbox {
     margin-left: 20px;
@@ -217,6 +286,7 @@ input.checkbox {
     position: absolute;
     /* position: absolute; */
 }
+
 
 div#creditCard,div#cash{
 	display: none;
@@ -370,7 +440,7 @@ p#img-change {
 /*search filter bar setting */
 
 .search-filters {
-    margin-left: -50px;
+    margin-left: 40px;
     position: fixed;
 }
 
@@ -457,6 +527,17 @@ div.box {
 }
 
  /*admin page end */
+ 
+ /* cart page */
+ .alert-info {
+    color: #31708f;
+    background-color: #d9edf7;
+    border-color: #bce8f1;
+    display: block;
+    text-align: center;
+    width: 100%;
+}
+
 @media screen and (min-width : 1200px) {
 	#register,#login,#cardPay{
 		margin-left : 15em;
@@ -464,4 +545,58 @@ div.box {
 	#reset{
 		margin-left : 5;
 	}
+}
+
+
+/*address page*/
+@media {
+    ::-webkit-scrollbar {
+        -webkit-appearance: none;
+        width: 7px;
+    }
+    ::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        background-color: rgba(0,0,0,.5);
+        -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+    }
+}
+
+div#addresses {
+    height: 400px;
+    width: 470px;
+    position: fixed;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    /* border: 1px solid red; */
+    display: block;
+    background: rgb(227, 245, 245);
+}
+
+row.addressBox {
+    text-align: center;
+    color: rgb(61, 74, 36);
+    background: #99ddff;
+    margin: 50px;
+    width: 400px;
+    font-size: 1.2em;
+}
+form#addressForm {
+    margin-left: -125px;
+}
+
+input.addressField,textarea.addressField{
+	border: 1px solid lightblue;
+	width : 30em;
+	height : 3em;
+}
+
+button.select,button.setDefault,button.remove {
+    display: inline-block;
+    width: 110px;
+    border-radius: 0px;
+    color: #581d00;
+}
+
+span.addressId,span.addressType{
+	display: none;
 }

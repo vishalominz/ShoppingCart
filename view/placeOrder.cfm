@@ -6,38 +6,38 @@
 <cfinclude template="header.cfm"/>
 <body>
 	<cfinclude template="menubar.cfm"/>
-	<div class="container-fluid">
 		<div class="row">
-			<div class="col-lg-12">
+			<div class="col-lg-8">
 			<form id="addressForm" method="post" action="" >
+					<input type="hidden" id="addressId" name="addressId" value=""/>
 				<div class="form-group">
 					<label class="formLabel"> Address Line 1 </label>
-					<textarea name="address1" id="addressLine1"></textarea>
+					<textarea class="addressField" name="address1" id="addressLine1"></textarea>
 					<span class="error" id="addressLine1">Required/Invalid</span>
 				</div>
 				<div class="form-group">
 					<label class="formLabel"> Address Line 2 </label>
-					<textarea name="address2" id="addressLine2"></textarea>
+					<textarea class="addressField" name="address2" id="addressLine2"></textarea>
 					<span class="error" id="addressLine2">Required/Invalid</span>
 				</div>
 				<div class="form-group">
 					<label class="formLabel">State</label>
-					<input class="inputfield" name="state" id="state" type="text" />
+					<input class="addressField" name="state" id="state" type="text" />
 					<span class="error" id="state">Required/Invalid</span>
 				</div>
 				<div class="form-group">
 					<label class="formLabel">City</label>
-					<input class="inputfield" name="city" id="city" type="text"/>
+					<input class="addressField" name="city" id="city" type="text"/>
 					<span class="error" id="city">Required/Invalid</span>
 				</div>
 				<div class="form-group">
 					<label class="formLabel">Pincode</label>
-					<input class="inputfield" name="pincode" id="pincode" type="text" maxlength="6"/>
+					<input class="addressField" name="pincode" id="pincode" type="text" maxlength="6"/>
 					<span class="error" id="pincode">Required/Invalid</span>
 				</div>
 				<div class="form-group">
 					<label class="formLabel">Address Type</label>
-					<input class="inputfield" name="adrressType" id="addressType" type="text"/>
+					<input class="addressField" name="adrressType" id="addressType" type="text"/>
 					<span class="error" id="addressType">Required/Invalid</span>
 				</div>
 				<div class="form-group">
@@ -47,7 +47,25 @@
 				</div>
 			</form>
 			</div>
+			<div class="col-lg-4">
+				<div class="row" id="addresses">
+					<cfloop query="#address#">
+						<cfoutput>
+								<div class="row addressBox" id="#AddressId#">
+										<p><span class="addressLine1">#AddressLine1#</span></p>
+										<p><span class="addressLine2">#AddressLine2#</span></p>
+										<p><span class="city">#city#</span> - <span class="pincode">#pincode#</span></p>
+										<p><span class="state">#state#</span></p>
+										<p><span class="addressId">#AddressId#</span></p>
+										<p><span class="addressType">#AddressType#</span></p>
+										<button class="selectAddress">Select</button>
+										<button class="removeAddress">Remove</button>
+										<button class="setDefaultAddress">Set Default</button>
+								</div>
+						</cfoutput>
+					</cfloop>
+				</div>
+			</div>
 		</div>
-	</div>
 </body>
 <cfinclude template="footer.cfm" />

@@ -13,8 +13,7 @@
 	hint="Public API for Cart.">
 
 <!--- add function for cart --->
-	<cffunction
-		name="AddToCart"
+	<cffunction	name="AddToCart"
 		access="remote"
 		returntype="struct"
 		returnformat="json"
@@ -172,8 +171,7 @@
 
 
 <!---- Delete function for cart --->
-	<cffunction
-		name="DeleteFromCart"
+	<cffunction	name="DeleteFromCart"
 		access="remote"
 		returntype="struct"
 		returnformat="json"
@@ -246,8 +244,7 @@
 		</cffunction>
 
 <!--- Get items for cart function --->
-		<cffunction
-			name="GetCartItems"
+		<cffunction	name="GetCartItems"
 			access="remote"
 			reutrntype="struct"
 			returnformat="json"
@@ -267,4 +264,38 @@
 			<cfreturn LOCAL.Response />
 		</cffunction>
 
+
+<!---- Update cart count --->
+		<cffunction name="UpdateCartItem"
+				access="remote"
+				returnformat="json"
+				returntype="any"
+				hint="Update cart count">
+
+			<cfargument name="countValue"
+						required="true" />
+			<cfargument name="productId"
+						required="true" />
+			<cfargument name="inventoryId"
+						required="true" />
+			<!--- Define the local scope --->
+			<cfset var LOCAL = {} />
+
+			<!--- Get a new API response --->
+			<cfset LOCAL.Response = THIS.GetNewResponse() />
+
+			<cfloop from="1" to="#arrayLen(Session.cart)#" index="item">
+					<cfif Session.cart[item].productId eq ARGUMENTS.productId
+							AND Session.cart[item].InventoryId eq ARGUMENTS.inventoryId>
+						<cfif ARGUMENTS.countValue gt Session.cart[item].maxcount>
+							<cfset LOCAL.Response.Success = false />
+							<cfset LOCAL.Response.Data = Session.cart[item].maxcount />
+						<cfelse>
+							<cfset Session.cart[item].productCount = ARGUMENTS.countValue />
+						</cfif>
+					</cfif>
+			</cfloop>
+			<!--- Retuen the response --->
+			<cfreturn LOCAL.Response />
+		</cffunction>
 </cfcomponent>

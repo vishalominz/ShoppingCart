@@ -25,7 +25,7 @@
 		<div class="row admin-content" id="productInsert">
 			<div class="col-md-2"></div>
 			<div class="col-md-8">
-			<form method="post" id="productInsert">
+			<form method="post" id="productInsert" action="insertProduct">
 				<div class="box">
 				<select name="productCategory" Id="productCategory">
 						  <option value="" selected>Select Category</option>
@@ -59,7 +59,7 @@
 				</div>
 				<div class="box insertProduct">
 				<label class="insertProduct">Product Image</label>
-				<input type="file" name="productImageLocation" class="insertProduct" id="productImageLocation" />
+				<input type="file" name="productImageLocation" class="insertProduct" id="productImageLocation" multiple/>
 				</div>
 				<div class="box insertProduct">
 				<label class="insertProduct"></label>

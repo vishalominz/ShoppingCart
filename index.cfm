@@ -1,7 +1,5 @@
 <cfinclude template="view/header.cfm"/>
-<body>
 	<cfinclude template="view/menubar.cfm"/>
-	<div class="container-fluid">
 		<div id="myCarousel" class="carousel slide" data-ride="carousel">
 		  <!-- Indicators -->
 		  <ol class="carousel-indicators">
@@ -67,6 +65,4 @@
 		  </a>
 		</div>
 
-	</div>
-</body>
 <cfinclude template="view/footer.cfm"/>

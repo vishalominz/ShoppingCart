@@ -7,6 +7,21 @@
   --->
 <cfcomponent accessors="true" output="false" persistent="false">
 
+<!--- switchUser controller --->
+	<cffunction name="switchUser"
+				access="remote"
+				returntype="any"
+				returnformat="json">
+
+			<cfinvoke component="model.User"
+					method="switchUser"
+					returnvariable="responseObj">
+			</cfinvoke>
+
+			<cfreturn responseObj />
+	</cffunction>
+
+
 <!--- login controller --->
 	<cffunction name="logIn"
 			access="remote"
@@ -291,6 +306,23 @@
 			<cfreturn address />
 	</cffunction>
 
+
+<!--- removeAddress --->
+	<cffunction name="removeAddress"
+				access="remote"
+				returntype="any"
+				returnformat="json">
+
+			<cfargument name="addressId"
+						required="true" />
+			<cfinvoke component="model.user"
+						method="removeAddress"
+						returnvariable="responseObject">
+					<cfinvokeargument name="addressId"
+									value="ARGUMENTS.addressId"/>
+			</cfinvoke>
+			<cfreturn responseObject />
+	</cffunction>
 <!--- retrieveOrderDetails --->
 	<cffunction name="retrieveOrderDetails"
 			access="remote"

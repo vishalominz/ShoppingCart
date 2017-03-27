@@ -23,6 +23,7 @@
 		<cfset session.lastpage = "" />
 		<cfset session.loggedIn=false />
 		<cfset session.address = {} />
+		<cfset session.isSeller = false />
 	</cffunction>
 
 <!--- onError function --->

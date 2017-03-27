@@ -308,6 +308,21 @@
 		<cfreturn address/>
 	</cffunction>
 
+<!--- removeAddress --->
+	<cffunction name="removeAddress"
+				access="public"
+				returnformat="json"
+				returntype="any">
+			<cfargument name="addressId"
+						required="true"/>
+
+			<cfquery>
+
+					DELETE FROM [dbo].[Address]
+      				WHERE addressId = #ARGUMENTS.addressId#
+
+			</cfquery>
+	</cffunction>
 
 <!--- Insert Order into Order Table --->
 	<cffunction	name="insertOrder"

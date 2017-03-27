@@ -37,13 +37,28 @@
 					<ul class="nav navbar-nav">
 						 <cfinclude template="productCategories.cfm" />
 					</ul>
-					<!--- <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menu">
+					 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menu">
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
-					</button> --->
+					</button>
 				</div>
-				<!--- <div class="collapse navbar-collapse" id="menu"> --->
+				<cfif !session.loggedIn>
+				 <ul class="nav navbar-nav navbar-left">
+					<span id="seller">
+						<cfif session.isSeller>
+							<cfoutput>
+								Switch to Seller
+							</cfoutput>
+						<cfelse>
+							<cfoutput>
+								Switch to Customer
+							</cfoutput>
+						</cfif>
+					</span>
+				</ul>
+				</cfif>
+				<div class="collapse navbar-collapse" id="menu">
 					<ul class="nav navbar-nav navbar-right">
 
 					<cfparam name="session.loggedIn" default=false type="boolean" />
@@ -67,4 +82,5 @@
 				  <!--- </div> --->
 			</div>
 </nav>
+<body>
 <div id="content" class="container">

@@ -13,7 +13,7 @@
 	<cfinclude template="menubar.cfm"/>
 	<div class="row">
 		<div class="col-md-2">
-			<!--- <cfinclude template="search-filter.cfm" /> --->
+			<cfinclude template="search-filter.cfm" />
 		</div>
 
 		<div class="col-md-10">

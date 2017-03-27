@@ -1,5 +1,14 @@
 function User(){
 	var objSelf= this;
+	//Get a jQuery reference to the seller button
+	this.userButton = $("span#seller");
+	
+	//Bind sellerButton on the click
+	this.userButton.click(
+			function( objEvent ){
+				objSelf.switchUser();
+				return false;
+			});
 	//Get a jQuery reference to the button
 	this.logInButton = $("form#loginUser");
 	
@@ -13,7 +22,7 @@ function User(){
 				}
 			}
 		);
-
+	
 	//Get a jQuery reference for logout link
 	this.logOutLink = $("a#logout");
 	
@@ -48,7 +57,23 @@ function User(){
 		return false;
 	});
 	
+	///Get a jQuery reference to select address button
+	this.selectAddressButton = $("button.selectAddress");
 	
+	//bind selectAddressButton to populateAddress()
+	this.selectAddressButton.click(function(){
+		var address = $(this).parent();
+		objSelf.populateAddress( address );
+	});
+	
+	//Get a jQuery reference to remove address button
+	this.removeAddressButton = $("button.removeAddress");
+	
+	//bind removeAddressButton to removeAddres()
+	this.removeAddressButton.click(function(){
+		var address = $(this).parent();
+		objSelf.removeAddress(address);
+	})
 	//Get a jQuery reference to product submit Button
 	this.productSubmit = $("input#orderProducts");
 	
@@ -402,6 +427,66 @@ User.prototype.uploadProfileImage = function(){
 			}
 		});
 	
+}
+
+User.prototype.populateAddress = function(address){
+	var addressLine1 = $(address).find(".addressLine1").text();
+	var addressLine2 = $(address).find(".addressLine2").text();
+	var city= $(address).find(".city").text();
+	var state= $(address).find(".state").text();
+	var pincode=  $(address).find(".pincode").text();
+	var addressType= $(address).find(".addressType").text();
+	var addressId = $(address).find(".addressId").text();
+	$("textarea#addressLine1").val(addressLine1);
+	$("textarea#addressLine2").val(addressLine2);
+	$("input#city").val(city);
+	$("input#state").val(city);
+	$("input#pincode").val(pincode);
+	$("input#addressType").val(addressType);
+	$("input#addressId").val(addressId);
+}
+
+
+User.prototype.removeAddress = function(address){
+	var addressId= $(address).find(".addressId").text();
+	
+	$.ajax({
+		url: "http://www.shopsworld.net/controller/controller.cfc",
+		dataType: "json",
+		type: "post",
+		data :{
+			method: "removeAddress",
+			addressId : addressId
+		},
+		success: function(responseObj){
+			$(address).hide();
+			alert("removed");
+		},
+		error: function(requestObj, error){
+			alert(error);
+		}
+	});
+	
+}
+
+
+User.prototype.switchUser = function(){
+	$.ajax({
+		url: "http://www.shopsworld.net/controller/controller.cfc",
+		dataType: "json",
+		type: "post",
+		data :{
+			method : "switchUser"
+		},
+		success : function(responseObj){
+			if(responseObj.SUCCESS){
+				$(location).attr('href',responseObj.URL);
+			}
+		},
+		error : function(requestObj, error){
+			alert(error);
+		}
+	});
 }
 
 $(document).ready(function(){

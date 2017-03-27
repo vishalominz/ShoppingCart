@@ -12,6 +12,34 @@
 	persistent="false"
 	hint="Public API for User.">
 
+<!--- User switchUser() function --->
+	<cffunction name="switchUser"
+				access="public"
+				returnformat="json"
+				returntype="any">
+		<!--- Get a new API response --->
+		<cfset var LOCAL = {} />
+
+		<!--- Get a new API response --->
+		<cfset LOCAL.Response = THIS.GetNewResponse() />
+		<cfparam name="link" default="" />
+
+		<cfif !session.loggedIn>
+			<cfif session.isSeller>
+				<cfset session.isSeller = false />
+				<cfset link="http://www.shopsworld.net/view/admin.cfm">
+			<cfelse>
+				<cfset session.isSeller = true />
+				<cfset link="http://www.shopsworld.net/index.cfm">
+			</cfif>
+		<cfelse>
+			<cfset LOCAL.Response.errors = "User is logged in" />
+		</cfif>
+		<cfset LOCAL.Response.url = link />
+
+		<cfreturn LOCAL.Response />
+	</cffunction>
+
 <!--- User logIn() function --->
 	<cffunction	name="logIn"
 			returntype="any"
@@ -467,6 +495,52 @@
 
 			<cfreturn address />
 	</cffunction>
+
+<!--- removeAddress --->
+	<cffunction name="removeAddress"
+				access="public"
+				returntype="any"
+				returnformat="json">
+			<cfargument name="addressId"
+						required="true"/>
+
+
+		<!--- Get a new API response --->
+		<cfset var LOCAL = {} />
+
+		<!--- Get a new API response --->
+		<cfset LOCAL.Response = THIS.GetNewResponse() />
+
+		<!--- Check to see if all the data is defined. --->
+		<cfif NOT Len(SESSION.user.userId)>
+			<cfset ArrayAppend(
+				LOCAL.Response.Errors,
+				"No ID Found"
+				) />
+		</cfif>
+
+		<cfif NOT Len(ARGUMENTS.addressId)>
+			<cfset ArrayAppend(
+				LOCAL.Response.Errors,
+				"No Address ID Found"
+				) />
+		</cfif>
+
+		<cfif NOT ArrayLen(LOCAL.Response.Errors)>
+			<cfinvoke component="Database"
+						method="removeAddress">
+					<cfinvokeargument name="addressId"
+									value="#ARGUMENTS.addressId#"/>
+			</cfinvoke>
+		</cfif>
+		<cfif ArrayLen(LOCAL.Response.Errors)>
+			<cfset LOCAL.Response.Success = false />
+		</cfif>
+
+		<cfreturn LOCAL.Response/>
+	</cffunction>
+
+
 
 <!--- retrieveOrderDetails() function --->
 	<cffunction name="retrieveOrderDetails"

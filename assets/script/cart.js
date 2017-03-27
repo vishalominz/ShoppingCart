@@ -132,7 +132,6 @@ DeleteFromCart.prototype.OnClickDelete = function(productId){
 					//update cart count
 					var count = parseInt($('#cartItemCount').html())-1;
 					$('#cartItemCount').html(count);
-					cosole.log($('.productItem'));
 					
 				
 				} else {
@@ -147,13 +146,68 @@ DeleteFromCart.prototype.OnClickDelete = function(productId){
 		);
 }
 
+////------------------------------///
+function UpdateCart(){
+	var objSelf = this;
+	//Get a jquery referenct for product Count element
+	this.productCount = $(".productCount");
+	//Bind the onclick event on click
+	this.productCount.click(function(objEvent){
+		$(this).parent().children(".updateButton").show();
+	});
+	//Get a jQuery reference to the update button
+	this.updateButton = $(".updateButton");
+	//Bind the onclick event on the button
+	this.updateButton.click(
+		function( objEvent ){
+			//Pass the Product details via AJAX
+			objSelf.OnClickUpdate($(this).parent());
+			return false;
+		}
+	);
+}
 
 
+UpdateCart.prototype.OnClickUpdate = function( element ){
+	var count = $(element).children(".productCount");
+	var updateButton = $(element).children(".updateButton");
+	var countValue = count.val();
+	var productId = $(element).attr('id');
+	var error = $(element).children(".error");
+	var inventoryId = $(element).children(".inventoryId").val();
+	alert(inventoryId);
+	$.ajax({
+		url: "/model/Cart.cfc",
+		type: "get",
+		data: {
+			method: "UpdateCartItem",
+			countValue: countValue,
+			productId: productId,
+			inventoryId: inventoryId
+		},
+		dataType: "json",
+		success: function(objResponse){
+			if(objResponse.SUCCESS){
+				updateButton.hide();
+				error.hide();
+			}else{
+				error.text("Maximum number of item available is "+objResponse.DATA);
+				error.show();
+			}
+		},
+		error: function(objRequest, error){
+			alert("error "+error);
+		}
+	});
+	
+	
+}
 ///When document is ready
 $(
 		function(){
 			//Create an instance of the Product Items
 			var objAddCartItem = new AddToCart();
 			var objRemoveCartItem = new DeleteFromCart();
+			var objUpdateCartItem = new UpdateCart();
 		}
 		);
