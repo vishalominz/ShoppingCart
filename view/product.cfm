@@ -24,7 +24,7 @@
 				<cfoutput>
 					<a href="productDetail.cfm?product=#ProductId#">
 						<div id="#ProductId#" class="product">
-						<img class="productDetailImage" src="/assets/#ProductImageLocation#" alt="#ProductName#"></br>
+						<img class="productDetailImage" src="/#ProductImageLocation#/default.jpg" alt="#ProductName#"></br>
 						<p>#ProductName#</p>
 						<p>#ProductBrand#</p>
 						<p>Selling Price : #NumberFormat(SellingPrice,'9,99')#</p>

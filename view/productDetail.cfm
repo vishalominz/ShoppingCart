@@ -34,7 +34,7 @@
 		</cfif>
 			<cfoutput>
 			<div class="col-md-6">
-				<img class="productDetailImage" src="/assets/#ProductImageLocation#" alt="#ProductName#" />
+				<img class="productDetailImage" src="/#ProductImageLocation#/default.jpg" alt="#ProductName#" />
 			</div>
 			<div class="col-md-6">
 				<div class="productInfo">

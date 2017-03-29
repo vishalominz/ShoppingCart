@@ -136,6 +136,17 @@
 			<cfreturn productCategory />
 	</cffunction>
 
+<!--- retrieveProductFromInventoryByCompany ---->
+	<cffunction name="retrieveProductFromInventoryByCompany"
+				access="remote"
+				returnformat="json"
+				returntype="any">
+			<cfinvoke component="model.Product"
+						method="retrieveProductFromInventoryByCompany"
+						returnvariable="inventoryProducts">
+			</cfinvoke>
+			<cfreturn inventoryProducts />
+	</cffunction>
 
 <!--- retrieveProductSubCategory controller --->
 	<cffunction	name="retrieveProductSubCategory"
@@ -330,6 +341,7 @@
 			</cfinvoke>
 			<cfreturn responseObject />
 	</cffunction>
+
 <!--- retrieveOrderDetails --->
 	<cffunction name="retrieveOrderDetails"
 			access="remote"
@@ -410,6 +422,89 @@
 			</cfinvoke>
 
 			<cfreturn ResponseObject>
+	</cffunction>
+
+
+<!--- insertProduct --->
+	<cffunction name="insertProduct"
+				access="public"
+				returnformat="json"
+				returntype="any"
+				hint="Seller insert's a product">
+			<cfargument name="productName"
+						required="true" />
+			<cfargument name="productBrand"
+						required="true" />
+			<cfargument name="leastPrice"
+						required="true" />
+			<cfargument name= "productDescription"
+						required="true" />
+			<cfargument name= "productCategory"
+						required="true" />
+			<cfargument name= "productSubCategory"
+						required="true" />
+
+			<cfset productDetail = {
+					productName = ARGUMENTS.productName,
+					productBrand = ARGUMENTS.productBrand,
+				    leastPrice = ARGUMENTS.leastPrice,
+				    productDescription = ARGUMENTS.productDescription,
+				    productCategoryId = form.productCategory,
+					productSubCategoryId = form.productSubCategory } />
+
+			<cfinvoke component="model.Seller"
+						method="insertProduct"
+						returnvariable="productInfo"
+						argumentcollection="#productDetail#">
+
+			</cfinvoke>
+			<cfreturn productInfo />
+	</cffunction>
+
+
+<!--- deleteProductFromInventory --->
+	<cffunction name="deleteProductFromInventory"
+				access="remote"
+				returnformat="json"
+				returntype="any">
+			
+			<cfargument name="inventoryId"
+						required="true"/>
+			<cfinvoke component="model.Seller"
+						method="deleteProductFromInventory"
+						returnvariable="responseObject">
+					<cfinvokeargument name="inventoryId"
+									value="#ARGUMENTS.inventoryId#" />
+			</cfinvoke>
+			<cfreturn responseObject />
+	</cffunction>
+
+<!--- updateProductInInventory --->
+	<cffunction name="updateProductInInventory"
+				access="remote"
+				returntype="any"
+				returnformat="json">
+			<cfargument name="sellingPrice"
+						required="true" />
+			<cfargument name="quantity"
+						required="true" />
+			<cfargument name="discount"
+						required="true" />
+			<cfargument name="inventoryId"
+						required="true" />
+			<cfinvoke component="model.Seller"
+						method="updateProductInInventory"
+						returnvariable="responseObject">
+					<cfinvokeargument name="inventoryId"
+										value="#ARGUMENTS.inventoryId#" />
+					<cfinvokeargument name="sellingPrice"
+										value="#ARGUMENTS.sellingPrice#" />
+					<cfinvokeargument name="quantity"
+										value="#ARGUMENTS.quantity#" />
+					<cfinvokeargument name="discount"
+										value="#ARGUMENTS.discount#" />
+			</cfinvoke>				
+			<cfreturn responseObject />
 	</cffunction>
 
 </cfcomponent>

@@ -168,8 +168,6 @@
 		<cfreturn LOCAL.Response />
 	</cffunction>
 
-
-
 <!---- Delete function for cart --->
 	<cffunction	name="DeleteFromCart"
 		access="remote"

@@ -138,6 +138,9 @@
 					<cfset session.user.email = userInfo.Email />
 					<cfset session.user.mobileNumber = userInfo.MobileNumber />
 					<cfset session.user.userType = userInfo.CustomerType />
+					<cfif structKeyExists("#userInfo#","SellingCompanyId")>
+						<cfset session.user.SellingCompanyId = userInfo.SellingCompanyId />
+					</cfif>
 					<cfset isLoggedIn = "true" />
 					<cfset LOCAL.Item ={
 						username = userInfo.CustomerName,

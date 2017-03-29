@@ -156,7 +156,6 @@
 	</cffunction>
 
 
-
 <!--- insertOrderDetail() function --->
 	<cffunction	name="insertOrderDetail"
 			access="remote"
@@ -289,6 +288,23 @@
 				<cfset LOCAL.Response.Success = "false" />
 			</cfif>
 		<cfreturn LOCAL.Response />
+	</cffunction>
+
+<!--- retrieveProductFromInventory --->
+	<cffunction name="retrieveProductFromInventoryByCompany"
+				access="public"
+				returnformat="json"
+				returntype="any">
+
+			<cfset sellingCompanyId="#session.user.SellingCompanyId#"/>
+
+			<cfinvoke component="Database"
+						method="retrieveProductFromInventoryByCompany"
+						returnvariable="inventoryProducts">
+					<cfinvokeargument name="sellingCompanyId"
+										value="#sellingCompanyId#" />
+			</cfinvoke>
+			<cfreturn inventoryProducts />
 	</cffunction>
 
 </cfcomponent>

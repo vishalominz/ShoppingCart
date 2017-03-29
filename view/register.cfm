@@ -44,4 +44,3 @@
 <cfelse>
 	<cflocation url="/index.cfm" addtoken="false" />
 </cfif>
-<script src="/assets/script/user.js"></script>

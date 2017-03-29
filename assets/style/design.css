@@ -485,7 +485,7 @@ div#search-slider {
  /*Carousel Designn end */
  
  
- /*admin page design */
+ /*---------- seller page design -------*/
 select#productCategory {
     /* position: absolute; */
     margin-left: 30px;
@@ -506,7 +506,8 @@ select#productSubCategory {
 input.insertProduct, textarea.insertProduct {
     display: block;
     margin-left: 335px;
-    margin-top: 25px;
+    margin-top: 15px;
+    margin-bottom: 15px;
     height: 40px;
     width: 325px;
     border: 1px solid lightblue;
@@ -526,9 +527,60 @@ div.box {
     margin-top: 5px;
 }
 
- /*admin page end */
+img.sellerProductImage {
+    height: 150px;
+    width: 150px;
+}
+
+.row.sellerProduct {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 5px solid;
+    font-size: 1.1em;
+}
+
+a.deleteProduct,a.editProduct,a.updateProduct {
+    border: 1px solid rebeccapurple;
+    width: 75px;
+    height: 30px;
+    text-align: center;
+    font-size: 1.1em;
+    line-height: 2em;
+    position: absolute;
+}
+
+a.deleteProduct{
+	margin-left: 80px;
+}
+
+a.updateProduct{
+	display: none;
+}
+
+.row.editSellerheader {
+    background: lightblue;
+    border-radius: 5px;
+    height: 50px;
+    line-height: 3em;
+    font-size: 1.2em;
+}
+
+p.dialog-message,p#success-message {
+    display: none;
+}
+
+
+input.insert-quantity,input.insert-price,input.insert-discount{
+    display: none;
+    width: 75%;
+}
+
+div.success-message{
+    display: none;
+}
+ /*--------- seller page end ----------------*/
  
- /* cart page */
+ /* --------------- cart page ---------------*/
  .alert-info {
     color: #31708f;
     background-color: #d9edf7;
@@ -600,3 +652,7 @@ button.select,button.setDefault,button.remove {
 span.addressId,span.addressType{
 	display: none;
 }
+
+
+
+/* --------- sellers page design --------*/

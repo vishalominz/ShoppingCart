@@ -34,7 +34,7 @@ function User(){
 	this.RegisterButton = $("form#registerUser");
 	
 	//Bind the register button to RegisterUser function
-	this.RegisterButton.click(
+	this.RegisterButton.submit(
 			function( objEvent ){
 				$(".error").hide();
 				objSelf.RegisterUser(objSelf);
@@ -173,7 +173,7 @@ User.prototype.LogIn = function(objSelf){
 				}
 			},
 			error: function(objRequest, strError){
-				alert("error  "+strError);
+				alert("login error  "+strError);
 				console.log(objRequest);
 			}
 		});
@@ -357,7 +357,7 @@ User.prototype.addAddress = function(objSelf){
 	    		}
 	    	},    
 	    	error : function(objRequest , error){
-	    		alert("error " +error);
+	    		alert("addAddress error " +error);
 	    	}
 	    });
     }
@@ -414,7 +414,7 @@ User.prototype.insertOrderDetail = function(objSelf){
 			}
 		},
 		error: function(RequestObj, error){
-			alert("error "+error);
+			alert("insertOrderDetail error "+error);
 			console.log(RequestObj);
 		}
 	}	
@@ -450,7 +450,7 @@ User.prototype.uploadProfileImage = function(){
 				}
 			},
 			error: function(RequestObj, error){
-				alert("error "+error);
+				alert("uploadImage error "+error);
 				console.log(RequestObj);
 			}
 		});
@@ -512,7 +512,7 @@ User.prototype.switchUser = function(){
 			}
 		},
 		error : function(requestObj, error){
-			alert(error);
+			alert(error +" switchUser");
 		}
 	});
 }

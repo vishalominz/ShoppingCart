@@ -93,6 +93,7 @@
 			      ,c.[Password]
 			      ,c.[ProfilePicture]
 			      ,c.[CustomerType]
+			      ,sc.[SellingCompanyId]
 			  FROM
 			  		[dbo].[Customer] as c
 			  INNER JOIN
@@ -159,6 +160,51 @@
 			 	DiscountPrice ASC,AvailableQuantity DESC;
 		</cfquery>
 		<cfreturn result />
+	</cffunction>
+
+<!---- retrieveProductFromInventoryByCompany ---->
+	<cffunction name="retrieveProductFromInventoryByCompany"
+				access="public"
+				returnformat="json"
+				returntype="any">
+			<cfargument name="sellingCompanyId"
+						required="true" />
+
+			<cfquery name="Products">
+			  SELECT p.ProductId
+			      ,p.[LeastPrice]
+			      ,p.[ProductCategoryId]
+			      ,p.[ProductName]
+			      ,p.[ProductRating]
+			      ,p.[ProductBrand]
+			      ,p.[ProductImageLocation]
+			      ,p.[ProductSubCategoryId]
+			      ,p.[ProductDescription]
+			      ,i.[AvailableQuantity]
+			      ,i.[InventoryId]
+			      ,i.[SellingPrice]
+			      ,i.[DiscountPercent]
+			      ,pc.[ProductCategory]
+			      ,psc.[ProductSubCategoryName]
+ 			FROM
+				[dbo].[Product] as p
+			INNER JOIN
+				[dbo].[Inventory] as i
+			ON
+				p.ProductId = i.ProductId
+			INNER JOIN
+				[dbo].[ProductCategory] as pc
+			ON
+				p.[productCategoryId] = pc.[productCategoryId]
+			INNER JOIN
+				[dbo].[ProductSubCategory] as psc
+			ON
+				psc.[ProductSubCategoryId] =  p.[ProductSubCategoryId]
+			WHERE
+				i.[SellingCompanyId] = #sellingCompanyId#
+			</cfquery>
+
+			<cfreturn Products />
 	</cffunction>
 
 <!--- Retrieve Products from database --->
@@ -471,8 +517,8 @@
 			           ,#ARGUMENTS.unitprice#
 			           ,#ARGUMENTS.discountPercent#)
 			</cfquery>
-
 	</cffunction>
+
 
 
 <!--- retrieve order details (items) by order id --->
@@ -660,9 +706,6 @@
 			</cfquery>
 			<cfreturn cartItems />
 	</cffunction>
-
-
-
 
 <!--- delete from cart Detail--->
 	<cffunction name="removeCartDetail"
@@ -915,11 +958,11 @@
 						default="" />
 			<cfargument name="productImageLocation"
 						required="false"
-						default="/images/product/default.jpg"/>
+						default="assets/images/product/default.jpg"/>
 			<cfargument name="leastPrice"
 						required="true"/>
 			<cfset lastModifiedDate = now() />
-		<cfquery>
+		<cfquery result="product">
 			INSERT INTO [dbo].[Product]
 		           ([LeastPrice]
 		           ,[ProductCategoryId]
@@ -930,15 +973,66 @@
 		           ,[ProductSubCategoryId]
 		           ,[ProductDescription])
 		     VALUES
-		           (<LeastPrice, int,>
-		           ,#ARGUMENTS.productCategoryId#
-		           ,#ARGUMETNS.productName#
-		           ,#ARGUMETNS.productBrand#
+		           (#ARGUMENTS.leastPrice#
+       	           ,#ARGUMENTS.productCategoryId#
+		           ,'#ARGUMENTS.productName#'
+		           ,'#ARGUMENTS.productBrand#'
 		           ,#lastModifiedDate#
-		           ,#ARGUMETNS.productImageLocation#
-		           ,#ARGUMETNS.productSubCategoryId#
-		           ,#ARGUMETNS.productDescription#
+		           ,'#ARGUMENTS.productImageLocation#'
+		           ,#ARGUMENTS.productSubCategoryId#
+		           ,'#ARGUMENTS.productDescription#')
 		</cfquery>
+		<cfset session.databaseKey = "#product.sql#" />
+		<cfquery result="productId">
+			UPDATE [dbo].[Product]
+   			SET
+				[ProductImageLocation] = '#ARGUMENTS.productImageLocation##product.GENERATEDKEY#'
+			WHERE [ProductId] = #product.GENERATEDKEY#
+		</cfquery>
+		<cfset session.database = "#productId.sql#" />
+		<cfreturn product.GENERATEDKEY />
+	</cffunction>
+
+
+<!--- deleteProductFromInventory --->
+	<cffunction name="deleteProductFromInventory"
+				access="public"
+				returnformat="json"
+				returntype="any">
+			<cfargument name="inventoryId"
+						required="true"/>
+			<cfquery>
+				DELETE 
+				FROM [dbo].[Inventory]
+      			WHERE
+      				InventoryId = #inventoryId#
+			</cfquery>				
+	</cffunction>
+
+<!---- updateProductInInventory --->
+	<cffunction name="updateProductInInventory"
+				access="public"
+				returntype="any"
+				returnformat="json">
+					
+			<cfargument name="sellingPrice"
+						required="true" />
+			<cfargument name="quantity"
+						required="true" />
+			<cfargument name="discount"
+						required="true" />	
+			<cfargument name="inventoryId"
+						required="true" />	
+			<cfset lastModifiedDate = now() />
+			<cfquery name="updateInventory">
+				UPDATE [dbo].[Inventory]
+   				SET    [AvailableQuantity] = #arguments.quantity#
+				      ,[SellingPrice] = #arguments.sellingPrice#
+				      ,[DiscountPercent] = #arguments.discount#
+				      ,[LastModifiedDate] =  #lastModifiedDate#
+				 WHERE [inventoryId] = #arguments.inventoryId#
+			</cfquery>
+
 	</cffunction>
 
 </cfcomponent>
