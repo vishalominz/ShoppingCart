@@ -6,19 +6,14 @@
 
 <cfinclude template="header.cfm"/>
 <cfinclude template="menubar.cfm"/>
-<cfif isDefined("Form.file") >
-<!--- If TRUE, upload the file. --->
-<cffile action = "upload"
-		fileField = "file"
-		destination = "\assets\images\Profile\#Session.user.userId#"
-		accept = "text/html">
-</cfif>
+
 <cfloop query="#UserInformation#">
 	<cfoutput>
 		<div class="row">
 			<div class="row">
-				<div class="col-md-6">
-					<img id="profilePicture" src="/assets#ProfilePicture#">
+				<div class="col-md-3"></div>
+				<div class="col-md-3">
+					<img id="profilePicture" src="/#ProfilePicture#pic#session.user.userId#.jpg">
 					</img>
 					<p id="img-change">
 						<a id="imageChangeLink">
@@ -26,7 +21,7 @@
 						</a>
 					</p>
 
-					<form id="img-upload" method="post" enctype="multipart/form-data">
+					<form action="profilePicUpload.cfm" id="img-upload" method="post" enctype="multipart/form-data">
 						<input type="file" name="file" id="file"/>
 						<input type="submit" id="fileUpload" class="btn-md" value="Change Image">
 					</form>

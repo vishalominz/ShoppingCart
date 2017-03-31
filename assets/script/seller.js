@@ -20,12 +20,14 @@ function Seller(){
 	this.insertProductLink.click(function( objEvent ){
 		$("div#productUpdateDelete").hide(); 
 		$("div#productInsert").show();
+		$("div#categoryInsert").hide();
 	});
 	
 	//updateDeleteProductLink click action
 	this.updateDeleteProductLink.click(function( objEvent ){
 		 $("div#productInsert").hide();
 		 $("div#productUpdateDelete").show();
+		 $("div#categoryInsert").hide();
 	});
 
 	//Get a jQuery reference for editProduct
@@ -37,6 +39,27 @@ function Seller(){
 	//Get a jQuery reference for updateProduct
 	this.updateProductLink	= $("a.updateProduct");
 	
+	//Get a jQuery reference for insertCategory
+	this.insertCategoryLink = $('a#insertCategory');
+
+	//bind click on insertCategoryLink
+	this.insertCategoryLink.click(function ( objEvent ){
+		$("div#productUpdateDelete").hide(); 
+		$("div#productInsert").hide();
+		$("div#categoryInsert").show();
+		$(this).parent().addClass("active");
+		$("a#insertProduct").parent().removeClass( "active" );
+		$("a#updatedeleteProduct").parent().removeClass( "active" );
+	});
+
+	//Get a jQuery reference for insertProductCategory
+	this.insertProductCategoryButton = $("input#insertProductCategoryButton");
+
+	//bind click on insertProductCategoryButton
+	this.insertProductCategoryButton.click( function ( objEvent ){
+			objSelf.insertProductCategory();
+	});
+
 	//editProductLink click function
 	this.editProductLink.click(function( objEvent ){
 		var parent= $(this).parent().parent();
@@ -52,6 +75,32 @@ function Seller(){
 	this.deleteProductLink.click(function( objEvent ){
 			objSelf.deleteProduct($(this).parent().parent());
 	});
+
+	//get a jQuery reference for sellerSearchButton
+	this.sellerSearchButton = $("#sellerSearchButton");
+
+	//sellerSearchButton click action
+	this.sellerSearchButton.click(function ( objEvent){
+		var url = "http://www.shopsworld.net/view/sellerSearch.cfm?search="+$("#searchField").val();
+		console.log($(location).attr('href',url));
+		$(location).attr('href',url);
+		return false;
+	});
+    
+	//get a jQuery refenence for file
+	this.fileinput = $('input#productImageLocation');
+
+	//change function for fileinput
+    this.fileinput.change(function(){
+         objSelf.readURL(this);
+    });
+	//get a jQuery reference for addProduxtToInventory
+	this.addProductToInventory = $('button.addProduct');
+
+	//on click event for addProductToInventory
+	this.addProductToInventory.click(function(objEvent){
+		objSelf.populateInsertProductForm(this);
+	});
 }
 
 Seller.prototype.updateProduct = function(element){
@@ -59,7 +108,6 @@ Seller.prototype.updateProduct = function(element){
 	var quantity =  element.find("input.insert-quantity").val();
 	var discount = element.find("input.insert-discount").val();
 	var inventoryId = element.find("input.inventoryId").val();
-	alert(price+" d "+discount+" q "+quantity);
 	$.ajax({
 		url: "http://www.shopsworld.net/controller/controller.cfc",
 		dataType: "json",
@@ -114,7 +162,6 @@ Seller.prototype.editProduct = function(element){
 		var discount = element.find("span.insert-discount").text();
 		var price 	 = element.find("span.insert-price").text();
 
-		alert(quantity+ 'quantity');
 		element.find("span.insert-quantity").hide();
 		element.find("span.insert-price").hide();
 		element.find("span.insert-discount").hide();
@@ -186,6 +233,7 @@ Seller.prototype.populateProductSubCategory = function(){
 				method: "retrieveProductSubCategory",
 				productCategoryId : productCategoryId
 			},
+			async: false,
 			dataType:"json",
 			success: function(ResponseObj){
 				console.log(ResponseObj.DATA);
@@ -201,6 +249,47 @@ Seller.prototype.populateProductSubCategory = function(){
 	}
 }
 
+Seller.prototype.insertProductCategory = function(){
+	var categoryName = $("input#insertProductCategory").val();
+	if(categoryName != ""){
+		$.ajax({
+			url: "http://www.shopsworld.net/controller/controller.cfc",
+			method: "get",
+			dataType: "json",
+			data: {
+				method: "insertProductCategory",
+				categoryName : categoryName
+			},
+			success: function(){
+				alert("success");
+			},
+			error: function(){
+				alert("error");
+			}
+		});
+	}
+}
+
+
+Seller.prototype.readURL =function(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+            	$('#insertproductImage').show();
+                $('#insertproductImage').attr('src', e.target.result);
+            }
+            
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+Seller.prototype.populateInsertProductForm = function( element ){
+	var product = $(element).val();
+	var url = "http://www.shopsworld.net/view/seller.cfm?product="+product;
+	$(location).attr('href',url);
+
+}
 
 $(document).ready(function(){
 	var objSeller = new Seller();		 

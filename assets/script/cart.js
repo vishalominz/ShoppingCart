@@ -56,9 +56,14 @@ AddToCart.prototype.OnClickAdd = function(element){
 						$('#Message').html("Product Added To Cart");
 						var count = objResponse.DATA[1];
 						$('#cartItemCount').html(count);
+						setTimeout(function() {
+					        $("#Message").hide('blind', {}, 500)
+					    }, 5000);
 					} else {
+						$('#buyNow,#addToCart').prop('disabled', true);
 						$("#Message").show();
 						$('#Message').html("No more product available");
+
 					}
 				} else if(objResponse.SUCCESS && element.id === "buyNow"){
 					var url= "http://www.shopsworld.net/view/cart.cfm";

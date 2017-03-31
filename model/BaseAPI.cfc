@@ -21,7 +21,7 @@
 	<cfset LOCAL.response = {
 			Success = true,
 			Errors = [],
-			Data = "",
+			Data = [],
 			url = ""
 			} />
 

@@ -5,6 +5,7 @@
 .container{
 	margin-top: 100px;
 	width: 100%;
+    margin-bottom: 50px;
 }
 /*---------- header design ----------------*/
 .navbar-default{
@@ -78,11 +79,7 @@ p {
 	margin: 0px;
 	
 }
-div.product{
-    font-size: 1.2em;
-    color: black;
-    text-decoration: none;
-}
+
 
 img.productDetailImage{
 	width : 200px;
@@ -200,7 +197,11 @@ div.productItem {
 button.removeItem {
     display: inline;
     position: absolute;
-        margin-top: 40px;
+    background: lightgrey;
+    color: #a913a9;
+    border: none;
+    font-weight: 600;
+    margin-top: 40px;
     margin-left: 605px;
 }
 button.updateButton {
@@ -233,11 +234,18 @@ input.productCount {
     background: #dddbe2;
 }
 
-div.product {
+div.product{
     font-size: 1.2em;
     color: black;
-    margin-left: 200px;
     text-decoration: none;
+    margin-left: 0px;
+}
+
+div.cartProduct{
+    font-size: 1.2em;
+    color: black;
+    text-decoration: none;
+    margin-left: 200px;
 }
 
 span.productName {
@@ -274,7 +282,7 @@ input#orderProducts {
 
 span.error.productError {
     position: absolute;
-    margin-top: 25px;
+    margin-top: 40px;
     margin-left: 100px;
 }
 
@@ -324,11 +332,14 @@ div.col{
 }
 
 /*invoice design */
-	div.invoiceBox{
-		padding-bottom: 20px;
-		position: relative;
-		height: 800px;
-	}
+	div.invoiceBox {
+    padding-bottom: 20px;
+    position: relative;
+    height: 800px;
+    margin-top: 50px;
+    background: lightgoldenrodyellow;
+    /* font-size: 1.2em; */
+}
 	div#invoice {
 	    width: 80%;
 	    /* height: 100%; */
@@ -351,9 +362,9 @@ div.col{
 	}
 	
 	div.invoice.orderDate {
-    margin-top: 85px;
+    margin-top: 60px;
     margin-left: -30px;
-	}
+    }
 	
 	div.contact {
 	    margin-left: 800px;
@@ -378,7 +389,7 @@ div.col{
 	
 	table#invoiceContent {
     margin-top: 300px;
-    width: 275%;
+    width: 250%;
     border: 1px solid black;
 	}
 	
@@ -428,6 +439,10 @@ form#img-upload {
     margin-top: 0px;
     margin-left: 20px;
     display: none;
+}
+img#profilePicture {
+    width: 200px;
+    height: 200px;
 }
 
 p#img-change {
@@ -560,11 +575,15 @@ a.updateProduct{
 .row.editSellerheader {
     background: lightblue;
     border-radius: 5px;
+    margin-top: 10px;
     height: 50px;
     line-height: 3em;
     font-size: 1.2em;
 }
 
+div#productInsert{
+    display: none;
+}
 p.dialog-message,p#success-message {
     display: none;
 }
@@ -575,19 +594,18 @@ input.insert-quantity,input.insert-price,input.insert-discount{
     width: 75%;
 }
 
-div.success-message{
-    display: none;
-}
  /*--------- seller page end ----------------*/
  
  /* --------------- cart page ---------------*/
- .alert-info {
+.alert-info {
     color: #31708f;
     background-color: #d9edf7;
     border-color: #bce8f1;
     display: block;
     text-align: center;
+    font-size: 1.5em;
     width: 100%;
+    font-weight: bold;
 }
 
 @media screen and (min-width : 1200px) {
@@ -615,8 +633,10 @@ div.success-message{
 
 div#addresses {
     height: 400px;
-    width: 470px;
-    position: fixed;
+    width: 100%;
+    position: relative;
+    margin-top: 20px;
+    border-radius: 5px;
     overflow-y: scroll;
     overflow-x: hidden;
     /* border: 1px solid red; */
@@ -624,16 +644,21 @@ div#addresses {
     background: rgb(227, 245, 245);
 }
 
-row.addressBox {
+div.addressBox {
+    position: relative;
     text-align: center;
+    margin-left: 5%;
+    margin-top: 5%;
     color: rgb(61, 74, 36);
     background: #99ddff;
-    margin: 50px;
-    width: 400px;
+    /* margin: 0px; */
+    width: 90%;
     font-size: 1.2em;
+     text-transform: capitalize;
 }
+
 form#addressForm {
-    margin-left: -125px;
+    margin-top: 20px;
 }
 
 input.addressField,textarea.addressField{
@@ -653,6 +678,47 @@ span.addressId,span.addressType{
 	display: none;
 }
 
-
+img#insertproductImage {
+    height: 200px;
+    width: 200px;
+    position: absolute;
+    top: 375px;
+    left: 745px;
+    display: none;
+}
 
 /* --------- sellers page design --------*/
+
+/* --------- seller design product category ------*/
+
+div#categoryInsert{
+    display: none;
+}
+
+fieldset.categoryInsert {
+    margin: 25px 100px;
+}
+
+label.insertCategory {
+    width: 250px;
+}
+
+input.insertCategory {
+    width: 250px;
+    border: 1px solid lightblue;
+    height: 35px;
+    margin-right: 50px;
+}
+
+input.insertCategoryButton{
+    width: 200px;
+    height: 30px;
+    font-size: 1.2em;
+}
+div.box {
+    display: block;
+    /* margin-top: 5px; */
+    margin-left: 35px;
+    margin-top: 20px;
+}
+/*========== seller design product category end =====*/

@@ -57,6 +57,7 @@
 			      ,[MobileNumber]
 			      ,[Password]
 			      ,[ProfilePicture]
+			      ,[CustomerType]
 			  FROM
 			  		[dbo].[Customer]
 			  WHERE
@@ -351,7 +352,7 @@
 			name="pincode"
 			required="true" />
 		<cfset dateTime = now() />
-		<cfquery name="address">
+		<cfquery result="address">
 		 INSERT INTO [dbo].[Address]
            ([CustomerId]
            ,[AddressLine1]
@@ -370,6 +371,53 @@
            , #dateTime#
            , #ARGUMENTS.pincode#)
 		</cfquery>
+		<cfreturn address.GENERATEDKEY />
+	</cffunction>
+
+<!--- update address --->
+	<cffunction name="updateAddress"
+				access="public"
+			returntype="Any">
+		<cfargument 
+			name="addressId"
+			required="true"/>
+		<cfargument
+			name="customerId"
+			required="true" />
+		<cfargument
+			name="addressLine1"
+			required="true" />
+		<cfargument
+			name="addressLine2"
+			required="false"
+			default="" />
+		<cfargument
+			name="city"
+			required="true" />
+		<cfargument
+			name="state"
+			required="true" />
+		<cfargument
+			name="addressType"
+			required="true"/>
+		<cfargument
+			name="pincode"
+			required="true" />
+		<cfset dateTime = now() />
+		<cfquery name="address">
+		 UPDATE [dbo].[Address]
+		   SET [CustomerId] = #arguments.customerId#
+		      ,[AddressLine1] = '#arguments.addressLine1#'
+		      ,[AddressLine2] = '#arguments.addressLine2#'
+		      ,[City] = '#arguments.city#'
+		      ,[State] = '#arguments.state#'
+		      ,[AddressType] = '#arguments.addressType#'
+		      ,[LastModifiedDate] = #dateTime#
+		      ,[pincode] = #arguments.pincode#
+		 WHERE 
+		 		[AddressId] = #arguments.addressId#
+		 </cfquery>
+
 	</cffunction>
 
 
@@ -428,7 +476,7 @@
 			<cfset currentTime = TimeFormat(todayDate, "HH:nn") />
 
 		<!--- insert order in database --->
-			<cfquery name="order">
+			<cfquery result="order">
 				INSERT INTO [dbo].[Order]
 			           ([CustomerId]
 			           ,[OrderDate]
@@ -440,7 +488,7 @@
 			           , '#currentTime#'
 			           , getdate())
 			</cfquery>
-
+			<cfreturn order.GENERATEDKEY />
 	</cffunction>
 
 
@@ -578,29 +626,68 @@
 				returntype="any" >
 			<cfargument name="searchItem"
 					required="true" />
-
-			<cfquery name="searchResult">
-				SELECT
-				p.ProductId as ProductId,
-				ProductName,
-				ProductBrand,
-				ProductImageLocation,
-				SellingPrice,
-				DiscountPercent,
-				AvailableQuantity,
-				[SellingPrice]-([SellingPrice]*ISNULL([DiscountPercent],0)/100) as DiscountPrice
-				FROM
-					Product p
-				INNER JOIN
-					Inventory i
-				ON
-					p.ProductId = i.ProductId
-				WHERE
-					ProductName LIKE '%#searchItem#%'
-					AND
-					AvailableQuantity > 0
-
-			</cfquery>
+			<cfargument name="brandList" 
+					required="true"/>
+			<cfargument name="minPrice" 
+					required="true" />
+			<cfargument name="maxPrice" 
+					required="true" />
+			<cfset session.database = brandList />
+			<cfif ARGUMENTS.brandList eq "">
+				<cfquery name="searchResult">
+					SELECT
+					p.ProductId as ProductId,
+					ProductName,
+					ProductBrand,
+					ProductImageLocation,
+					SellingPrice,
+					DiscountPercent,
+					AvailableQuantity,
+					[SellingPrice]-([SellingPrice]*ISNULL([DiscountPercent],0)/100) as DiscountPrice
+					FROM
+						Product p
+					INNER JOIN
+						Inventory i
+					ON
+						p.ProductId = i.ProductId
+					WHERE
+						ProductName LIKE '%#searchItem#%'
+						AND
+						AvailableQuantity > 0
+						AND
+						[SellingPrice]-([SellingPrice]*ISNULL([DiscountPercent],0)/100) >= #arguments.minPrice#
+						AND
+						[SellingPrice]-([SellingPrice]*ISNULL([DiscountPercent],0)/100) <= #arguments.maxPrice#
+				</cfquery>
+			<cfelse>
+				<cfquery name="searchResult">
+					SELECT
+					p.ProductId as ProductId,
+					ProductName,
+					ProductBrand,
+					ProductImageLocation,
+					SellingPrice,
+					DiscountPercent,
+					AvailableQuantity,
+					[SellingPrice]-([SellingPrice]*ISNULL([DiscountPercent],0)/100) as DiscountPrice
+					FROM
+						Product p
+					INNER JOIN
+						Inventory i
+					ON
+						p.ProductId = i.ProductId
+					WHERE
+						ProductName LIKE '%#searchItem#%'
+						AND
+						AvailableQuantity > 0
+						AND
+						[SellingPrice]-([SellingPrice]*ISNULL([DiscountPercent],0)/100) >= #arguments.minPrice#
+						AND
+						[SellingPrice]-([SellingPrice]*ISNULL([DiscountPercent],0)/100) <= #arguments.maxPrice#
+						AND
+						ProductBrand in (#PreserveSingleQuotes(arguments.brandList)#)
+				</cfquery>
+			</cfif>
 			<cfreturn searchResult />
 	</cffunction>
 
@@ -777,7 +864,7 @@
 			<cfargument name="sellingCompanyId"
 					required="true"/>
 
-			<cfquery name="OrderDetails">
+			<cfquery name="OrderDetails" result="order">
 
 				SELECT [OrderDetailId]
 				      ,od.[OrderId]
@@ -829,6 +916,8 @@
 				 ORDER BY
 					OrderDate Desc,OrderTime Desc
 			</cfquery>
+			<cfset session.sql = order.sql />
+			<cfset session.dataResult = orderDetails />
 			<cfreturn OrderDetails />
 	</cffunction>
 
@@ -843,15 +932,8 @@
 					required="true" />
 
 			<cfquery name="sellingCompany">
-				SELECT [OrderDetailId]
-				      ,[OrderId]
-				      ,[ProductId]
-				      ,[LastModifiedDate]
-				      ,[OrderQuantity]
-				      ,[ShippingAddressId]
-				      ,[SellingCompanyId]
-				      ,[UnitPrice]
-				      ,[DiscountPercent]
+				SELECT 
+					DISTINCT [SellingCompanyId]
 				  FROM [dbo].[OrderDetail]
 				  WHERE
 					OrderId = #orderId#
@@ -933,7 +1015,7 @@
 			<cfquery name="profilePicture">
 					 UPDATE [dbo].[Customer]
 					 SET
-					 	[ProfilePicture] = #ARGUMENTS.pictureLocation#
+					 	[ProfilePicture] = '#ARGUMENTS.pictureLocation#'
 					 WHERE
 						[CustomerId] = #ARGUMENTS.userId#
 			</cfquery>
@@ -982,14 +1064,12 @@
 		           ,#ARGUMENTS.productSubCategoryId#
 		           ,'#ARGUMENTS.productDescription#')
 		</cfquery>
-		<cfset session.databaseKey = "#product.sql#" />
 		<cfquery result="productId">
 			UPDATE [dbo].[Product]
    			SET
 				[ProductImageLocation] = '#ARGUMENTS.productImageLocation##product.GENERATEDKEY#'
 			WHERE [ProductId] = #product.GENERATEDKEY#
 		</cfquery>
-		<cfset session.database = "#productId.sql#" />
 		<cfreturn product.GENERATEDKEY />
 	</cffunction>
 
@@ -1035,6 +1115,117 @@
 
 	</cffunction>
 
+<!---- insertProductInInventory --->
+	<cffunction name="insertProductInInventory"
+				access="public"
+				returntype="any"
+				returnformat="json">
+		
+		<cfargument name="sellingCompanyId"
+					required="true" />
+		<cfargument name="productId"
+					required="true" />
+		<cfargument name="availableQuantity"
+					required="true" />
+		<cfargument name="sellingPrice"
+					required="true" />
+		<cfargument name="discount"
+					required="true" />
+		<cfset lastModifiedDate = now() />
+		<cfquery result="inventoryItem">
+			INSERT INTO [dbo].[Inventory]
+		           ([SellingCompanyId]
+		           ,[ProductId]
+		           ,[AvailableQuantity]
+		           ,[SellingPrice]
+		           ,[DiscountPercent]
+		           ,[LastModifiedDate])
+		     VALUES
+		           (#arguments.sellingCompanyId#
+		           ,#arguments.productId#
+		           ,#arguments.availableQuantity#
+		           ,#arguments.sellingPrice#
+		           ,#arguments.discount#
+		           ,#lastModifiedDate#)
+		</cfquery>
+		<cfreturn inventoryItem.GENERATEDKEY />
+	</cffunction>
+
+<!---- insertProductCategory --->
+	<cffunction name="insertProductCategory"
+				access="public"
+				returntype="any"
+				returnformat="json">
+		<cfargument name="categoryName"
+					required="true" />	
+		<cfquery result="category">
+			INSERT INTO [dbo].[ProductCategory]
+		           ([ProductCategory])
+		     VALUES
+		           ('#ARGUMENTS.categoryName#')
+		</cfquery>
+		<cfreturn category.GENERATEDKEY />		
+	</cffunction>
+
+
+<!---- sellerSearchProducts --->
+	<cffunction name="sellerSearchProducts"
+				access="public"
+				returnformat="json"
+				returntype="any">
+			<cfargument name="searchValue"
+					required="true" />
+			
+			<cfquery name="products">
+				SELECT p.[ProductId]
+			      ,p.[LeastPrice]
+			      ,p.[ProductCategoryId]
+			      ,p.[ProductName]
+			      ,p.[ProductRating]
+			      ,p.[ProductBrand]
+			      ,p.[LastModifiedDate]
+			      ,p.[ProductImageLocation]
+			      ,p.[ProductSubCategoryId]
+			      ,p.[ProductDescription]
+				  ,i.[SellingCompanyId]
+				  ,i.[InventoryId]
+			      ,i.[AvailableQuantity]
+			      ,i.[SellingPrice]
+			      ,i.[DiscountPercent]
+			      ,pc.[ProductCategory]
+	  			  ,psc.[ProductSubCategoryName]
+			  FROM [dbo].[Product] p
+			  LEFT OUTER JOIN
+			  [dbo].[Inventory] i
+			  ON
+				p.[ProductId] = i.[ProductId]
+			  INNER JOIN
+				[dbo].[ProductCategory] pc
+			  ON
+				pc.[ProductCategoryId] = p.[ProductCategoryId]
+			  INNER JOIN
+				[dbo].[ProductSubCategory] psc
+			  ON
+				psc.[ProductSubCategoryId] = p.[ProductSubCategoryId]
+			  WHERE
+				p.[ProductName] LIKE '%#ARGUMENTS.searchValue#%' 
+			</cfquery>
+			<cfreturn products />					
+
+	</cffunction>
+
+<!--- retrieveBrandNames --->
+	<cffunction name="retrieveBrandNames"
+				access="public"
+				returnformat="json"
+				returntype="any">
+			
+			<cfquery name="brands">
+				SELECT DISTINCT [ProductBrand]
+  				FROM [dbo].[Product]
+			</cfquery>		
+			<cfreturn brands />		
+	</cffunction>
 </cfcomponent>
 
 

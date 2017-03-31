@@ -42,13 +42,14 @@
 					#ProductBrand#<br/>
 					#ProductDescription#<br/>
 				</div>
-
+				<cfif !session.isSeller>
 				<div class="paymentMenu">
 					<button type="button" name="addToCart" id="addToCart" value="#URLEncodedFormat(SerializeJSON(productDetail))#">
 						Add To Cart
 					</button>
 					<button type="button" name="buyNow" id="buyNow" value="#URLEncodedFormat(SerializeJSON(productDetail))#">Buy</button>
 				</div>
+				</cfif>
 
 				<div >
 					<span id="Message"></span>

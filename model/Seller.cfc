@@ -169,13 +169,103 @@
 		<cfreturn LOCAL.Response />
 </cffunction>
 
-<cffunction name="insertProductCategory">
+<!---- insertProductInInventory --->
+<cffunction name="insertProductInInventory"
+				access="public"
+				returntype="any"
+				returnformat="json">
 
+		<cfargument name="productId"
+					required="true" />
+		<cfargument name="availableQuantity"
+					required="true" />
+		<cfargument name="sellingPrice"
+					required="true" />
+		<cfargument name="discount"
+					required="true" />
+		<cfset sellingCompanyId= session.user.sellingCompanyId />
+		
+
+		<cfset var LOCAL = {} />
+
+		<!--- Get a new API response --->
+		<cfset LOCAL.Response = THIS.GetNewResponse() />
+
+		<cfset args = {
+			sellingCompanyId = sellingCompanyId,
+			productId = ARGUMENTS.productId,
+			availableQuantity = ARGUMENTS.availableQuantity,
+			sellingPrice = ARGUMENTS.sellingPrice,
+			discount = ARGUMENTS.discount
+		} />
+		<cfinvoke component="Database"
+					method="insertProductInInventory"
+					returnvariable="inventoryItem"
+					argumentcollection="#args#">
+		</cfinvoke>
+
+		<cfset LOCAL.Item ={
+				inventoryId = inventoryItem,
+				sellingCompanyId = sellingCompanyId,
+				productId = ARGUMENTS.productId,
+				availableQuantity = ARGUMENTS.availableQuantity,
+				sellingPrice = ARGUMENTS.sellingPrice,
+				discount = ARGUMENTS.discount
+		} />
+
+		<cfset LOCAL.Response.Data = LOCAL.Item />
+
+		<cfreturn LOCAL.Response.Data />
+</cffunction>
+
+
+<cffunction name="insertProductCategory"
+			access="public"
+			returntype="any"
+			returnformat="json">
+		<cfargument name="categoryName"
+					required="true" />
+
+		<cfset var LOCAL = {} />
+
+		<!--- Get a new API response --->
+		<cfset LOCAL.Response = THIS.GetNewResponse() />
+
+		<cfinvoke component="Database"
+					method="insertProductCategory"
+					returnvariable="productCategoryId">
+			<cfinvokeargument name="categoryName"
+						value="#ARGUMENTS.categoryName#"/>
+		</cfinvoke>	
+		<cfset LOCAL.item = {
+			ProductCategory = ARGUMENTS.categoryName,
+			ProductCategoryId = '#productCategoryId#'
+		} />
+		<cfset LOCAL.Response.data = LOCAL.item />		
+		<cfreturn LOCAL.Response />
 </cffunction>
 
 <cffunction name="insertProductSubCategory">
 
 </cffunction>
+
+
+	<cffunction name="sellerSearchProducts"
+				access="public"
+				returnformat="json"
+				returntype="any">
+			<cfargument name="searchValue"
+					required="true" />
+			
+			<cfinvoke component="Database"
+					method="sellerSearchProducts"
+					returnvariable="products">
+				<cfinvokeargument name="searchValue"
+							value="#ARGUMENTS.searchValue#" />	
+			</cfinvoke>
+			<cfreturn products />					
+
+	</cffunction>
 
 <cffunction name="insertSellerAndShipping">
 

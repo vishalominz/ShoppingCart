@@ -1,6 +1,6 @@
 
 </div>
-<nav class="navbar navbar-inverse navbar-bottom">
+<nav class="navbar navbar-inverse navbar-fixed-bottom">
 	<div class="container-fluid">
 		<div class="navbar-header">
 			high
@@ -14,12 +14,25 @@
 
 	</div>
 </nav>
+<cfif isDefined("URL.search")>
+	<cfoutput>
+		<script>
+			$(document).ready(function(){
+					$("##searchField").val("#URL.search#");
+			});
+		</script>
+	</cfoutput>	
+</cfif>
 </body>
 <!--- Website scritps js --->
 <!---
 <script src="CGI.HOST_NAME#/assets/script/cart.js"></script>
 <script src="scripts/script.js"></script>
  --->
+ <cfif session.isSeller>
+	 <!--- seller script --->
+	<script src="/assets/script/seller.js"></script>
+ </cfif>
 <!--- user script --->
 <script src="/assets/script/user.js"></script>
 <!--- cart script --->

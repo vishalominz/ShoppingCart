@@ -2,18 +2,27 @@
 <nav class="navbar navbar-default navbar-fixed-top">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<a class="navbar-brand" href="/index.cfm">OnlineShop</a>
+					<cfif !session.isSeller>
+						<a class="navbar-brand" href="/index.cfm">OnlineShop</a>
+					<cfelseif session.loggedIn>
+						<a class="navbar-brand" href="/view/seller.cfm">OnlineShop</a>
+					<cfelse>
+						<a class="navbar-brand" href="/view/login.cfm">OnlineShop</a>
+					</cfif>
+					
 				</div>
 				<div>
-				<ul class="nav navbar-nav navbar-right">
-					<li>
-						<a href="/view/cart.cfm">
-						<span class="glyphicon glyphicon-shopping-cart"></span>
-						Cart
-						<span class="badge" id="cartItemCount"><cfoutput>#cartListCount#</cfoutput></span>
-						 </a>
-					</li>
-				</ul>
+				<cfif !session.isSeller>
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							<a href="/view/cart.cfm">
+							<span class="glyphicon glyphicon-shopping-cart"></span>
+							Cart
+							<span class="badge" id="cartItemCount"><cfoutput>#cartListCount#</cfoutput></span>
+							 </a>
+						</li>
+					</ul>
+				</cfif>
 				</div>
 			  	<form class="navbar-form" id="search" autocomplete="off">
 					<div class="input-group" id="searchBox">
@@ -21,9 +30,15 @@
 						</div>
 						<input type="text" id="searchField" class="form-control" placeholder="Search">
 						<div class="input-group-btn">
-							<button class="btn btn-default" id="searchButton" type="submit">
-								<i class="glyphicon glyphicon-search"></i>
-							</button>
+							<cfif session.isSeller && session.loggedIn>
+								<button class="btn btn-default" id="sellerSearchButton" type="submit">
+									<i class="glyphicon glyphicon-search"></i>
+								</button>
+							<cfelse>
+								<button class="btn btn-default" id="searchButton" type="submit">
+									<i class="glyphicon glyphicon-search"></i>
+								</button>
+							</cfif>
 						</div>
 					</div>
 
@@ -37,7 +52,7 @@
 					<ul class="nav navbar-nav">
 						 <cfinclude template="productCategories.cfm" />
 					</ul>
-					 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#menu">
+					 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="##menu">
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
@@ -73,7 +88,9 @@
 						        <span class="caret"></span></a>
 						        <ul class="dropdown-menu">
 						          <li><a id="profile">Profile</a></li>
-						          <li><a id="buyHistory">Buy History</a></li>
+						          <cfif !session.isSeller>
+							          <li><a id="buyHistory">Buy History</a></li>
+						          </cfif>
 						          <li><a id="logout">Log Out</a></li>
 						        </ul>
 						      </li>

@@ -23,6 +23,14 @@ function Product(){
 		return false;
 	});
 	
+	//Get a jQuery reference for brand checkbox
+	this.brandCheckbox = $("#brand-search input");
+
+	//on check marked call function
+	this.brandCheckbox.click( function(){
+		objSelf.getSelectedValues();
+	})
+
 	//Get a jQuery reference for search-price slider
 	this.searchPriceSlider = $("#search-slider");
 	
@@ -35,6 +43,9 @@ function Product(){
 			slide: function( event, ui ) {
 				$( "#price" ).val( "₹" + ui.values[ 0 ] +
 						"- ₹" + ui.values[ 1 ] );
+				$("input#minPrice").val(ui.values[0]);
+				$("input#maxPrice").val(ui.values[1]);
+				objSelf.getSelectedValues();
 			}
 		});
 	  $( "#price" ).val( "₹" + $( "#search-slider" ).slider( "values", 0 ) + 
@@ -51,7 +62,9 @@ Product.prototype.search = function(searchBox){
 			dataType:"json",
 			data: {
 				method : "searchSuggestion",
-				searchItem : searchValue
+				searchItem : searchValue,
+				minPrice : 0,
+				maxPrice : 100000
 			},
 			success: function( ResponseObj ){
 				searchDiv = $("div#suggestionBox");
@@ -71,8 +84,7 @@ Product.prototype.search = function(searchBox){
 				}
 			},
 			error: function( RequestObj,error){
-				console.log( RequestObj);
-				alert("error "+error);
+				console.log("error searchBox "+error);
 			}
 		});
 	}
@@ -80,6 +92,43 @@ Product.prototype.search = function(searchBox){
 		$("div#suggestionBox").hide();
 	}
 }
+
+Product.prototype.getSelectedValues = function(){
+	var allCheckedVals = [];
+	var searchValue = $("#searchField").val();
+	var minPrice = $("input#minPrice").val();
+	var maxPrice = $("input#maxPrice").val();
+     $('#brand-search :checked').each(function() {
+       allCheckedVals.push($(this).val());
+     });
+   	 var list = "";
+   	 if(allCheckedVals.length > 0){
+   	 	list = "'"+allCheckedVals[0]+"'";
+   	 	for( val in allCheckedVals){
+     		list = list + ",'"+allCheckedVals[val]+"'";
+     }
+   	 }
+     if(list != ""){
+     	var url = "http://www.shopsworld.net/view/searchProducts.cfm?search="+searchValue+"&brandList="+list+"&minPrice="+minPrice+"&maxPrice="+maxPrice;
+     	$.get( url, function( data ) {
+  			$( "div.searchProducts" ).html( data );  		
+		});
+     	/*$.ajax({
+     		url : "http://www.shopsworld.net/controller/controller.cfc",
+     		type : "get",
+     		dataType: "json",
+     		data: {
+     			method : "searchSuggestion",
+     			brandList : list,
+     			searchItem : searchValue
+     		},
+     		success : function(ResponseObj){
+     			
+     		}
+     	});*/
+     }
+}
+
 
 $(document).ready(function(){
 	var objProsuct = new Product();

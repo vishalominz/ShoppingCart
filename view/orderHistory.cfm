@@ -32,7 +32,7 @@
 				</div>
 				<div class="col-md-3 col-5">
 					<span class="span-Value">
-						<a id="#orderId#">Generate Invoice</a>
+						<a id="#orderId#" class="invoice">Generate Invoice</a>
 					</span>
 				</div>
 
@@ -68,7 +68,7 @@
 					</div>
 					<div class="col-md-2">
 						<span class="">
-							<img class="purchaseHistory" src="/assets/#ProductImageLocation#">
+							<img class="purchaseHistory" src="/#ProductImageLocation#/default.jpg">
 						</span>
 					</div>
 					<div class="col-md-2">

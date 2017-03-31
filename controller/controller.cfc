@@ -277,6 +277,57 @@
 		<cfreturn addressDetail />
 	</cffunction>
 
+
+<!--- updateAddress --->
+	<cffunction name="updateAddress"
+				access="remote"
+				returnformat="json"
+				returntype="any">
+		<cfargument 
+			name="addressId"
+			required="true"	/>		
+		<cfargument
+			name="addressLine1"
+			required="true" />
+		<cfargument
+			name="addressLine2"
+			required="false"
+			default="" />
+		<cfargument
+			name="city"
+			required="true" />
+		<cfargument
+			name="state"
+			required="true" />
+		<cfargument
+			name="addressType"
+			required="true"/>
+		<cfargument
+			name="pincode"
+			required="true" />
+
+		<cfset addressDetail = {
+				addressId = "#ARGUMENTS.addressId#",
+				customerId = "#SESSION.user.userId#",
+				addressLine1 = "#ARGUMENTS.addressLine1#",
+				addressLine2 = "#ARGUMENTS.addressLine2#",
+				city = "#ARGUMENTS.city#",
+				state = "#ARGUMENTS.state#",
+				addressType = "#ARGUMENTS.addressType#",
+				pincode = "#ARGUMENTS.pincode#"
+				} />
+		<cfinvoke
+			component="model.User"
+			method="updateAddress"
+			argumentcollection="#addressDetail#"
+			returnvariable="addressDetail"
+			>
+		</cfinvoke>
+
+		<cfreturn addressDetail />
+
+	</cffunction>
+
 <!--- insertOrderDetail --->
 	<cffunction	name="insertOrderDetail"
 		access="remote"
@@ -296,15 +347,26 @@
 			returnformat="json"
 			returntype="any">
 
-		<cfargument
-				name="searchItem"
-				required="true" />
-
+		<cfargument name="searchItem"
+					required="true" />
+		<cfargument name="brandList" 
+					required="false" default=""/>
+		<cfargument name="minPrice" 
+					required="false" default=0 />
+		<cfargument name="maxPrice" 
+					required="false" default=100000 />
+		<cfset session.controller = brandList />
 		<cfinvoke component="model.Product"
 					method="searchSuggestion"
 					returnvariable="searchResponse">
 				<cfinvokeargument name="searchItem"
 						value="#ARGUMENTS.searchItem#" />
+				<cfinvokeargument name="brandList"
+						value="#ARGUMENTS.brandList#" />
+				<cfinvokeargument name="minPrice"
+						value="#ARGUMENTS.minPrice#" />
+				<cfinvokeargument name="maxPrice"
+						value="#ARGUMENTS.maxPrice#" />
 		</cfinvoke>
 		<cfreturn searchResponse />
 	</cffunction>
@@ -337,7 +399,7 @@
 						method="removeAddress"
 						returnvariable="responseObject">
 					<cfinvokeargument name="addressId"
-									value="ARGUMENTS.addressId"/>
+									value="#ARGUMENTS.addressId#"/>
 			</cfinvoke>
 			<cfreturn responseObject />
 	</cffunction>
@@ -347,9 +409,13 @@
 			access="remote"
 			returnformat="json"
 			returntype="any">
+		<cfargument name="orderId"
+					required="true" />
 		<cfinvoke component="model.User"
 				method="retrieveOrderDetails"
 				returnvariable="orderDetails">
+				<cfinvokeargument name="orderId"
+								value="#ARGUMENTS.orderId#" />
 		</cfinvoke>
 		<cfreturn orderDetails />
 	</cffunction>
@@ -407,13 +473,7 @@
 				returntype="any"
 				output="true">
 			<cfargument name="formData"
-						required="false"
-						default=""/>
-			<cfoutput>
-				<cfdump var="#form#"/>
-				<cfset session.formvalue="#form#"/>
-			</cfoutput>
-			<cfset session.controller = "#formData#" />
+						required="true">
 			<cfinvoke component="model.User"
 						method="updateUserProfilePicture"
 						returnvariable="ResponseObject">
@@ -506,5 +566,82 @@
 			</cfinvoke>				
 			<cfreturn responseObject />
 	</cffunction>
+
+<cffunction name="insertProductInInventory"
+			access="public"
+			returnformat="json"
+			returntype="any">
+		<cfargument name="productId"
+					required="true" />
+		<cfargument name="availableQuantity"
+					required="true" />
+		<cfargument name="sellingPrice"
+					required="true" />
+		<cfargument name="discount"
+					required="true" />
+		<cfset args = {
+			productId = ARGUMENTS.productId,
+			availableQuantity = ARGUMENTS.availableQuantity,
+			sellingPrice = ARGUMENTS.sellingPrice,
+			discount = ARGUMENTS.discount
+		} />
+		<cfinvoke component="model.Seller"
+					method="insertProductInInventory"
+					returnvariable="insertedItem"
+					argumentcollection="#args#">	
+		</cfinvoke>
+		<cfreturn insertedItem />
+</cffunction>
+
+
+	<cffunction name="insertProductCategory"
+				access="remote"
+				returnformat="json"
+				returntype="any">
+			<cfargument name="categoryName"
+						required="true" />
+
+			<cfinvoke component="model.Seller"
+						method="insertProductCategory"
+						returnvariable="ResponseObject">
+					<cfinvokeargument name="categoryName"
+							value="#ARGUMENTS.categoryName#" />	
+			</cfinvoke>		
+			<cfreturn ResponseObject />
+	</cffunction>
+
+
+<!--- sellerSearchProducts--->
+	<cffunction name="sellerSearchProducts"
+				access="remote"
+				returnformat="json"
+				returntype="any">
+			<cfargument name="searchValue"
+					required="true" />
+			
+			<cfinvoke component="model.Seller"
+					method="sellerSearchProducts"
+					returnvariable="products">
+				<cfinvokeargument name="searchValue"
+							value="#ARGUMENTS.searchValue#" />	
+			</cfinvoke>
+			<cfreturn products />					
+
+	</cffunction>
+
+<!--- retrieveBrandNames --->
+	<cffunction name="retrieveBrandNames"
+				access="remote"
+				returntype="any"
+				returnformat="json">
+					
+			<cfinvoke component="model.Product"
+						method="retrieveBrandNames"
+						returnvariable="brands">
+			</cfinvoke>
+
+			<cfreturn brands />
+	</cffunction>
+	
 
 </cfcomponent>

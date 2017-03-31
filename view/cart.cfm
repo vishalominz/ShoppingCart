@@ -14,8 +14,8 @@
 		<cfloop from="1" to="#arrayLen(cartItems.data)#" index="location">
 			<cfoutput>
 			<div class="productItem" id="#CartItems.data[location].productId#">
-				<img class="productImage  img-responsive" src="\assets\#cartItems.data[location].productImageLocation#" />
-				<div class="product">
+				<img class="productImage  img-responsive" src="/#cartItems.data[location].productImageLocation#/default.jpg" />
+				<div class="cartProduct">
 					<span class="productName">#CartItems.data[location].productName#</span>
 					<span class="productBrand">#CartItems.data[location].productBrand#</span>
 					<span class="productDescription">#CartItems.data[location].productDescription#</span>

@@ -515,6 +515,83 @@
 	</cffunction>
 
 
+
+<!---- updateAddress() function --->
+	<cffunction name="updateAddress"
+							access="public"
+				returntype="struct"
+				returnformat="json"
+				output="false"
+				hint =" Insert Address in Table">
+		<cfargument 
+			name="addressId"
+			required="true" />
+		<cfargument
+			name="customerId"
+			required="true" />
+		<cfargument
+			name="addressLine1"
+			required="true" />
+		<cfargument
+			name="addressLine2"
+			required="false"
+			default="" />
+		<cfargument
+			name="city"
+			required="true" />
+		<cfargument
+			name="state"
+			required="true" />
+		<cfargument
+			name="addressType"
+			required="true"/>
+		<cfargument
+			name="pincode"
+			required="true" />
+
+		<!--- Get a new API response --->
+		<cfset var LOCAL = {} />
+
+		<!--- Get a new API response --->
+		<cfset LOCAL.Response = THIS.GetNewResponse() />
+
+		<!--- Check to see if all the data is defined. --->
+		<cfif NOT Len(SESSION.user.userId)>
+			<cfset ArrayAppend(
+				LOCAL.Response.Errors,
+				"No ID Found"
+				) />
+		</cfif>
+
+		<cfif NOT ArrayLen( LOCAL.Response.Errors)>
+		<!--- Setting arguments for database call --->
+			<cfset addressDetail={
+					addressId = "#ARGUMENTS.addressId#",
+					customerId = "#SESSION.user.userId#",
+					addressLine1 = "#ARGUMENTS.addressLine1#",
+					addressLine2 = "#ARGUMENTS.addressLine2#",
+					city = "#ARGUMENTS.city#",
+					state="#ARGUMENTS.state#",
+					addressType = "#ARGUMENTS.addressType#",
+					pincode = "#ARGUMENTS.pincode#"
+					} />
+
+		<!--- database call --->
+		<cfinvoke
+			component="Database"
+			method="updateAddress"
+			argumentcollection="#addressDetail#">
+		</cfinvoke>
+
+		<cfset LOCAL.Response.Success = true />
+		<cfset Session.address = addressDetail />
+		<cfset LOCAL.Response.Data = addressDetail />
+		</cfif>
+
+		<cfreturn LOCAL.Response />
+	</cffunction>
+
+
 <!--- retrieveAddress() function --->
 	<cffunction name="retrieveAddress"
 			access="public"
@@ -587,19 +664,10 @@
 			access="public"
 			returnformat="json"
 			returntype="any">
-
+			<cfargument name="orderId"
+						required="true" />
 			<cfset invoiceDetail=[] />
 
-			<cfinvoke component="Database"
-					method="retrieveOrderId"
-					returnvariable="order">
-					<cfinvokeargument name="customerId"
-						value="#session.user.userId#"/>
-			</cfinvoke>
-			<cfloop query="#order#">
-				<cfset orderId="#OrderId#" />
-				<cfbreak />
-			</cfloop>
 
 			<cfinvoke component="Database"
 			method="retrieveSellingCompanyForOrder"
@@ -717,22 +785,15 @@
 				"File size is 0"
 				) />
 		</cfif>
-		<cfset destination = "/assets/images/Profile/#Session.user.userId#.jpg" />
-		<cfif NOT ArrayLen( LOCAL.Response.Errors)>
-		<!--- Setting arguments for database call --->
-			  <cffile action="upload"
-			  			destination= "#destination#"
-			  			fileField="#ARGUMENTS.formData#">
 
-		<!--- database call --->
 			<cfinvoke component="Database"
 					method="updateUserProfilePicture">
 					<cfinvokeargument name="pictureLocation"
-								value= "#destination#" />
+								value= "#arguments.formData#" />
+					<cfinvokeargument name="userId"
+								value="#session.user.userId#" />
 			</cfinvoke>
-
-			<cfset LOCAL.Response.url = destination />
-		</cfif>
+		
 
 		<cfif ArrayLen( LOCAL.Response.Errors)>
 			<cfset LOCAL.Response.Success = false />

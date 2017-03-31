@@ -120,6 +120,16 @@ function User(){
 		objSelf.retrieveOrderHistory();
 	});
 	
+	//Get a jQuery reference for invoice link
+	this.generateInvoiceLink = $('a.invoice');
+
+	//bind generateInvoiceLink
+	this.generateInvoiceLink.click( function( objEvent ){
+		var id = $(this).attr('id');
+		var url = window.location.origin+"/view/invoice.cfm?orderId="+id;
+		$(location).attr('href',url);
+	});
+	
 	//Get a jQuery reference for image change link
 	this.changeImage = $("#imageChangeLink");
 	
@@ -129,13 +139,6 @@ function User(){
 		$("p#img-change").hide();
 	});
 	
-	//Get a jQuery reference for upload image button
-	this.uploadImage = $("input#fileUpload");
-	
-	//bind click to uploadImage
-	this.uploadImage.click(function(){
-		objSelf.uploadProfileImage();
-	});
 }
 
 //Define a method to check logIn credentials
@@ -145,7 +148,6 @@ User.prototype.LogIn = function(objSelf){
 	var sessionSeller = $("#sellerValue").val();
 	var company = sessionSeller == "true" ?  $("#company").val() : "" ;
 	var valid = false;
-	alert(company +" company");
 	valid = objSelf.LogInValidate(email,password,company,sessionSeller);
 	//Call login controller
 	console.log(valid);
@@ -253,7 +255,6 @@ User.prototype.RegisterUser = function( objSelf ){
 	var sessionSeller = $("#sellerValue").val();
 	var company = sessionSeller=="true" ? $("#company").val() : "" ;
 	var valid = false;
-	alert(sessionSeller+" "+company);
 	valid = objSelf.userInfoValidate(email, password, name, mobileNumber, company, sessionSeller);
 	//Call login controller
 	console.log(valid);
@@ -275,7 +276,6 @@ User.prototype.RegisterUser = function( objSelf ){
 			success: function( objResponse ){
 				//Check to see if request was successful
 				if(objResponse.SUCCESS){
-					alert(success);
 					window.location.href = objResponse.URL;
 				}
 					valid = false;
@@ -293,12 +293,11 @@ User.prototype.RegisterUser = function( objSelf ){
 //user info validation while registering
 User.prototype.userInfoValidate = function(email, password, name, mobileNumber, company, sessionSeller){
 	var valid = true;
-	alert(email+" email");
 	if(email.trim() === ""){
 		valid = false;
 		$("span#email").show();
 	}
-	alert(password);
+	
 	if(password === ""){
 		valid = false;
 		$("span#password").show();
@@ -334,14 +333,42 @@ User.prototype.addAddress = function(objSelf){
     var state = $('[name="state"]').val();
     var addressType =  $('[name="adrressType"]').val();
     var pincode =  $('[name="pincode"]').val();
+    var addressId = $('[name="addressId"]').val();
     var isValid = objSelf.validateAddressData(addressLine1,addressLine2,city,state,addressType,pincode);
-    if(isValid){
+    if(isValid && addressId === ""){
 	    $.ajax( 
 	    {
 	    	type: "get",
 	    	url : "http://www.shopsworld.net/controller/controller.cfc",
 	    	data : {
 	    		method : "insertAddress",
+	    		addressLine1 : addressLine1,
+	    		addressLine2 : addressLine2,
+	    		city : city,
+	    		state : state,
+	    		addressType : addressType,
+	    		pincode : pincode
+	    		},
+	    	dataType: "json",
+	    	success : function(objResponse){  
+	    		if(objResponse.SUCCESS){
+	    			var url = window.location.origin+"/view/payment.cfm";
+	    			$(location).attr('href',url);
+	    		}
+	    	},    
+	    	error : function(objRequest , error){
+	    		alert("addAddress error " +error);
+	    	}
+	    });
+    }
+    else if(isValid){
+    	 $.ajax( 
+	    {
+	    	type: "get",
+	    	url : "http://www.shopsworld.net/controller/controller.cfc",
+	    	data : {
+	    		method : "updateAddress",
+	    		addressId : addressId,
 	    		addressLine1 : addressLine1,
 	    		addressLine2 : addressLine2,
 	    		city : city,
@@ -406,7 +433,7 @@ User.prototype.insertOrderDetail = function(objSelf){
 		},
 		success: function(ResponseObj){
 			if(ResponseObj.SUCCESS){
-				var url = window.location.origin+"/view/invoice.cfm";
+				var url = window.location.origin+"/view/invoice.cfm?orderId="+ResponseObj.DATA;
 				$(location).attr('href',url);
 			}else{
 				var url = window.location.origin+"/view/cart.cfm?error="+JSON.stringify(ResponseObj.error);
@@ -427,34 +454,6 @@ User.prototype.insertOrderDetail = function(objSelf){
 User.prototype.retrieveOrderHistory = function(){
 	var url = "http://www.shopsworld.net/view/orderHistory.cfm";
 	$(location).attr('href',url);
-}
-
-//upload image
-User.prototype.uploadProfileImage = function(){
-		$.ajax({
-			url : "http://www.shopsworld.net/controller/controller.cfc",
-			type : "post",
-			dataType: "json",
-			data : {
-				method  : "updateUserProfilePicture"
-			},
-			success: function(ResponseObj){
-				alert(ResponseObj.SUCCESS);
-				if(ResponseObj.SUCCESS){
-					$("form#img-upload").hide();
-					$("p#img-change").show();
-					var url = ResponseObj.URL;
-					$('#profilePicture').attr('src', url);
-				}else{
-					
-				}
-			},
-			error: function(RequestObj, error){
-				alert("uploadImage error "+error);
-				console.log(RequestObj);
-			}
-		});
-	
 }
 
 User.prototype.populateAddress = function(address){
@@ -481,14 +480,14 @@ User.prototype.removeAddress = function(address){
 	$.ajax({
 		url: "http://www.shopsworld.net/controller/controller.cfc",
 		dataType: "json",
-		type: "post",
+		type: "get",
 		data :{
 			method: "removeAddress",
 			addressId : addressId
 		},
 		success: function(responseObj){
 			$(address).hide();
-			alert("removed");
+			
 		},
 		error: function(requestObj, error){
 			alert(error);

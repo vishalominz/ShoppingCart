@@ -21,6 +21,7 @@
 				      <li><a id="updatedeleteProduct">Update/Delete Product</a></li>
 				    </ul>
 				  </li>
+				  <li><a id="insertCategory">Product Category</a></li>
 				</ul>
 			</div>
 			<div id="dialog-message" title="Update Done">
@@ -38,18 +39,18 @@
 					<div class="col-md-8">
 					<form method="post" id="productInsert" action="insertProduct.cfm" enctype="multipart/form-data">
 						<div class="box">
-						<select name="productCategory" Id="productCategory">
-								  <option value="" selected>Select Category</option>
-							<cfloop query="#ProductCategory#">
-								<cfoutput>
-									<option value="#ProductCategoryId#">#ProductCategory#</option>
-								</cfoutput>
-							</cfloop>
-						</select>
+							<select name="productCategory" Id="productCategory">
+									  <option value="" selected>Select Category</option>
+								<cfloop query="#ProductCategory#">
+									<cfoutput>
+										<option value="#ProductCategoryId#">#ProductCategory#</option>
+									</cfoutput>
+								</cfloop>
+							</select>
 
-						<select name="productSubCategory" Id="productSubCategory">
-							<option value="" selected>Select Sub Category</option>
-						</select>
+							<select name="productSubCategory" Id="productSubCategory">
+								<option value="" selected>Select Sub Category</option>
+							</select>
 						</div>
 						<div class="box insertProduct">
 						<label class="insertProduct">Product Name</label>
@@ -69,7 +70,7 @@
 						</div>
 						<div class="box insertProduct">
 						<label class="insertProduct">Discount Percent</label>
-						<input type="text" name="discountPercent" class="insertProduct" id="discountPrice" />
+						<input type="text" name="discountPercent" class="insertProduct" id="discountPercent" />
 						</div>
 						<div class="box insertProduct">
 						<label class="insertProduct">Quantity</label>
@@ -87,6 +88,8 @@
 						<div class="box insertProduct">
 						<label class="insertProduct"></label>
 						<input type="submit" class="insertProduct"  value="Save"/>
+						<input type="hidden" id="productId" name="productId" value=""/>
+						<img src="" id="insertproductImage" alt="Product Image"/>
 						</div>
 					</form>
 					</div>
@@ -149,7 +152,32 @@
 				</cfloop>
 			</div>
 
-			<div class="row seller-content" id="productUpdate">
+			<div class="row seller-content" id="categoryInsert">
+				<fieldset class="categoryInsert">
+					<legend class="legend">Insert Product Category</legend>
+					<div class="box insertCategory">
+						<label class="insertCategory">Product Category</label>
+						<input type="text" name="insertProductCategory" class="insertCategory" id="insertProductCategory" />
+						<input type="button" name="insertProductCategoryButton" class="insertCategoryButton" id="insertProductCategoryButton"  value="Add Category"/>
+					</div>
+				</fieldset>
+
+				<fieldset class="categoryInsert">
+					<legend class="legend">Insert Product Sub Category</legend>
+					<select name="productCategory" class="insertCategory" Id="productCategory">
+								  <option value="" selected>Select Category</option>
+							<cfloop query="#ProductCategory#">
+								<cfoutput>
+									<option value="#ProductCategoryId#">#ProductCategory#</option>
+								</cfoutput>
+							</cfloop>
+					</select>
+					<div class="box insertCategory">
+						<label class="insertCategory">Product Sub Category</label>
+						<input type="text" name="insertProductSubCategory" class="insertCategory" id="insertProductSubCategory" />
+						<input type="button" name="insertProductSubCategory" class="insertCategoryButton" id="insertProductSubCategory" value="Add Sub Category"/>
+					</div>
+				</fieldset>
 			</div>
 
 
@@ -157,10 +185,47 @@
 		</div>
 		<div class="col-lg-1"></div>
 	</div>
-	<!--- seller script --->
-	<script src="/assets/script/seller.js"></script>
-	<cfinclude template="footer.cfm"/>
+	<cfinclude template="footer.cfm"/>d
+	<cfif isDefined("URL.product")>
+		<cfdump var="#URL.product#"/>
+		<cfoutput>
+			<script>
+				$(document).ready(function(){
+					var product = JSON.parse(unescape(getUrlParameter('product')));
+					$("div##productUpdateDelete").hide(); 
+					$("div##productInsert").show();
+					$("div##categoryInsert").hide();
+					$("select##productCategory").val(product.PRODUCTCATEGORYID);
+					var obj = new Seller();
+					obj.populateProductSubCategory();
+					$("select##productSubCategory").val(product.PRODUCTSUBCATEGORYID);
+					$("input##productName").val(product.PRODUCTNAME);
+					$("input##productBrand").val(product.PRODUCTBRAND);
+					$("textarea##productDescription").val(product.PRODUCTDESCRIPTION);
+					$("input##productId").val(product.PRODUCTID);
+					$("img##insertproductImage").show();
+					$("img##insertproductImage").attr('src','/'+product.PRODUCTIMAGELOCATION+'/default.jpg');
+				 });
+				 function getUrlParameter(sParam) {
+					    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+					        sURLVariables = sPageURL.split('&'),
+					        sParameterName,
+					        i;
+
+					    for (i = 0; i < sURLVariables.length; i++) {
+					        sParameterName = sURLVariables[i].split('=');
+
+					        if (sParameterName[0] === sParam) {
+					            return sParameterName[1] === undefined ? true : sParameterName[1];
+					        }
+					    }
+					};	
+			</script>
+		</cfoutput>
+
+	</cfif>
 <cfelse>
 	<cflocation url="/index.cfm" addtoken="false" />
 
 </cfif>
+

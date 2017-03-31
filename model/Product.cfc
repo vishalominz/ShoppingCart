@@ -104,7 +104,13 @@
 			<cfargument
 				name="searchItem"
 				required="true" />
-
+			<cfargument name="brandList" 
+					required="true"/>
+			<cfargument name="minPrice" 
+					required="true" />
+			<cfargument name="maxPrice" 
+					required="true" />
+			<cfset session.Product= brandList />
 		<!--- Get a new API response --->
 			<cfset var LOCAL = {} />
 		<!--- Get a new API response --->
@@ -122,9 +128,14 @@
 					method="searchProduct"
 					returnvariable="searchItems">
 
-					<cfinvokeargument
-							name="searchItem"
+					<cfinvokeargument name="searchItem"
 							value="#ARGUMENTS.searchItem#" />
+					<cfinvokeargument name="brandList"
+						value="#ARGUMENTS.brandList#" />
+					<cfinvokeargument name="minPrice"
+						value="#ARGUMENTS.minPrice#" />
+					<cfinvokeargument name="maxPrice"
+						value="#ARGUMENTS.maxPrice#" />
 				</cfinvoke>
 				<cfset LOCAL.Data = [] />
 				<cfif searchItems.recordCount gt 0>
@@ -216,30 +227,16 @@
 				<cfinvoke
 					component="Database"
 					method="insertOrder"
-					returnvariable="order">
+					returnvariable="orderId">
 
 					<cfinvokeargument
 						name="customerId"
 						value="#SESSION.user.userId#" />
 				</cfinvoke>
 
-			<!--- get order id --->
-				<cfinvoke
-					component="Database"
-					method="retrieveOrderId"
-					returnvariable="order">
-
-					<cfinvokeargument
-						name="customerId"
-						value="#SESSION.user.userId#">
-				</cfinvoke>
 
 				<cfparam name="orderId" default="" />
 
-				<cfloop query="order">
-					<cfset orderId = "#OrderId#" />
-					<cfbreak />
-				</cfloop>
 
 			<!--- write each item in cart to database --->
 					<cfloop
@@ -283,6 +280,7 @@
 				</cfloop>
 				<cfset SESSION.cart=[] />
 				<cfset SESSION.address={} />
+				<cfset LOCAL.Response.Data = orderId />
 			</cfif>
 			<cfif Arraylen(LOCAL.Response.Errors)>
 				<cfset LOCAL.Response.Success = "false" />
@@ -307,4 +305,17 @@
 			<cfreturn inventoryProducts />
 	</cffunction>
 
+
+<!---- retrieveBrandNames --->
+	<cffunction name="retrieveBrandNames"
+				access="public"
+				returnformat="json"
+				returntype="any">
+			
+			<cfinvoke component="Database"
+						method="retrieveBrandNames"
+						returnvariable="brands">
+			</cfinvoke>
+			<cfreturn brands />				
+	</cffunction>
 </cfcomponent>
