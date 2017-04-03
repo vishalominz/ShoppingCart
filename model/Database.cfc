@@ -1226,6 +1226,85 @@
 			</cfquery>		
 			<cfreturn brands />		
 	</cffunction>
+
+
+<!--- retrieve Sale Detail --->
+	<cffunction name="retreiveSaleDetail"
+				access="public"
+				returnformat="json"
+				returntype="any">
+			<cfargument name="sellingCompanyId"
+						required="true" />
+			<cfargument name="productList"
+						required="true" />
+			<cfargument name="saleDate"
+						required="false"
+						default="" />
+			<cfquery name="productSale">
+				SELECT
+					od.ProductId,
+					Sum(od.OrderQuantity) as TotalSale,
+					CONVERT(date,od.LastModifiedDate) as SaleDate,
+					p.ProductName
+				  FROM [MyShoppingZone].[dbo].[Order] o
+				  INNER JOIN 
+						[MyShoppingZone].[dbo].[OrderDetail] od
+				  ON
+					o.OrderId = od.OrderId
+				  INNER JOIN
+						[MyShoppingZone].[dbo].[Product] p
+					ON
+					p.ProductId = od.ProductId
+				 WHERE 
+					od.SellingCompanyId = #arguments.sellingCompanyId#
+					AND
+					od.ProductId in (#PreserveSingleQuotes(arguments.productList)#)
+					AND
+					CONVERT(date,od.LastModifiedDate) = '#arguments.saleDate#'
+				GROUP BY 
+					CONVERT(date,od.LastModifiedDate),
+					od.ProductId,p.productName
+				ORDER BY
+					TotalSale DESC
+			</cfquery>	
+			<cfreturn productSale />			
+	</cffunction>
+
+
+<!--- retrieve PopularSoldProducts --->
+	<cffunction name="retrieveMostSoldProducts"
+				access="public"
+				returnformat="json"
+				returntype="any">
+					
+			<cfargument name="sellingCompanyId"
+						required="true" />
+			<cfquery name="popularProducts">
+				SELECT TOP 10
+					od.ProductId,
+					Sum(od.OrderQuantity) as TotalSale,
+					CONVERT(date,od.LastModifiedDate) as SaleDate,
+					p.ProductName
+				  FROM [MyShoppingZone].[dbo].[Order] o
+				  INNER JOIN 
+						[MyShoppingZone].[dbo].[OrderDetail] od
+				 ON
+					o.OrderId = od.OrderId
+					INNER JOIN
+						[MyShoppingZone].[dbo].[Product] p
+					ON
+					p.ProductId = od.ProductId
+				 WHERE 
+					od.SellingCompanyId = 1
+				GROUP BY 
+					CONVERT(date,od.LastModifiedDate),
+					od.ProductId,p.productName
+				ORDER BY
+					TotalSale DESC
+			</cfquery>
+
+			<cfreturn popularProducts/>
+	</cffunction>
 </cfcomponent>
 
 

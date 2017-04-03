@@ -44,7 +44,7 @@
 					returnvariable="insertedItem"
 					argumentcollection="#inventoryDetail#">	
 		</cfinvoke>
-	<cflocation url="#lastPage#?product=insert" />
+	<cflocation url="/view/seller.cfm" />
 <cfelse>
 	<cflocation url="/view/login.cfm" />
 </cfif>

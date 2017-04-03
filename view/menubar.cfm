@@ -50,9 +50,13 @@
 			<div class="container-fluid">
 				<div class="navbar-header">
 					<ul class="nav navbar-nav">
+						<div id="productModalCategories">
 						 <cfinclude template="productCategories.cfm" />
+						</div>
 					</ul>
+					<cfoutput>
 					 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="##menu">
+					</cfoutput>
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>

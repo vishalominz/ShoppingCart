@@ -65,6 +65,33 @@
 						default="assets/images/product/"/>
 			<cfargument name="leastPrice"
 						required="true"/>
+
+			<!--- Get a new API response --->
+			<cfset var LOCAL = {} />
+
+			<!--- Get a new API response --->
+			<cfset LOCAL.Response = THIS.GetNewResponse() />
+			
+			<cfif NOT LEN(ARGUMENTS.productName)>
+				<cfset arrayAppend(LOCAL.Response.Errors,
+							"ProductName Required") />
+			</cfif>
+			<cfif NOT LEN(ARGUMENTS.productCategoryId)>
+				<cfset arrayAppend(LOCAL.Response.Errors,
+							"Product Category Required") />
+			</cfif>
+			<cfif NOT LEN(ARGUMENTS.productSubCategoryId)>
+				<cfset arrayAppend(LOCAL.Response.Errors,
+							"Prduct SubCategory Required") />
+			</cfif>
+			<cfif NOT LEN(ARGUMENTS.productBrand)>
+				<cfset arrayAppend(LOCAL.Response.Errors,
+							"Product Brand Required") />
+			</cfif>
+			<cfif NOT LEN(ARGUMENTS.productDescription)>
+				<cfset arrayAppend(LOCAL.Response.Errors,
+							"Product Description Required") />
+			</cfif>
 			<cfset args={
 					productName = ARGUMENTS.productName,
 					productCategoryId=ARGUMENTS.productCategoryId,
@@ -75,30 +102,27 @@
 					leastPrice = ARGUMENTS.leastPrice
 					} />
 
-		<!--- Get a new API response --->
-		<cfset var LOCAL = {} />
+		
+		    <cfif NOT arrayLen(LOCAL.Response.Errors)>
+				    
+				<cfinvoke component="Database"
+							method="insertProduct"
+							argumentcollection="#args#"
+							returnvariable="productId">
+				</cfinvoke>
 
-		<!--- Get a new API response --->
-		<cfset LOCAL.Response = THIS.GetNewResponse() />
-
-			<cfinvoke component="Database"
-						method="insertProduct"
-						argumentcollection="#args#"
-						returnvariable="productId">
-			</cfinvoke>
-
-		<cfset LOCAL.Item = {
-					productId = "#productId#",
-					productName = ARGUMENTS.productName,
-					productCategoryId=ARGUMENTS.productCategoryId,
-					productSubCategoryId= ARGUMENTS.productSubCategoryId,
-					productBrand = ARGUMENTS.productBrand,
-					productDescription = ARGUMENTS.productDescription,
-					productImageLocation = "#ARGUMENTS.productImageLocation##productId#",
-					leastPrice = ARGUMENTS.leastPrice
-				}>
-		<cfset LOCAL.Response.Data = LOCAL.Item />
-
+				<cfset LOCAL.Item = {
+						productId = "#productId#",
+						productName = ARGUMENTS.productName,
+						productCategoryId=ARGUMENTS.productCategoryId,
+						productSubCategoryId= ARGUMENTS.productSubCategoryId,
+						productBrand = ARGUMENTS.productBrand,
+						productDescription = ARGUMENTS.productDescription,
+						productImageLocation = "#ARGUMENTS.productImageLocation##productId#",
+						leastPrice = ARGUMENTS.leastPrice
+					}>
+				<cfset LOCAL.Response.Data = LOCAL.Item />
+		    </cfif>	
 		<cfreturn LOCAL.Response.Data />
 
 </cffunction>
@@ -123,10 +147,14 @@
 		<!--- Get a new API response --->
 		<cfset LOCAL.Response = THIS.GetNewResponse() />
 
-		<cfif NOT Len(sellingPrice)>
-			arrayAppend(LOCAL.Response.errors,
-						"No selling Price");
+		<cfif NOT Len(ARGUMENTS.sellingPrice)>
+			<cfset arrayAppend(LOCAL.Response.errors,
+						"Selling Price value Required") />
 		</cfif>		
+		<cfif NOT Len(ARGUMENTS.quantity)>
+			<cfset arrayAppend(LOCAL.Response.errors,
+						"Quantity value Required") />
+		</cfif>
 		<cfif NOT arrayLen(LOCAL.Response.Errors)>
 									
 			<cfinvoke component="Database"
@@ -191,6 +219,18 @@
 		<!--- Get a new API response --->
 		<cfset LOCAL.Response = THIS.GetNewResponse() />
 
+		<cfif NOT LEN(ARGUMENTS.productId)>
+			<cfset arrayAppend(LOCAL.Response.Errors,
+					"Product ID not found") />
+		</cfif>
+		<cfif NOT LEN(ARGUMENTS.availableQuantity)>
+			<cfset arrayAppend(LOCAL.Response.Errors,
+					"Quantity not found") />
+		</cfif>
+		<cfif NOT LEN(ARGUMENTS.sellingPrice)>
+			<cfset arrayAppend(LOCAL.Response.Errors,
+					"Selling Price not found") />
+		</cfif>
 		<cfset args = {
 			sellingCompanyId = sellingCompanyId,
 			productId = ARGUMENTS.productId,

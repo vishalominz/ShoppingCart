@@ -196,15 +196,21 @@
 					$("div##productInsert").show();
 					$("div##categoryInsert").hide();
 					$("select##productCategory").val(product.PRODUCTCATEGORYID);
+					$('select##productCategory option:not(:selected)').prop('disabled', true);
 					var obj = new Seller();
 					obj.populateProductSubCategory();
 					$("select##productSubCategory").val(product.PRODUCTSUBCATEGORYID);
+					$('select##productSubCategory option:not(:selected)').prop('disabled', true);
 					$("input##productName").val(product.PRODUCTNAME);
+					$("input##productName").prop("readonly", true);
 					$("input##productBrand").val(product.PRODUCTBRAND);
+					$("input##productBrand").prop("readonly", true);
 					$("textarea##productDescription").val(product.PRODUCTDESCRIPTION);
+					$("textarea##productDescription").prop("readonly", true);
 					$("input##productId").val(product.PRODUCTID);
 					$("img##insertproductImage").show();
 					$("img##insertproductImage").attr('src','/'+product.PRODUCTIMAGELOCATION+'/default.jpg');
+					$('input##productImageLocation').prop('disabled', true);
 				 });
 				 function getUrlParameter(sParam) {
 					    var sPageURL = decodeURIComponent(window.location.search.substring(1)),

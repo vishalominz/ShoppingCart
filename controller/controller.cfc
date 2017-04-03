@@ -643,5 +643,20 @@
 			<cfreturn brands />
 	</cffunction>
 	
-
+<!--- retrieveMostSoldProducts --->
+	<cffunction name="retrieveMostSoldProducts"
+			access="remote"
+			returntype="any"
+			returnformat="json">
+		<cfargument name="sellingCompanyId"
+					required="true" />
+		<cfinvoke component="model.Database"
+					method="retrieveMostSoldProducts"
+					returnvariable="mostSoldProducts">
+				<cfinvokeargument name="sellingCompanyId"
+					value="#arguments.sellingCompanyId#" />
+		</cfinvoke>
+		<cfreturn mostSoldProducts />
+	</cffunction>
+		
 </cfcomponent>

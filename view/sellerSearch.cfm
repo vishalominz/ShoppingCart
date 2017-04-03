@@ -33,7 +33,7 @@
 					 </div>
 				<cfloop query="#products#">
 					<cfoutput>
-						<cfif #SellingCompanyId# neq "">		
+						<cfif #SellingCompanyId# neq "" AND #SellingCompanyId# eq Session.user.sellingCompanyId>		
 							<div class="row sellerProduct">
 								<div class="col-lg-2">
 									<img src="/#ProductImageLocation#/default.jpg" class="sellerProductImage">

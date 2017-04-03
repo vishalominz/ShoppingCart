@@ -687,6 +687,17 @@ img#insertproductImage {
     display: none;
 }
 
+label.error {
+    margin-left: 335px;
+    color: red;
+    font-weight: 500;
+}
+
+label#productCategory-error {
+    margin-left: -250px;
+    position: absolute;
+    margin-top: 60px;
+}
 /* --------- sellers page design --------*/
 
 /* --------- seller design product category ------*/
@@ -722,3 +733,63 @@ div.box {
     margin-top: 20px;
 }
 /*========== seller design product category end =====*/
+
+
+/* ------- status page of seller */
+
+select#productBySeller {
+    width: 80%;
+    text-align: center;
+    font-size: 1.2em;
+    height: 300px;
+}
+
+input#searchSellerProduct {
+    width: 80%;
+    height: 35px;
+    background: lightgoldenrodyellow;
+}
+
+option.sellerProduct {
+    padding: 5px;
+    line-height: 1.5em;
+    font-family: sans-serif;
+}
+
+div#salesChart {
+    margin-top: 35px;
+    margin-left: 350px;
+    width: 750px;
+    height: 300px;
+    /*border: 1px solid red;*/
+    position: absolute;
+}
+
+
+label{
+    font-size: 1.5em;
+}
+
+input#saleDate {
+    height: 35px;
+     margin-left: 20px;
+}
+
+.col-md-10.popularProducts li {
+    font-size: medium;
+    text-decoration: none;
+    list-style: none;
+    text-align: left;
+    padding: 5px 15px;
+}
+
+.col-md-10.popularProducts p {
+    font-size: 1.5em;
+    color: firebrick;
+    font-weight: bold;
+}
+
+.row.sellerStatusContent {
+    margin-top: 35px;
+}
+/*======== status page of seller ends */

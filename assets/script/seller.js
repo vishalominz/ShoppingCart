@@ -1,6 +1,16 @@
 function Seller(){
 	var objSelf = this;
 	
+	$('.date-picker').datepicker( {
+		 changeMonth: true,
+        changeYear: true,
+        showButtonPanel: true,
+        dateFormat: 'yy-mm-dd',
+        onClose: function(dateText, inst) { 
+            $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, inst.selectedDay));
+        }
+    });
+
 	//Get a jQuery reference to the select option
 	this.productCategory = $("select#productCategory");
 	
@@ -87,6 +97,13 @@ function Seller(){
 		return false;
 	});
     
+    //get a jQuery reference for sellerSearchProduct 
+	this.sellerSearchItem = $("input#searchSellerProduct");
+
+	//sellerSearchItem click action
+	this.sellerSearchItem.keyup( function(){
+		objSelf.sellerSearchProduct();
+	});
 	//get a jQuery refenence for file
 	this.fileinput = $('input#productImageLocation');
 
@@ -101,6 +118,59 @@ function Seller(){
 	this.addProductToInventory.click(function(objEvent){
 		objSelf.populateInsertProductForm(this);
 	});
+
+	//form validation
+	$("form[id='productInsert']").validate({
+    // Specify validation rules
+    rules: {
+      productName: "required",
+      productBrand: {
+        required: true,
+      },
+      sellingPrice: {
+        required: true,
+      },
+      quantity: "required",
+      productDescription: "required",
+      productCategory: "required",
+      productSubCategory: "required"
+    },
+    // Specify validation error messages
+    messages: {
+      productName: "Please enter product name",
+      productBrand: {
+        required: "Please enter Brand name"
+      },
+      sellingPrice: {
+      	required: "Please enter Selling Price"
+      },
+      quantity: "Please enter product quantity",
+      productDescription: "Please enter description",
+      email: "Please enter a valid email address",
+       productCategory: "Please select a category",
+      productSubCategory: "Please select a subcategory"
+    },
+    submitHandler: function(form) {
+      form.submit();
+    }
+  });
+
+   //Get a jQuery reference for date
+   this.saleDate = $("input#saleDate");
+
+  //Get a jQuery reference for productSelectBox
+  this.productBySeller = $("select#productBySeller option");
+
+  //on change of select option in productBySeller
+  this.productBySeller.click( function(){
+  		objSelf.retrieveSalesDetail();
+  });
+
+  //on change of saleDate
+  $('.date-picker').on("change", function() {
+   	objSelf.retrieveSalesDetail();
+  });
+
 }
 
 Seller.prototype.updateProduct = function(element){
@@ -261,7 +331,10 @@ Seller.prototype.insertProductCategory = function(){
 				categoryName : categoryName
 			},
 			success: function(){
-				alert("success");
+				var url = "http://www.shopsworld.net/view/productCategories.cfm"
+				$.get(url, function( data ){
+					$('div#productModalCategories').html(data);
+				});
 			},
 			error: function(){
 				alert("error");
@@ -290,6 +363,67 @@ Seller.prototype.populateInsertProductForm = function( element ){
 	$(location).attr('href',url);
 
 }
+
+Seller.prototype.sellerSearchProduct = function(){
+	var searchItem = $("input#searchSellerProduct").val();
+	$.ajax({
+		url: "http://www.shopsworld.net/controller/controller.cfc",
+		method: "get",
+		dataType : "json",
+		data : {
+			method : "sellerSearchProducts",
+			searchValue : searchItem
+		},
+		success : function(ResponseObj){
+			$("select#productBySeller option").hide();
+			$("select#productBySeller option:selected").show();
+			console.log(ResponseObj);
+			for(obj in ResponseObj.DATA){
+					if(ResponseObj.COLUMNS[0] === "PRODUCTID" && ResponseObj.DATA[obj][11] != null){
+						//var obj = "<option class='sellerProduct' value="+ResponseObj.DATA[obj][11]+">"+ResponseObj.DATA[obj][3]+"</option>"
+		
+						//$("input#productBySeller").appendTo(obj);
+					//console.log($("<option class='sellerProduct' value="+ResponseObj.DATA[obj][11]+">"+ResponseObj.DATA[obj][3]+"</option>").appendTo($("select#productBySeller")));
+						$("select#productBySeller option[value="+ResponseObj.DATA[obj][0]+"]").show();
+					}
+				
+			}
+		},
+		error: function(RequestObj, error){
+			alert("error");
+		}
+	})
+}
+
+
+Seller.prototype.retrieveSalesDetail = function(){
+	 var productList = "";
+	 var saleDate = $("input#saleDate").val();
+	 $("select#productBySeller option:selected").each( function(){            
+     		productList += $(this).val()+',';       				
+     		});
+	 productList = productList.substring(0, productList.length - 1);
+
+	 if(productList != "" && saleDate != ""){
+	 	var url = "http://www.shopsworld.net/view/salesGraph.cfm?productList="+productList+"&saleDate="+saleDate;
+				$.get(url, function( data ){
+					$('div#salesChart').html(data);
+				});
+	 }else{
+	 	if(productList === "" && saleDate ===""){
+	 		$("div#salesChart").html("<p>No Product Selected</p><p>No Date Selected</p>");		
+	 	}
+	 	else{
+	 		if(productList === ""){
+	 			$("div#salesChart").html("<p>No Product Selected</p>");
+	 		}
+	 		if(saleDate === ""){
+	 			$("div#salesChart").html("<p>No Date Selected</p>");
+	 		}
+	 	}
+	 }
+}
+
 
 $(document).ready(function(){
 	var objSeller = new Seller();		 
