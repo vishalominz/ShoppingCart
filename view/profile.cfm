@@ -13,7 +13,7 @@
 			<div class="row">
 				<div class="col-md-3"></div>
 				<div class="col-md-3">
-					<img id="profilePicture" src="/#ProfilePicture#pic#session.user.userId#.jpg">
+					<img id="profilePicture" src="/#ProfilePicture#">
 					</img>
 					<p id="img-change">
 						<a id="imageChangeLink">

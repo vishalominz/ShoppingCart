@@ -6,28 +6,37 @@
   --- date:   3/13/17
   --->
 <cfcomponent extends="BaseAPI"
-	accessors="true" output="false" persistent="false">
+		accessors="true" output="false" persistent="false">
 
 <!--- retrieveProductSubCategory from database --->
 	<cffunction	name="retrieveProductSubCategory"
 			returnformat="json"
-			returntype="any"
+			returntype="query"
 			access="public">
 
 		<cfargument
 				name="productCategoryId"
 				required="true"
 				type="numeric">
-			<cfinvoke
-				component="Database"
-				method="retrieveProductSubCategory"
-				returnvariable="productSubCategory">
+			
+			<cftry>
+				<cfinvoke
+					component="Database"
+					method="retrieveProductSubCategory"
+					returnvariable="productSubCategory">
 
-				<cfinvokeargument
-					name="productCategoryId"
-					value="#ARGUMENTS.productCategoryId#">
-			</cfinvoke>
-
+					<cfinvokeargument
+						name="productCategoryId"
+						value="#ARGUMENTS.productCategoryId#">
+				</cfinvoke>
+				<cfset message = "Successfully retrieved Product Sub Category List" />
+				<cfset THIS.log("SUCCESS","Product",getFunctionCalledName(),message) />
+				<cfcatch type="database">
+					<cfset message = "Failed to retrieve Product Sub Category List" />
+					<cfset THIS.log("ERROR","Product",getFunctionCalledName(),message) />
+				</cfcatch>
+			</cftry>
+			
 			<cfreturn productSubCategory/>
 	</cffunction>
 
@@ -37,12 +46,19 @@
 			returntype="any"
 			access="public">
 
-			<cfinvoke
-				component="Database"
-				method="retrieveProductCategory"
-				returnvariable="productCategory">
-			</cfinvoke>
-
+			<cftry>
+				<cfinvoke
+					component="Database"
+					method="retrieveProductCategory"
+					returnvariable="productCategory">
+				</cfinvoke>
+				<cfset message = "Successfully retrieved Product Category List" />
+				<cfset THIS.log("SUCCESS","Product",getFunctionCalledName(),message) />
+				<cfcatch type="database">
+					<cfset message = "Failed to retrieve Product Category List" />
+					<cfset THIS.log("ERROR","Product",getFunctionCalledName(),message) />
+				</cfcatch>
+			</cftry>
 			<cfreturn productCategory />
 	</cffunction>
 
@@ -52,22 +68,26 @@
 			returnformat="json"
 			access="public">
 
-			<cfargument
-					name="productSubCategoryId"
-					type="numeric"
-					required="true" />
+			<cfargument	name="productSubCategoryId"
+						type="numeric"
+						required="true" />
 
-			<cfinvoke
-				component="Database"
-				method="retrieveProductBySubCategory"
-				returnvariable="productBySubCategory">
+			<cftry>			
+				<cfinvoke component="Database"
+						method="retrieveProductBySubCategory"
+						returnvariable="productBySubCategory">
 
-				<cfinvokeargument
-						name="productSubCategoryId"
-						value="#ARGUMENTS.productSubCategoryId#">
+					<cfinvokeargument name="productSubCategoryId"
+									value="#ARGUMENTS.productSubCategoryId#">
 
-			</cfinvoke>
-
+				</cfinvoke>
+					<cfset message = "Successfully Retrieved Products by Sub Category." />
+					<cfset THIS.log("SUCCESS","Product",getFunctionCalledName(),message) />
+				<cfcatch type="database">
+					<cfset message = "Failed to retrieve Product By Sub Category." />
+					<cfset THIS.log("ERROR","Product",getFunctionCalledName(),message) />
+				</cfcatch>
+			</cftry>
 			<cfreturn productBySubCategory />
 	</cffunction>
 
@@ -82,16 +102,23 @@
 				type="numeric"
 				required="true">
 
-			<cfinvoke
-				component="Database"
-				method = "retrieveProductDetail"
-				returnvariable="productDetail">
+				<cftry>
+					<cfinvoke
+						component="Database"
+						method = "retrieveProductDetail"
+						returnvariable="productDetail">
 
-				<cfinvokeargument
-					name="productId"
-					value="#ARGUMENTS.productId#">
-			</cfinvoke>
-
+						<cfinvokeargument
+							name="productId"
+							value="#ARGUMENTS.productId#">
+					</cfinvoke>
+					<cfset message = "Product details for Product Id = #ARGUMENTS.productId#" />
+					<cfset THIS.log("SUCCESS","Product",getFunctionCalledName(),message) />
+					<cfcatch type="database">
+						<cfset message = "Failed to retrieve product Detail of product =  #ARGUMENTS.productId#"/>
+						<cfset THIS.log("ERROR","Product",getFunctionCalledName(),message) />
+					</cfcatch>
+				</cftry>
 			<cfreturn productDetail/>
 	</cffunction>
 
@@ -122,21 +149,28 @@
 			</cfif>
 
 			<cfif NOT ArrayLen(LOCAL.Response.Errors)>
+				<cftry>
+					<cfinvoke
+						component="Database"
+						method="searchProduct"
+						returnvariable="searchItems">
 
-				<cfinvoke
-					component="Database"
-					method="searchProduct"
-					returnvariable="searchItems">
-
-					<cfinvokeargument name="searchItem"
-							value="#ARGUMENTS.searchItem#" />
-					<cfinvokeargument name="brandList"
-						value="#ARGUMENTS.brandList#" />
-					<cfinvokeargument name="minPrice"
-						value="#ARGUMENTS.minPrice#" />
-					<cfinvokeargument name="maxPrice"
-						value="#ARGUMENTS.maxPrice#" />
-				</cfinvoke>
+						<cfinvokeargument name="searchItem"
+								value="#ARGUMENTS.searchItem#" />
+						<cfinvokeargument name="brandList"
+							value="#ARGUMENTS.brandList#" />
+						<cfinvokeargument name="minPrice"
+							value="#ARGUMENTS.minPrice#" />
+						<cfinvokeargument name="maxPrice"
+							value="#ARGUMENTS.maxPrice#" />
+					</cfinvoke>
+					<cfset message = "Product searched by name like %#ARGUMENTS.searchItem#%" />
+					<cfset THIS.log("SUCCESS","Product",getFunctionCalledName(),message) />
+					<cfcatch type="database">
+						<cfset message = "Failed to search product by name like %#ARGUMENTS.searchItem#%" />
+						<cfset THIS.log("ERROR","Product",getFunctionCalledName(),message) />
+					</cfcatch>
+				</cftry>
 				<cfset LOCAL.Data = [] />
 				<cfif searchItems.recordCount gt 0>
 					<cfloop query="#searchItems#">
@@ -166,11 +200,10 @@
 			<cfreturn LOCAL.Response />
 	</cffunction>
 
-
 <!--- insertOrderDetail() function --->
 	<cffunction	name="insertOrderDetail"
 			access="remote"
-			returntype="Any"
+			returntype="struct"
 			returnformat="json">
 
 		<!--- Get a new API response --->
@@ -191,18 +224,28 @@
 				index="location" >
 				<cfset currentItem = "#cartDetail[location]#" />
 				<cfset isPresent = "false" />
-				<cfinvoke
-						component="Database"
-						method="retrieveFromInventory"
-						returnvariable="inventoryItems">
+				<cftry>
+					<cfinvoke
+							component="Database"
+							method="retrieveFromInventory"
+							returnvariable="inventoryItems">
 
-						<cfinvokeargument
-								name="productId"
-								value="#cartDetail[location].productId#">
-						<cfinvokeargument
-								name="quantity"
-								value="#cartDetail[location].productCount#">
-				</cfinvoke>
+							<cfinvokeargument
+									name="productId"
+									value="#cartDetail[location].productId#">
+							<cfinvokeargument
+									name="quantity"
+									value="#cartDetail[location].productCount#">
+					</cfinvoke>
+					<cfset message = "Product retrieved by #session.user.username#[#session.user.userId#]
+									 from Inventory" />
+					<cfset THIS.log("SUCCESS","Product",getFunctionCalledName(),message) />
+					<cfcatch type="database">
+						<cfset message = "Failed to retrieve product by #session.user.username#[#session.user.userId#]
+										 from Inventory" />
+						<cfset THIS.log("ERROR","Product",getFunctionCalledName(),message) />
+					</cfcatch>
+				</cftry>
 
 				<cfloop query="inventoryItems">
 					<cfif InventoryId eq currentItem.inventoryId>
@@ -224,19 +267,26 @@
 		<!--- check if error is present --->
 			<cfif NOT ArrayLen(LOCAL.Response.Errors)>
 			<!--- create a order id in database --->
-				<cfinvoke
-					component="Database"
-					method="insertOrder"
-					returnvariable="orderId">
+				<cftry>
+					<cfinvoke
+						component="Database"
+						method="insertOrder"
+						returnvariable="orderId">
 
-					<cfinvokeargument
-						name="customerId"
-						value="#SESSION.user.userId#" />
-				</cfinvoke>
-
-
+						<cfinvokeargument
+							name="customerId"
+							value="#SESSION.user.userId#" />
+					</cfinvoke>
+					<cfset message = "Order inserted by #session.user.username#[#session.user.userId#]
+									" />
+					<cfset THIS.log("SUCCESS","Product",getFunctionCalledName(),message) />
+					<cfcatch type="database">
+						<cfset message = "Failed to insert order by #session.user.username#[#session.user.userId#]" />
+						<cfset THIS.log("ERROR","Product",getFunctionCalledName(),message) />
+					</cfcatch>
+				</cftry>
+			
 				<cfparam name="orderId" default="" />
-
 
 			<!--- write each item in cart to database --->
 					<cfloop
@@ -255,14 +305,23 @@
 						} />
 
 				<!--- write order details--->
-					<cfinvoke
-						component="Database"
-						method="insertOrderDetail"
-						argumentcollection="#orderDetail#"
-						returnvariable="orderDetail">
-					</cfinvoke>
+					<cftry>
+						<cfinvoke
+							component="Database"
+							method="insertOrderDetail"
+							argumentcollection="#orderDetail#"
+							returnvariable="orderDetail">
+						</cfinvoke>
+						<cfset message = "Inserted Order Details for #session.user.username#[#session.user.userId#]" />
+						<cfset THIS.log("SUCCESS","Product",getFunctionCalledName(),message) />
+						<cfcatch type="database">
+							<cfset message = "Failed to insert orfer for #session.user.username#[#session.user.userId#]" />
+							<cfset THIS.log("ERROR","Product",getFunctionCalledName(),message) />
+						</cfcatch>
+					</cftry>
 
 				<!--- update availableQuantity for each product in inventory --->
+					<cftry>
 						<cfinvoke
 							component="Database"
 							method="updateAvailableQuantity">
@@ -277,7 +336,15 @@
 								name="productId"
 								value="#cartDetail[location].productId#" />
 						</cfinvoke>
+						<cfset message = "Avilable Quantity of product update by #session.user.username#[#session.user.userId#]" />
+						<cfset THIS.log("SUCCESS","Product",getFunctionCalledName(),message) />
+						<cfcatch type="database">
+							<cfset message = "Failed to update available quantity by #session.user.username#[#session.user.userId#]" />
+							<cfset THIS.log("ERROR","Product",getFunctionCalledName(),message) />
+						</cfcatch>
+					</cftry>
 				</cfloop>
+			<!--- reseting variables --->
 				<cfset SESSION.cart=[] />
 				<cfset SESSION.address={} />
 				<cfset LOCAL.Response.Data = orderId />
@@ -292,30 +359,74 @@
 	<cffunction name="retrieveProductFromInventoryByCompany"
 				access="public"
 				returnformat="json"
-				returntype="any">
+				returntype="query">
 
 			<cfset sellingCompanyId="#session.user.SellingCompanyId#"/>
-
-			<cfinvoke component="Database"
-						method="retrieveProductFromInventoryByCompany"
-						returnvariable="inventoryProducts">
-					<cfinvokeargument name="sellingCompanyId"
-										value="#sellingCompanyId#" />
-			</cfinvoke>
+			<cftry>
+				<cfinvoke component="Database"
+							method="retrieveProductFromInventoryByCompany"
+							returnvariable="inventoryProducts">
+						<cfinvokeargument name="sellingCompanyId"
+											value="#sellingCompanyId#" />
+				</cfinvoke>
+				<cfset message = "Product retrieved by #session.user.username#[#session.user.userId#]
+									of Selling Company ID = #sellingCompanyId#" />
+				<cfset THIS.log("SUCCESS","Product",getFunctionCalledName(),message) />
+				<cfcatch type="database">
+					<cfset message = "Failed to retrieve product by #session.user.username#[#session.user.userId#]
+									of Selling Company ID = #sellingCompanyId#" />
+					<cfset THIS.log("ERROR","Product",getFunctionCalledName(),message) />
+				</cfcatch>
+			</cftry>
 			<cfreturn inventoryProducts />
 	</cffunction>
-
 
 <!---- retrieveBrandNames --->
 	<cffunction name="retrieveBrandNames"
 				access="public"
 				returnformat="json"
-				returntype="any">
-			
-			<cfinvoke component="Database"
-						method="retrieveBrandNames"
-						returnvariable="brands">
-			</cfinvoke>
+				returntype="query">
+			<cftry>
+				<cfinvoke component="Database"
+							method="retrieveBrandNames"
+							returnvariable="brands">
+				</cfinvoke>
+				<cfset message = "Brand Names retrieved successfully" />
+				<cfset THIS.log("SUCCESS","Product",getFunctionCalledName(),message) />
+				<cfcatch type="database">
+					<cfset message = "Failed to retrive Brand Names" />
+					<cfset THIS.log("ERROR","Product",getFunctionCalledName(),message) />
+				</cfcatch>
+			</cftry>
 			<cfreturn brands />				
 	</cffunction>
+
+<!--- insertProductSubCategory --->
+	<cffunction name = "insertProductSubCategory"
+			access = "public"
+			returntype="void"
+			returnformat = "json">
+		<cfargument name = "categoryName"
+					required = true />
+		<cfargument name = "subCategoryName"	
+					required = true />
+		<cftry>
+			<cfinvoke component = "Database"
+						method = "insertProductSubCategory">
+					<cfinvokeargument name="categoryName"
+									value="#ARGUMENTS.categoryName#" />
+					<cfinvokeargument name="subCategoryName"
+									value="#ARGUMENTS.subCategoryName#" />
+			</cfinvoke>
+			<cfset message = "Product Sub Category inserted in database by #session.user.username#[#session.user.userId#]" />
+			<cfset THIS.log("SUCCESS","Product",getFunctionCalledName(),message) />
+			<cfcatch type="database">
+				<cfset message = "Failed to inset product sub category in database by #session.user.username#[#session.user.userId#]" />
+				<cfset THIS.log("ERROR","Product",getFunctionCalledName(),message) />
+			</cfcatch>
+		</cftry>
+	</cffunction>
+
+<!--- retrieveProductByOtherSeller --->
+
 </cfcomponent>

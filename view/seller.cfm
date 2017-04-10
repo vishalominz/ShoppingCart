@@ -12,8 +12,8 @@
 		<div class="col-lg-10">
 			<div class="row" id="seller-menu">
 				<ul class="nav nav-tabs">
-				  <li ><a id="stats">Stats</a></li>
-				  <li class="active" class="dropdown">
+				  <li class="active"><a id="stats">Stats</a></li>
+				  <li class="dropdown">
 				    <a class="dropdown-toggle" data-toggle="dropdown" id="produt">Product
 				    <span class="caret"></span></a>
 				    <ul class="dropdown-menu">
@@ -32,7 +32,7 @@
 			</div>
 			<div class="row" id="seller-content">
 				<div class="row seller-content" id="stats">
-
+					<cfinclude template="sellerStatus.cfm" />
 				</div>
 				<div class="row seller-content" id="productInsert">
 					<div class="col-md-2"></div>
@@ -164,7 +164,7 @@
 
 				<fieldset class="categoryInsert">
 					<legend class="legend">Insert Product Sub Category</legend>
-					<select name="productCategory" class="insertCategory" Id="productCategory">
+					<select name="productCategorySelect" class="insertCategory" Id="productCategorySelect">
 								  <option value="" selected>Select Category</option>
 							<cfloop query="#ProductCategory#">
 								<cfoutput>
@@ -175,7 +175,7 @@
 					<div class="box insertCategory">
 						<label class="insertCategory">Product Sub Category</label>
 						<input type="text" name="insertProductSubCategory" class="insertCategory" id="insertProductSubCategory" />
-						<input type="button" name="insertProductSubCategory" class="insertCategoryButton" id="insertProductSubCategory" value="Add Sub Category"/>
+						<input type="button" name="insertProductSubCategoryButton" class="insertCategoryButton" id="insertProductSubCategoryButton" value="Add Sub Category"/>
 					</div>
 				</fieldset>
 			</div>
@@ -195,6 +195,7 @@
 					$("div##productUpdateDelete").hide(); 
 					$("div##productInsert").show();
 					$("div##categoryInsert").hide();
+					$("div##stats").hide();
 					$("select##productCategory").val(product.PRODUCTCATEGORYID);
 					$('select##productCategory option:not(:selected)').prop('disabled', true);
 					var obj = new Seller();

@@ -12,35 +12,36 @@
 				<div class="col-lg-7">
 				<form id="addressForm" method="post" action="" >
 						<input type="hidden" id="addressId" name="addressId" value=""/>
+						<input type="hidden" id="isUsed" name="isUsed" value="">
 					<div class="form-group">
 						<label class="formLabel"> Address Line 1 </label>
 						<textarea class="addressField" name="address1" id="addressLine1"></textarea>
-						<span class="error" id="addressLine1">Required/Invalid</span>
+						<span class="error" id="addressLine1">Invalid</span>
 					</div>
 					<div class="form-group">
 						<label class="formLabel"> Address Line 2 </label>
 						<textarea class="addressField" name="address2" id="addressLine2"></textarea>
-						<span class="error" id="addressLine2">Required/Invalid</span>
+						<span class="error" id="addressLine2">Invalid</span>
 					</div>
 					<div class="form-group">
 						<label class="formLabel">State</label>
 						<input class="addressField" name="state" id="state" type="text" />
-						<span class="error" id="state">Required/Invalid</span>
+						<span class="error" id="state">Invalid</span>
 					</div>
 					<div class="form-group">
 						<label class="formLabel">City</label>
 						<input class="addressField" name="city" id="city" type="text"/>
-						<span class="error" id="city">Required/Invalid</span>
+						<span class="error" id="city">Invalid</span>
 					</div>
 					<div class="form-group">
 						<label class="formLabel">Pincode</label>
 						<input class="addressField" name="pincode" id="pincode" type="text" maxlength="6"/>
-						<span class="error" id="pincode">Required/Invalid</span>
+						<span class="error" id="pincode">Invalid</span>
 					</div>
 					<div class="form-group">
 						<label class="formLabel">Address Type</label>
 						<input class="addressField" name="adrressType" id="addressType" type="text"/>
-						<span class="error" id="addressType">Required/Invalid</span>
+						<span class="error" id="addressType">Invalid</span>
 					</div>
 					<div class="form-group">
 						<label class="formLabel"></label>
@@ -59,6 +60,7 @@
 											<p><span class="city">#city#</span> - <span class="pincode">#pincode#</span></p>
 											<p><span class="state">#state#</span></p>
 											<p><span class="addressId">#AddressId#</span></p>
+											<p><span class="isUsed">#isUsed#</span></p>
 											<p><span class="addressType">#AddressType#</span></p>
 											<button class="selectAddress">Select</button>
 											<button class="removeAddress">Remove</button>

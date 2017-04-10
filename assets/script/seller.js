@@ -26,18 +26,37 @@ function Seller(){
 	//Get a jQuery reference for deleteProduct
 	this.updateDeleteProductLink = $("a#updatedeleteProduct");
 	
+	//Get a jQuery reference for stats
+	this.stats = $("a#stats");
+
+	//staus click action
+	this.stats.click(function( objEven){
+		$("li").removeClass("active");
+		$("div#productUpdateDelete").hide(); 
+		$("div#productInsert").hide();
+		$("div#categoryInsert").hide();
+		$("div#stats").show();
+		$("a#stats").parent().addClass("active");
+	});
+
 	//insertProductLink click action
 	this.insertProductLink.click(function( objEvent ){
+		$("li").removeClass("active");
 		$("div#productUpdateDelete").hide(); 
 		$("div#productInsert").show();
 		$("div#categoryInsert").hide();
+		$("div#stats").hide();
+		$("a#insertProduct").parent().parent().parent().addClass("active");
 	});
 	
 	//updateDeleteProductLink click action
 	this.updateDeleteProductLink.click(function( objEvent ){
+		$("li").removeClass("active");
 		 $("div#productInsert").hide();
 		 $("div#productUpdateDelete").show();
 		 $("div#categoryInsert").hide();
+		 $("div#stats").hide();
+		 $("a#updatedeleteProduct").parent().parent().parent().addClass("active");
 	});
 
 	//Get a jQuery reference for editProduct
@@ -54,12 +73,12 @@ function Seller(){
 
 	//bind click on insertCategoryLink
 	this.insertCategoryLink.click(function ( objEvent ){
+		$("li").removeClass("active");
 		$("div#productUpdateDelete").hide(); 
 		$("div#productInsert").hide();
 		$("div#categoryInsert").show();
+		$("div#stats").hide();
 		$(this).parent().addClass("active");
-		$("a#insertProduct").parent().removeClass( "active" );
-		$("a#updatedeleteProduct").parent().removeClass( "active" );
 	});
 
 	//Get a jQuery reference for insertProductCategory
@@ -70,6 +89,13 @@ function Seller(){
 			objSelf.insertProductCategory();
 	});
 
+	//Get a jQuery reference for insertProductSubCategoryButton
+	this.insertProductSubCategoryButton = $("input#insertProductSubCategoryButton");
+
+	//bind click on insertProductCategoryButton
+	this.insertProductSubCategoryButton.click( function ( objEvent ){
+			objSelf.insertProductSubCategory();
+	});
 	//editProductLink click function
 	this.editProductLink.click(function( objEvent ){
 		var parent= $(this).parent().parent();
@@ -129,8 +155,12 @@ function Seller(){
       },
       sellingPrice: {
         required: true,
+        number: true
       },
-      quantity: "required",
+      quantity: {
+      	required: true,
+      	number: true
+      },
       productDescription: "required",
       productCategory: "required",
       productSubCategory: "required"
@@ -142,9 +172,13 @@ function Seller(){
         required: "Please enter Brand name"
       },
       sellingPrice: {
-      	required: "Please enter Selling Price"
+      	required: "Please enter Selling Price",
+      	number : "Can only be numeric value"
       },
-      quantity: "Please enter product quantity",
+      quantity: {
+      	required :"Please enter product quantity",
+      	number : "Can only be numeric value"
+      },
       productDescription: "Please enter description",
       email: "Please enter a valid email address",
        productCategory: "Please select a category",
@@ -342,7 +376,31 @@ Seller.prototype.insertProductCategory = function(){
 		});
 	}
 }
-
+Seller.prototype.insertProductSubCategory = function(){
+	var categoryName = $("select#productCategorySelect").val();
+	var subCategoryName = $("input#insertProductSubCategory").val();
+	 if(categoryName != "" && subCategoryName.trim() != ""){
+		$.ajax({
+			url: "http://www.shopsworld.net/controller/controller.cfc",
+			method: "get",
+			dataType: "json",
+			data: {
+				method: "insertProductSubCategory",
+				categoryName : categoryName,
+				subCategoryName : subCategoryName
+			},
+			success: function( ResponseObj ){
+				var url = "http://www.shopsworld.net/view/productCategories.cfm"
+				$.get(url, function( data ){
+					$('div#productModalCategories').html(data);
+				});
+			},
+			error: function(RequestObj, error){
+				alert("error");
+			}
+		});
+	}
+}
 
 Seller.prototype.readURL =function(input) {
         if (input.files && input.files[0]) {
@@ -411,14 +469,14 @@ Seller.prototype.retrieveSalesDetail = function(){
 				});
 	 }else{
 	 	if(productList === "" && saleDate ===""){
-	 		$("div#salesChart").html("<p>No Product Selected</p><p>No Date Selected</p>");		
+	 		$("div#salesChart").html('<p class="graphMessage">No Product Selected</p><p class="graphMessage">No Date Selected</p>');		
 	 	}
 	 	else{
 	 		if(productList === ""){
-	 			$("div#salesChart").html("<p>No Product Selected</p>");
+	 			$("div#salesChart").html('<p class="graphMessage">No Product Selected</p>');
 	 		}
 	 		if(saleDate === ""){
-	 			$("div#salesChart").html("<p>No Date Selected</p>");
+	 			$("div#salesChart").html('<p class="graphMessage">No Date Selected</p>');
 	 		}
 	 	}
 	 }

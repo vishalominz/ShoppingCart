@@ -270,7 +270,8 @@ User.prototype.RegisterUser = function( objSelf ){
 				email : email,
 				password : password,
 				name : name,
-				mobileNumber : mobileNumber
+				mobileNumber : mobileNumber,
+				company : company
 			},
 			
 			success: function( objResponse ){
@@ -334,8 +335,9 @@ User.prototype.addAddress = function(objSelf){
     var addressType =  $('[name="adrressType"]').val();
     var pincode =  $('[name="pincode"]').val();
     var addressId = $('[name="addressId"]').val();
+    var isUsed = $('[name="isUsed').val()
     var isValid = objSelf.validateAddressData(addressLine1,addressLine2,city,state,addressType,pincode);
-    if(isValid && addressId === ""){
+    if(isValid && (addressId === "" || isUsed == 1 )){
 	    $.ajax( 
 	    {
 	    	type: "get",
@@ -464,6 +466,7 @@ User.prototype.populateAddress = function(address){
 	var pincode=  $(address).find(".pincode").text();
 	var addressType= $(address).find(".addressType").text();
 	var addressId = $(address).find(".addressId").text();
+	var isUsed = $(address).find(".isUsed").text();
 	$("textarea#addressLine1").val(addressLine1);
 	$("textarea#addressLine2").val(addressLine2);
 	$("input#city").val(city);
@@ -471,6 +474,7 @@ User.prototype.populateAddress = function(address){
 	$("input#pincode").val(pincode);
 	$("input#addressType").val(addressType);
 	$("input#addressId").val(addressId);
+	$("input#isUsed").val(isUsed);
 }
 
 
@@ -501,7 +505,7 @@ User.prototype.switchUser = function(){
 	$.ajax({
 		url: "http://www.shopsworld.net/controller/controller.cfc",
 		dataType: "json",
-		type: "post",
+		type: "get",
 		data :{
 			method : "switchUser"
 		},

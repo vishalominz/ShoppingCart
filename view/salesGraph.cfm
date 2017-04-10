@@ -2,9 +2,9 @@
 <cfparam name="saleDate" default="" />
 <cfif session.isSeller>
 	<cfif saleDate eq "">
-		<p>No date is selected</p>
+		<p class="graphMessage">No date is selected</p>
 	<cfelseif ProductList eq "">
-		<p>No Product is selected</p>
+		<p class="graphMessage">No Product is selected</p>
 	<cfelse>
 		<cfinvoke component="model.Database"
 				method="retreiveSaleDetail"
@@ -30,7 +30,7 @@
 				    </cfchartseries>
 			</cfchart>
 		<cfelse>
-			<p>No selected products were sold on this day.</p>
+			<p class="graphMessage">No selected products were sold on this day.</p>
 		</cfif>	
 	</cfif>	
 

@@ -8,13 +8,13 @@
 <cfcomponent
 	extends="BaseAPI"
 	accessors="true"
-	output="false"
+	output="true"
 	persistent="false"
 	hint="Public API for Cart.">
 
 <!--- add function for cart --->
 	<cffunction	name="AddToCart"
-		access="remote"
+		access="public"
 		returntype="struct"
 		returnformat="json"
 		output="false"
@@ -46,6 +46,12 @@
 			hint="Brand of the product"
 			/>
 		<cfargument
+			name="InventoryId"
+			type="string"
+			required="true"
+			hint="Inventory Id"
+			/>
+		<cfargument
 			name="productImageLocation"
 			type="string"
 			required="true"
@@ -68,7 +74,14 @@
 		<cfif NOT Len(ARGUMENTS.productId)>
 			<cfset ArrayAppend(
 				LOCAL.Response.Errors,
-				"No ID Found"
+				"No Product ID Found"
+				) />
+		</cfif>
+
+		<cfif NOT Len(ARGUMENTS.inventoryId)>
+			<cfset ArrayAppend(
+				LOCAL.Response.Errors,
+				"No Inventory ID Found"
 				) />
 		</cfif>
 
@@ -81,21 +94,29 @@
 
 			<!--- Check if item is already present in session.cart --->
 			<cfloop from="1" to="#ArrayLen(SESSION.cart)#" index="item">
-				<cfif session.cart[item].ProductId eq ARGUMENTS.ProductId>
+				<cfif session.cart[item].InventoryId eq ARGUMENTS.InventoryId>
 					<cfset isItemPresent = true />
 					<cfset itemIndex = "#item#" />
 				</cfif>
 			</cfloop>
 
 			<!--- retrieve inventory from database --->
-			<cfinvoke component="database" method="retrieveFromInventory"  returnvariable="inventoryItem">
-				<cfinvokeargument name="productId" value="#ARGUMENTS.ProductId#" />
-				<cfinvokeargument name="quantity" value="#orderQuantity#" />
-				<cfif isItemPresent eq true>
-					<cfinvokeargument name="quantity" value="#Session.cart[itemIndex].productCount + orderQuantity#" />
-				</cfif>
-			</cfinvoke>
-
+			<cftry>
+				<cfinvoke component="database" method="retrieveFromInventory"  returnvariable="inventoryItem">
+					<cfinvokeargument name="productId" value="#ARGUMENTS.ProductId#" />
+					<cfinvokeargument name="quantity" value="#ARGUMENTS.orderQuantity#" />
+					<cfinvokeargument name="inventoryId" value="#ARGUMENTS.inventoryId#" />
+					<cfif isItemPresent eq true>
+						<cfinvokeargument name="quantity" value="#Session.cart[itemIndex].productCount + orderQuantity#" />
+					</cfif>
+				</cfinvoke>
+				<cfset message= "Data succesfully retrieved from inventory of database." />
+				<cfset THIS.log("SUCCESS","Cart",getFunctionCalledName(),message) />
+				<cfcatch type="database">
+					<cfset message = "Data retrieval failed from Inventory of database" />
+					<cfset THIS.log("ERROR","Cart",getFunctionCalledName(),message) />
+				</cfcatch>
+			</cftry>
 
 			<!--- check if item is present in the Inventory of database --->
 			<cfif inventoryItem.recordcount gt 0>
@@ -153,8 +174,19 @@
 
 			</cfif>
 
+			<!--- count total number of products in cart --->
+			<cfparam name="cartItemCount" default=0 />
+			<cfif ArrayLen(Session.cart) gt 0>
+				<cfoutput>
+				<cfloop from="1" to="#ArrayLen(SESSION.cart)#" index="loc">
+					<cfset cartItemCount = cartItemCount + Session.cart[loc].ProductCount />
+				
+				</cfloop>
+				</cfoutput>
+			</cfif>
+				
 			<!--- Set return data as array --->
-			<cfset LOCAL.Response.Data = [LOCAL.Item,ArrayLen(session.cart),isItemPresent] />
+			<cfset LOCAL.Response.Data = [LOCAL.Item,cartItemCount,isItemPresent] />
 		</cfif>
 
 		<!--- Check to see if any error is present. --->
@@ -163,14 +195,15 @@
 			<!--- if error is present , set request as not succesful --->
 			<cfset LOCAL.Response.Success = false />
 		</cfif>
-
+		<cfset message = "Product added to cart" />
+		<cfset THIS.log("Success","Cart",getFunctionCalledName(),message) />
 		<!--- Returnt the response. --->
 		<cfreturn LOCAL.Response />
 	</cffunction>
 
 <!---- Delete function for cart --->
 	<cffunction	name="DeleteFromCart"
-		access="remote"
+		access="public"
 		returntype="struct"
 		returnformat="json"
 		output="false"
@@ -226,8 +259,12 @@
 					LOCAL.ProductIndex
 					) />
 
+			<!--- write log after success --->
+				<cfset message = "Product #LOCAL.Item.ProductName#[#LOCAL.Item.ProductId#] removed from cart" />
+				<cfset THIS.log("ERROR","Seller",getFunctionCalledName(),message) />
+
 				<!--- Set the Product Item as the return data --->
-				<cfset LOCAL.Response.Data = LOCAL.Item />
+				<cfset LOCAL.Response.Data = Session.cart />
 
 			</cfif>
 
@@ -243,7 +280,7 @@
 
 <!--- Get items for cart function --->
 		<cffunction	name="GetCartItems"
-			access="remote"
+			access="public"
 			reutrntype="struct"
 			returnformat="json"
 			output = "false"
@@ -262,12 +299,11 @@
 			<cfreturn LOCAL.Response />
 		</cffunction>
 
-
 <!---- Update cart count --->
 		<cffunction name="UpdateCartItem"
-				access="remote"
+				access="public"
 				returnformat="json"
-				returntype="any"
+				returntype="struct"
 				hint="Update cart count">
 
 			<cfargument name="countValue"
@@ -281,19 +317,28 @@
 
 			<!--- Get a new API response --->
 			<cfset LOCAL.Response = THIS.GetNewResponse() />
-
+			<cfparam name="cartItemCount" default=0 />
 			<cfloop from="1" to="#arrayLen(Session.cart)#" index="item">
 					<cfif Session.cart[item].productId eq ARGUMENTS.productId
 							AND Session.cart[item].InventoryId eq ARGUMENTS.inventoryId>
-						<cfif ARGUMENTS.countValue gt Session.cart[item].maxcount>
+						<cfif ARGUMENTS.countValue gt Session.cart[item].maxcount
+								OR ARGUMENTS.countValue lte 0>
 							<cfset LOCAL.Response.Success = false />
 							<cfset LOCAL.Response.Data = Session.cart[item].maxcount />
 						<cfelse>
 							<cfset Session.cart[item].productCount = ARGUMENTS.countValue />
 						</cfif>
+						<cfset LOCAL.Item = SEssion.cart[item] />
 					</cfif>
+					<cfset cartItemCount = cartItemCount + Session.cart[item].productCount />
 			</cfloop>
-			<!--- Retuen the response --->
+
+		<!--- write log after success --->
+			<cfset message = "Product #LOCAL.Item.ProductName#[#LOCAL.Item.ProductId#] count updated to #LOCAL.Item.ProductCount#" />
+			<cfset THIS.log("ERROR","Seller",getFunctionCalledName(),message) />
+
+			<cfset LOCAL.Response.Data = cartItemCount />
+		<!--- Retuen the response --->
 			<cfreturn LOCAL.Response />
 		</cffunction>
 </cfcomponent>

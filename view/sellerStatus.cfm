@@ -9,8 +9,7 @@
 					value="#session.user.sellingCompanyId#" />
 </cfinvoke>
 
-<cfinclude template="header.cfm" />
-<cfinclude template="menubar.cfm" />
+
 
 	<!--- <input type="date" data-date-inline-picker="true" />
 	<cfchart> 
@@ -66,4 +65,3 @@
 
 	</div>
 
-<cfinclude template="footer.cfm" />

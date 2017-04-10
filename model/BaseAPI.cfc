@@ -29,4 +29,25 @@
 	<cfreturn LOCAL.Response />
 
 </cffunction>
+
+<cffunction name = "log"
+			access="public"
+			returnformat="json"
+			returntype="void"
+			output="false"
+			hint="Writes log in shopsWorld.log file">
+				
+		<cfargument name="status"
+					required="true" />
+		<cfargument name="objectName"
+					required="true" />
+		<cfargument name="functionName"
+					required="true" />
+		<cfargument name="message"
+					required="true" />
+
+		<cflog file="shopsWorld"
+				application="false"
+				text = "#status# - #objectName#:#functionName# - #message#" />
+</cffunction>
 </cfcomponent>

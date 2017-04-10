@@ -14,7 +14,7 @@
 		<div class="row invoiceBox" id="invoice#productDetail[location].orderDetailId#">
 		  <div class="col-lg-1"></div>
 		  <div class="col-lg-10">
-		  <div class="invoice invoiceHeading"> Invoice
+		  <div class="invoice invoiceHeading"> <span class="invoiceTitle">Invoice</span>
 			<div class="invoice orderNumber"> Order ID : #productDetail[location].orderId# </div>
 		 	<div class="invoice orderDate"> Order Date : #DATEFORMAT(productDetail[location].orderDate, "m/d/yyyy")# </div>
 		  </div>
@@ -22,14 +22,14 @@
 			 	<p> #productDetail[location].SellingCompanyName# </p>
 		 </div>
 		  <div class="invoice userInfo">
-				<div class="invoice billTo"><p>Bill To :</p>
+				<div class="invoice billTo"><p><span class="invoiceTitle">Bill To :</span></p>
 						<p>#productDetail[location].addressLine1#</p>
 						<p>#productDetail[location].addressLine2#</p>
 						<p>#productDetail[location].city#</p>
 						<p>#productDetail[location].state# -
 						#productDetail[location].pincode#</p>
 				</div>
-			    <div class="invoice shipTo"><p>Ship To :</p>
+			    <div class="invoice shipTo"><p><span class="invoiceTitle">Ship To :</span></p>
 						<p>#productDetail[location].addressLine1#</p>
 						<p>#productDetail[location].addressLine2#</p>
 						<p>#productDetail[location].city#</p>
@@ -55,7 +55,7 @@
 								<td>#ProductName#</td>
 								<td>#ProductBrand#</td>
 								<td>#OrderQuantity#</td>
-								<td>#UnitPrice#</td>
+								<td>&##8377; #UnitPrice#</td>
 							</tr>
 						</cfoutput>
 						<cfset sum = sum + #UnitPrice# * #OrderQuantity# />
@@ -64,7 +64,7 @@
 					<tr>
 						<td colspan="3"></td>
 						<td >Total</td>
-						<td>#sum#</td>
+						<td>&##8377; : #sum#</td>
 					</tr>
 				</table>
 			</div>

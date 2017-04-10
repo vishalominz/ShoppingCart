@@ -9,6 +9,15 @@ function Product(){
 		objSelf.search(this.searchBox);
 	});
 	
+	//Get a jQuery refernce for the images of product
+	this.imageIcon = $("img.thumbnails");
+
+	//Bin imageIcon to click
+	this.imageIcon.click( function(){
+		var imageLocation = $(this).attr('src');
+		$("img#productDetailImage").attr('src',imageLocation);
+	})
+
 	//Bind search items - binding dynamically
 	$('div#suggestionBox').on('click', 'li', function() {
 	    $("input#searchField").val($(this).text());

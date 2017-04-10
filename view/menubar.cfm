@@ -1,4 +1,7 @@
-<cfparam name="cartListCount" default="#Arraylen(session.cart)#" />
+<cfparam name="cartListCount" default=0 />
+<cfloop from="1" to="#ArrayLen(SESSION.cart)#" index="item">
+	<cfset cartListCount = cartListCount + Session.cart[item].ProductCount />
+</cfloop>
 <nav class="navbar navbar-default navbar-fixed-top">
 			<div class="container-fluid">
 				<div class="navbar-header">

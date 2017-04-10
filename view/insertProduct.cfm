@@ -1,7 +1,9 @@
 <cfif session.isSeller AND session.loggedIn>
 	<cfset lastPage = "#CGI.HTTP_REFERER#" />
 	<cfif form.productId eq "">
-			
+		<cfif form.leastPrice eq "">
+			<cfset form.leastPrice = 0 />
+		</cfif>	
 		<cfset productDetail = {
 					productName = form.productName,
 					productBrand = form.productBrand,
