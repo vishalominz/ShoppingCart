@@ -147,7 +147,6 @@
 				<cfset ArrayAppend(LOCAL.Response.Errors,
 					"Search value is null") />
 			</cfif>
-
 			<cfif NOT ArrayLen(LOCAL.Response.Errors)>
 				<cftry>
 					<cfinvoke
@@ -202,7 +201,7 @@
 
 <!--- insertOrderDetail() function --->
 	<cffunction	name="insertOrderDetail"
-			access="remote"
+			access="public"
 			returntype="struct"
 			returnformat="json">
 
@@ -236,6 +235,10 @@
 							<cfinvokeargument
 									name="quantity"
 									value="#cartDetail[location].productCount#">
+							<cfinvokeargument 
+									name="inventoryId"
+									value="#cartDetail[location].inventoryId#">
+
 					</cfinvoke>
 					<cfset message = "Product retrieved by #session.user.username#[#session.user.userId#]
 									 from Inventory" />

@@ -1,6 +1,6 @@
 function Seller(){
 	var objSelf = this;
-	
+
 	$('.date-picker').datepicker( {
 		 changeMonth: true,
         changeYear: true,
@@ -146,12 +146,14 @@ function Seller(){
 	});
 
 	//form validation
-	$("form[id='productInsert']").validate({
+	$("form#productInsert").validate({
     // Specify validation rules
     rules: {
-      productName: "required",
+      productName: {
+      	required: true
+      },
       productBrand: {
-        required: true,
+      required: true
       },
       sellingPrice: {
         required: true,
@@ -161,13 +163,18 @@ function Seller(){
       	required: true,
       	number: true
       },
-      productDescription: "required",
+      productDescription: {
+      	required: true
+      },
       productCategory: "required",
-      productSubCategory: "required"
+      productSubCategory: "required",
+      email: "required"
     },
     // Specify validation error messages
     messages: {
-      productName: "Please enter product name",
+      productName: {
+      	required: "Please enter product name"
+      },
       productBrand: {
         required: "Please enter Brand name"
       },
@@ -247,6 +254,7 @@ Seller.prototype.updateProduct = function(element){
 		      buttons: {
 		        Ok: function() {
 		          $( this ).dialog( "close" );
+		          $(this).find('p').show();
 		        }
 		      }
     		});
@@ -369,6 +377,7 @@ Seller.prototype.insertProductCategory = function(){
 				$.get(url, function( data ){
 					$('div#productModalCategories').html(data);
 				});
+				$( "#dialog" ).dialog();
 			},
 			error: function(){
 				alert("error");
@@ -394,11 +403,14 @@ Seller.prototype.insertProductSubCategory = function(){
 				$.get(url, function( data ){
 					$('div#productModalCategories').html(data);
 				});
+				$( "#dialog" ).dialog();
+
 			},
 			error: function(RequestObj, error){
 				alert("error");
 			}
 		});
+
 	}
 }
 

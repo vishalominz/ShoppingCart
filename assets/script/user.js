@@ -30,17 +30,9 @@ function User(){
 				return objSelf.LogOut();
 			})
 			
-	//Get a jQuery reference for register button
-	this.RegisterButton = $("form#registerUser");
 	
-	//Bind the register button to RegisterUser function
-	this.RegisterButton.submit(
-			function( objEvent ){
-				$(".error").hide();
-				objSelf.RegisterUser(objSelf);
-				return false;
-			}
-		);
+	//Validation of form data
+	objSelf.validateData(objSelf,$("form#registerUser"),objSelf.RegisterUser);
 	
 	//Get a jQuery reference to Address submit Button
 	this.addressButton = $('input#addressSubmit');
@@ -150,12 +142,11 @@ User.prototype.LogIn = function(objSelf){
 	var valid = false;
 	valid = objSelf.LogInValidate(email,password,company,sessionSeller);
 	//Call login controller
-	console.log(valid);
 	if(valid){
 		$.ajax(
 			{
-			url : "http://www.shopsworld.net/controller/controller.cfc",		
-			type : "get",
+			url : "/controller/controller.cfc",		
+			type : "post",
 			data : {
 				method : "logIn",
 				email : email,
@@ -166,33 +157,27 @@ User.prototype.LogIn = function(objSelf){
 			dataType: "json",
 			success: function( objResponse ){
 				//Check to see if request was successful
-				console.log(objResponse.URL);
-				console.log(objResponse.DATA);
 				if(objResponse.SUCCESS){
 					$(location).attr('href',objResponse.URL);
 				}else{
-					valid = false;
-				}
+					$("#logInError").text("");
+					if(!sessionSeller){
+						$("#logInError").text("Invalid email or password.");
+					}else {
+						$("#logInError").text("Invalid email or password or compnay.");
+					}
+					$("#logInError").show();
+					$("#email").val("");
+					$("#password").val("");
+					$("#company").val("");
+							}
 			},
 			error: function(objRequest, strError){
 				alert("login error  "+strError);
-				console.log(objRequest);
+			
 			}
 		});
 	}
-	if(!valid){
-		$("#logInError").text("");
-		if(!sessionSeller){
-			$("#logInError").text("Invalid email or password.");
-		}else {
-			$("#logInError").text("Invalid email or password or compnay.");
-		}
-		$("#logInError").show();
-		$("#email").val("");
-		$("#password").val("");
-		$("#company").val("");
-	}
-	return valid;
 }
 
 
@@ -200,8 +185,8 @@ User.prototype.LogIn = function(objSelf){
 User.prototype.LogOut = function(){
 	$.ajax(
 			{
-			url : "http://www.shopsworld.net/controller/controller.cfc",		
-			type : "get",
+			url : "/controller/controller.cfc",		
+			type : "post",
 			data : {
 				method : "logOut",
 			},
@@ -245,25 +230,134 @@ User.prototype.LogInValidate = function(email, password, company, sessionSeller)
 	return valid;
 }
 
+//input validation for forms
+User.prototype.validateData = function(objSelf, formName ,submitAction){
+	jQuery.validator.addMethod("fullName", function(value, element) { 
+	  		return /^[a-zA-Z]{4,}(?: [a-zA-Z]+){0,2}$/.test(value) && value != ""; 
+		}, "Name should be of more than 4 letters");
+	
+	jQuery.validator.addMethod("noSpace", function(value, element) { 
+			return value.indexOf(" ") && value != ""; 
+		}, "No space please and don't leave it empty");
+
+	jQuery.validator.addMethod("pincode",function(pincode,element){
+		 return /^[1-9]{1}[0-9]{5}$/;
+	},"Invalid pincode");
+
+	jQuery.validator.addMethod("password",function(password,element){
+		return /^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,}$/.test(password);
+	},  "Ensure string has two uppercase letters <br/>Ensure string has one special case letter <br/>Ensure string has two digits <br/>Ensure string has three lowercase letters <br/>Ensure string is of length 8"
+	);
+
+	jQuery.validator.addMethod("phoneno", function(phoneNumber, element) {
+    	    phoneNumber = phoneNumber.replace(/\s+/g, "");
+    	    return this.optional(element) || phoneNumber.length > 9 && 
+    	    phoneNumber.match(/^((\+[1-9]{1,4}[ \-]*)|(\([0-9]{2,3}\)[ \-]*)|([0-9]{2,4})[ \-]*)*?[0-9]{3,4}?[ \-]*[0-9]{3,4}?$/);
+    	}, "Please specify a valid phone number");
+	//form validation
+	$(formName).validate({
+    // Specify validation rules
+    rules: {
+      name: {
+      	required: true,
+      	fullName: true,
+      },
+      email: {
+      required: true,
+      noSpace: true,
+      email: true
+      },
+      mobileNumber: {
+        required: true,
+        number: true,
+        phoneno: true
+      },
+      password: {
+      	required: true,
+      	password: true
+      },
+      confirmPassword: {
+      	required: true,
+      	equalTo: "#password"
+      },
+      company: {
+      	required: true
+      },
+      addressLine1: {
+      	required: true
+      },
+      city: {
+      	required: true
+      },
+      state: {
+      	required: true
+      },
+      pincode: {
+      	required: true,
+      	number: true,
+      	pincode: true
+      },
+      addressType: {
+      	required: true
+      }
+
+    },
+    // Specify validation error messages
+    messages: {
+      name: {
+      	required: "Please enter your name"
+      },
+      mobileNumber: {
+      	required: "Please enter your Phone Number"
+      },
+      email: {
+        required: "Please enter Email"
+      },
+      password: {
+      	required: "Please enter Password"
+      },
+      confirmPassword: {
+      	required :"Please confirm Password"
+      },
+      company: {
+      	required: "Please enter company name"
+      },
+      addressLine1: {
+      	required: "Please enter address detail"
+      },
+      city: {
+      	required: "Please enter the city name"
+      },
+      state: {
+      	required: "Please enter the state name"
+      },
+      pincode: {
+      	required: "Please enter the pincode",
+      	number : "Only contains number"
+      },
+      addressType :{
+      	required: "Please select an address type"
+      }
+    },
+    submitHandler: function(form) {
+      objSelf.RegisterUser();
+      return false;
+    }
+  });
+}
 
 //Register user function
-User.prototype.RegisterUser = function( objSelf ){
+User.prototype.RegisterUser = function(){
 	var email = $("#email").val();
 	var password = $("#password").val();
 	var name= $("#name").val();
 	var mobileNumber = $("#mobileNumber").val();
 	var sessionSeller = $("#sellerValue").val();
 	var company = sessionSeller=="true" ? $("#company").val() : "" ;
-	var valid = false;
-	valid = objSelf.userInfoValidate(email, password, name, mobileNumber, company, sessionSeller);
-	//Call login controller
-	console.log(valid);
-	if(valid){
 		$.ajax(
 			{
-			url : "http://www.shopsworld.net/controller/controller.cfc",		
-			type : "get",
-			async : false,
+			url : "/controller/controller.cfc",		
+			type : "post",
 			dataType: "json",
 			data : {
 				method : "registerUser",
@@ -279,50 +373,29 @@ User.prototype.RegisterUser = function( objSelf ){
 				if(objResponse.SUCCESS){
 					window.location.href = objResponse.URL;
 				}
-					valid = false;
+				else{
+					for(var i = 0; i < objResponse.ERRORS.length; i ++){
+						var string = objResponse.ERRORS[i];
+						var emailResult = string.match(/email/i);
+						if(emailResult){
+							$(".error#email").show();
+							$(".error#email").html(objResponse.ERRORS[0]);
+						}
+						var mobileNumberResult = string.match(/mobile/i);
+						if(mobileNumberResult){
+							$(".error#mobileNumber").show();
+							$(".error#mobileNumber").html(objResponse.ERRORS[1]);
+						}
+					}	
+				}
 				
 			},
-			error: function(objRequest, strError){
-				console.log(objRequest);
-				alert(strError);
+			error: function(objRequest, error){
+				//window.open('http://www.shopsworld.net/view/error.cfm', "_self");
+				alert(error);
 			}
 		});
-	}
-	return valid;
 }
-
-//user info validation while registering
-User.prototype.userInfoValidate = function(email, password, name, mobileNumber, company, sessionSeller){
-	var valid = true;
-	if(email.trim() === ""){
-		valid = false;
-		$("span#email").show();
-	}
-	
-	if(password === ""){
-		valid = false;
-		$("span#password").show();
-	}
-	if(name.trim() === ""){
-		valid = false;
-		$("span#name").show();
-	}
-	mobileNumber = Number(mobileNumber);
-	if(mobileNumber < 1000000000 || mobileNumber > 9999999999 || isNaN(mobileNumber)){
-		valid = false;
-		$("span#mobileNumber").show();
-	}
-	if(sessionSeller == "true"){
-		company = company.trim();
-		if(company === ""){
-			valid = false;
-			$("span#company").show();
-		}		
-	}
-	
-	return valid;
-}
-
 
 
 //addAddress of the user
@@ -341,7 +414,7 @@ User.prototype.addAddress = function(objSelf){
 	    $.ajax( 
 	    {
 	    	type: "get",
-	    	url : "http://www.shopsworld.net/controller/controller.cfc",
+	    	url : "/controller/controller.cfc",
 	    	data : {
 	    		method : "insertAddress",
 	    		addressLine1 : addressLine1,
@@ -367,7 +440,7 @@ User.prototype.addAddress = function(objSelf){
     	 $.ajax( 
 	    {
 	    	type: "get",
-	    	url : "http://www.shopsworld.net/controller/controller.cfc",
+	    	url : "/controller/controller.cfc",
 	    	data : {
 	    		method : "updateAddress",
 	    		addressId : addressId,
@@ -427,7 +500,7 @@ User.prototype.validateAddressData =function(addressLine1,addressLine2,city,stat
 //insert order details
 User.prototype.insertOrderDetail = function(objSelf){
 	$.ajax({
-		url : "http://www.shopsworld.net/controller/controller.cfc",
+		url : "/controller/controller.cfc",
 		type : "get",
 		dataType: "json",
 		data : {

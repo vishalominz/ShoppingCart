@@ -145,7 +145,7 @@
 							</div>
 							<input type="hidden" class="inventoryId" name="inventoryId" value="#InventoryId#" />
 							<div id="dialog-confirm" title="Delete Product?">
-							  <p class="dialog-message"><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Are you sure you want to Delete Product #ProductName#?</p>
+							  <p class=""><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Are you sure you want to Delete Product #ProductName#?</p>
 							</div>
 						</div>
 					</cfoutput>
@@ -178,6 +178,11 @@
 						<input type="button" name="insertProductSubCategoryButton" class="insertCategoryButton" id="insertProductSubCategoryButton" value="Add Sub Category"/>
 					</div>
 				</fieldset>
+				<div id="dialog" title="Category Added">
+					  <p class="">
+					  Category Added Successfully.
+					 </p>
+				</div>
 			</div>
 
 

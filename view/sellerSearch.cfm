@@ -1,18 +1,19 @@
 <cfparam name="search" default=""/>
-<cfset columnCount = 1 />
-<cfinvoke component="controller.Controller"
-			method="sellerSearchProducts"
-			returnvariable="products">
+<cfif session.isSeller AND session.loggedIn>
+		<cfset columnCount = 1 />
+		<cfinvoke component="controller.Controller"
+					method="sellerSearchProducts"
+					returnvariable="products">
 
-		<cfinvokeargument name="searchValue"
-						value="#search#">
-</cfinvoke>
+				<cfinvokeargument name="searchValue"
+								value="#search#">
+		</cfinvoke>
 
 
-<cfinclude template="header.cfm"/>
-<body>
-	<cfinclude template="menubar.cfm"/>
-		<div class="row seller-content" id="">
+		<cfinclude template="header.cfm"/>
+		<body>
+			<cfinclude template="menubar.cfm"/>
+				<div class="row seller-content" id="">
 					  <div class="row editSellerheader">
 					  		<div class="col-lg-1"></div>
 							<div class="col-lg-2">
@@ -36,7 +37,7 @@
 						<cfif #SellingCompanyId# neq "" AND #SellingCompanyId# eq Session.user.sellingCompanyId>		
 							<div class="row sellerProduct">
 								<div class="col-lg-2">
-									<img src="/#ProductImageLocation#/default.jpg" class="sellerProductImage">
+									<img src="/#ProductImageLocation#/default.jpg" class="sellerProductImage" >
 								</div>
 								<div class="col-lg-1">
 									<p>#ProductName#</p>
@@ -107,5 +108,8 @@
 					</cfoutput>
 				</cfloop>
 			</div>
-</body>
-<cfinclude template="footer.cfm"/>
+	</body>
+	<cfinclude template="footer.cfm"/>
+<cfelse>
+	<cflocation url="/view/search.cfm" addtoken="false"/>
+</cfif>

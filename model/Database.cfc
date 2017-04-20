@@ -13,6 +13,28 @@
   --->
 <cfcomponent accessors = "true" output = "false" persistent = "false">
 
+<!--- retrieve email and mobile number --->
+	<cffunction name="retriveUserEmailMobile"
+				acces="public"
+				returntype="query"
+				hint="Retrieves user email and mobile number">
+			<cfargument name="email"
+						required="true" />
+			<cfargument name="mobileNumber"
+						required="true" />
+
+			<cfquery name="userInfo">
+				SELECT [Email]
+				      ,[MobileNumber]
+				  FROM [dbo].[Customer]
+				  WHERE
+					[Email] = '#ARGUMENTS.email#'
+					OR
+					[MobileNumber] = #ARGUMENTS.mobileNumber#
+			</cfquery>			
+			<cfreturn userInfo />		
+	</cffunction>
+
 <!--- registerUser() --->
 	<cffunction name = "registerUser"
 				access = "public"
@@ -22,7 +44,8 @@
 		<cfargument name = "mobileNumber" required = "true" type = "numeric" />
 		<cfargument name = "password" required = "true" type = "string" />
 		<cfargument name = "email" required = "true" type = "string" />
-		<cfargument name = "profilePicture" required = "false" default = "./assets/image/profile/default.jpg" />
+		<cfargument name = "profilePicture" required = "false" default = "./assets/image/profile/default.jpg" />	 
+		<cfargument name = "customerType" required="false" default = "customer"/> 	
 		<cfset LOCAL.datetime  =  now()/>
 		<cfquery result = "user">
 			INSERT INTO [dbo].[Customer]
@@ -263,7 +286,7 @@
 	<cffunction access = "public" name = "retrieveProducts" returntype = "Any">
 		<cfargument name = "productId" require = "true" type = "numeric" />
 		<cfargument name = "quantity" require = "true" type = "numeric" />
-		<cfquery name = "result">
+		<cfquery name = "result" result="products">
 			SELECT TOP 10 p.ProductId
 		      ,[LeastPrice]
 		      ,[ProductCategoryId]
@@ -273,7 +296,6 @@
 		      ,[ProductImageLocation]
 		      ,[ProductSubCategoryId]
 		      ,[ProductDescription]
-		      ,[AvailableQuantity]
  			 FROM
 				[dbo].[Product] as p
 			INNER JOIN
@@ -282,7 +304,17 @@
 				p.ProductId  =  i.ProductId
 			WHERE
 				[AvailableQuantity] > 0
-			 ORDER BY
+			GROUP BY
+				 p.productId,
+				 p.productRating,
+				 p.LeastPrice,
+				 p.ProductCategoryId,
+				 p.ProductName, 
+				 p.ProductBrand, 
+				 p.ProductImageLocation, 
+				 p.ProductSubCategoryId, 
+                 p.ProductDescription
+			ORDER BY
 			 	[ProductRating]
 		</cfquery>
 		<cfreturn result />
@@ -314,7 +346,7 @@
 				dbo.ProductSubCategory
 			WHERE
 				 ProductCategoryId  =  <cfqueryparam cfsqltype = "cf_sql_integer"
-				             							value = "#ProductCategoryId#" />
+				             							value = "#ARGUMENTS.ProductCategoryId#" />
 		</cfquery>
 
 		<cfreturn productSubCategory/>
@@ -328,7 +360,7 @@
 					type = "numeric"
 					required = "true" />
 
-		<cfquery name = "productBySubCategory">
+		<cfquery name = "productBySubCategory" result = "products">
 			SELECT
 				p.ProductId,
 				ProductName,
@@ -427,7 +459,8 @@
            ,[AddressType]
            ,[LastModifiedDate]
            ,[pincode]
-           ,[isUsed])
+           ,[isUsed]
+           ,[isDeleted])
     	 VALUES ( 
     	 	 <cfqueryparam cfsqltype = "cf_sql_integer" value = "#ARGUMENTS.customerId#" />
            , <cfqueryparam cfsqltype="cf_sql_varchar" value = "#ARGUMENTS.addressLine1#" />
@@ -437,6 +470,7 @@
            , <cfqueryparam cfsqltype="cf_sql_varchar" value = "#ARGUMENTS.addressType#" />
            , <cfqueryparam cfsqltype="cf_sql_timestamp" value = "#LOCAL.dateTime#" />
            , <cfqueryparam cfsqltype="cf_sql_integer" value = "#ARGUMENTS.pincode#" />
+           , <cfqueryparam cfsqltype="cf_sql_bit" value = false />
            , <cfqueryparam cfsqltype="cf_sql_bit" value = false />
            )
 		</cfquery>
@@ -507,7 +541,7 @@
 				name = "customerId"
 				required = "true">
 
-		<cfquery name = "address">
+		<cfquery name = "address">		
 			SELECT TOP 5 [AddressId]
 			      ,[CustomerId]
 			      ,[AddressLine1]
@@ -712,7 +746,7 @@
 
 
 <!--- search by name --->
-	<cffunction name = "searchProduct"
+	<!--- <cffunction name = "searchProduct"
 				access = "public"
 				returntype = "any" >
 			<cfargument name = "searchItem"
@@ -723,9 +757,8 @@
 					required = "true" />
 			<cfargument name = "maxPrice" 
 					required = "true" />
-			<cfset session.database  =  brandList />
 			<cfif ARGUMENTS.brandList eq "">
-				<cfquery name = "searchResult">
+			<cfquery name = "searchResult" result="searchQuery">
 					SELECT
 					p.ProductId as ProductId,
 					ProductName,
@@ -742,7 +775,9 @@
 					ON
 						p.ProductId  =  i.ProductId
 					WHERE
-						ProductName LIKE '%#searchItem#%'
+						ProductName 
+						LIKE 
+							<cfqueryparam cfsqltype="cf_sql_varchar" value = "%#searchItem#%" />
 						AND
 						AvailableQuantity > 0
 						AND
@@ -753,7 +788,7 @@
 							<cfqueryparam cfsqltype = "cf_sql_decimal" value = "#ARGUMENTS.maxPrice#" />
 				</cfquery>
 			<cfelse>
-				<cfquery name = "searchResult">
+				<cfquery name = "searchResult" result="searchQuery">
 					SELECT
 					p.ProductId as ProductId,
 					ProductName,
@@ -791,8 +826,96 @@
 				</cfquery>
 			</cfif>
 			<cfreturn searchResult />
-	</cffunction>
+	</cffunction> --->
 
+
+<cffunction name = "searchProduct"
+				access = "public"
+				returntype = "any" >
+			<cfargument name = "searchItem"
+					required = "true" />
+			<cfargument name = "brandList" 
+					required = "true"/>
+			<cfargument name = "minPrice" 
+					required = "true" />
+			<cfargument name = "maxPrice" 
+					required = "true" />
+			<cfif ARGUMENTS.brandList eq "">
+			<cfquery name = "searchResult" result="searchQuery">
+					SELECT
+					p.ProductId as ProductId,
+					ProductName,
+					ProductBrand,
+					ProductImageLocation,
+					SellingPrice,
+					DiscountPercent,
+					AvailableQuantity,
+					[SellingPrice]-([SellingPrice]*ISNULL([DiscountPercent],0)/100) as DiscountPrice
+					FROM
+						Product p
+					INNER JOIN
+						Inventory i
+					ON
+						p.ProductId  =  i.ProductId
+					WHERE
+						ProductName 
+						LIKE 
+							'%#searchItem#%'
+						AND
+						AvailableQuantity > 0
+						AND
+						[SellingPrice]-([SellingPrice]*ISNULL([DiscountPercent],0)/100) >=  
+							#ARGUMENTS.minPrice#
+						AND
+						[SellingPrice]-([SellingPrice]*ISNULL([DiscountPercent],0)/100) <=  
+							#ARGUMENTS.maxPrice#
+						 AND i.InventoryId =
+					        ( SELECT TOP 1
+					                 i.InventoryId
+					            FROM Inventory
+					            WHERE p.ProductId  =  i.ProductId
+					       )
+				</cfquery>
+			<cfelse>
+				<cfquery name = "searchResult" result="searchQuery">
+					SELECT
+					p.ProductId as ProductId,
+					ProductName,
+					ProductBrand,
+					ProductImageLocation,
+					SellingPrice,
+					DiscountPercent,
+					AvailableQuantity,
+					[SellingPrice]-([SellingPrice]*ISNULL([DiscountPercent],0)/100) as DiscountPrice
+					FROM
+						Product p
+					INNER JOIN
+						Inventory i
+					ON
+						p.ProductId  =  i.ProductId
+					WHERE
+						ProductName 
+							LIKE 
+							'%#searchItem#%'
+						AND
+						AvailableQuantity > 0
+						AND
+						[SellingPrice]-([SellingPrice]*ISNULL([DiscountPercent],0)/100) > =  
+							#ARGUMENTS.minPrice#
+						AND
+						[SellingPrice]-([SellingPrice]*ISNULL([DiscountPercent],0)/100) < =  
+							#ARGUMENTS.maxPrice#
+						AND
+						ProductBrand 
+							IN 
+							(
+								#preserveSingleQuotes(ARGUMENTS.brandList)#
+							)
+				</cfquery>
+			</cfif>
+			<cfset session.database = searchQuery.SQL />
+			<cfreturn searchResult />
+	</cffunction>
 <!--- insertCart --->
 	<cffunction name = "insertCart"
 			access = "public"
@@ -1071,6 +1194,8 @@
 				  WHERE
 				  	CustomerId = <cfqueryparam cfsqltype="cf_sql_integer"
 				  					value="#ARGUMENTS.userId#" />
+				  ORDER BY
+				  	LastModifiedDate DESC
 			</cfquery>
 
 			<cfreturn orderDetail />
@@ -1515,7 +1640,7 @@
 					
 			<cfargument name = "sellingCompanyId"
 						required = "true" />
-			<cfquery name = "popularProducts">
+			<cfquery name = "popularProducts" result="PopularSoldProducts">
 				SELECT TOP 10
 					od.[ProductId],
 					SUM(od.OrderQuantity) as TotalSale,
@@ -1540,7 +1665,7 @@
 				ORDER BY
 					TotalSale DESC
 			</cfquery>
-
+			<cfset session.database = PopularSoldProducts.SQL />
 			<cfreturn popularProducts/>
 	</cffunction>
 

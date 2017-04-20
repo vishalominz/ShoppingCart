@@ -5,7 +5,7 @@
   --- author: mindfire
   --- date:   3/10/17
   --->
-<cfcomponent accessors = "true" output = "false" persistent = "false">
+<cfcomponent accessors = "true" output = "true" persistent = "false">
 <!--- switchUser controller --->
 	<cffunction name = "switchUser"
 				access = "remote"
@@ -121,8 +121,6 @@
 			returnvariable = "registerInfo"
 			argumentcollection = "#userInfo#">
 		</cfinvoke>
-
-
 		<cfreturn registerInfo />
 	</cffunction>
 
@@ -346,7 +344,6 @@
 					required = "false" default = 0 />
 		<cfargument name = "maxPrice" 
 					required = "false" default = 100000 />
-		<cfset session.controller  =  brandList />
 		<cfinvoke component = "model.Product"
 					method = "searchSuggestion"
 					returnvariable = "searchResponse">
@@ -773,7 +770,7 @@
 
 <!--- Update Cart Item Count --->
 	<cffunction name="UpdateCartItem"
-				access="public"
+				access="remote"
 				returnformat="json"
 				returntype="struct"
 				hint="Redirects to Update Cart function">

@@ -60,8 +60,8 @@
 											<p><span class="city">#city#</span> - <span class="pincode">#pincode#</span></p>
 											<p><span class="state">#state#</span></p>
 											<p><span class="addressId">#AddressId#</span></p>
-											<p><span class="isUsed">#isUsed#</span></p>
 											<p><span class="addressType">#AddressType#</span></p>
+											<p><span class="isUsed">#isUsed#</span></p>
 											<button class="selectAddress">Select</button>
 											<button class="removeAddress">Remove</button>
 									</div>

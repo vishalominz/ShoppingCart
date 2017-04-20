@@ -309,36 +309,38 @@
 			<cfargument name="countValue"
 						required="true" />
 			<cfargument name="productId"
-						required="true" />
+						required="true"/>
 			<cfargument name="inventoryId"
-						required="true" />
+						required="true"/>
 			<!--- Define the local scope --->
 			<cfset var LOCAL = {} />
-
 			<!--- Get a new API response --->
 			<cfset LOCAL.Response = THIS.GetNewResponse() />
+			<cfset LOCAL.Item = {} />
 			<cfparam name="cartItemCount" default=0 />
 			<cfloop from="1" to="#arrayLen(Session.cart)#" index="item">
-					<cfif Session.cart[item].productId eq ARGUMENTS.productId
-							AND Session.cart[item].InventoryId eq ARGUMENTS.inventoryId>
-						<cfif ARGUMENTS.countValue gt Session.cart[item].maxcount
-								OR ARGUMENTS.countValue lte 0>
-							<cfset LOCAL.Response.Success = false />
-							<cfset LOCAL.Response.Data = Session.cart[item].maxcount />
-						<cfelse>
-							<cfset Session.cart[item].productCount = ARGUMENTS.countValue />
-						</cfif>
-						<cfset LOCAL.Item = SEssion.cart[item] />
+				<cfif Session.cart[item].productId eq ARGUMENTS.productId 
+						AND Session.cart[item].InventoryId eq ARGUMENTS.inventoryId>
+					<cfif ARGUMENTS.countValue gt Session.cart[item].maxcount
+							OR ARGUMENTS.countValue lte 0>
+						<cfset LOCAL.Response.Success = false />
+						<cfset LOCAL.Response.Data = Session.cart[item].maxcount />
+					<cfelse>
+						<cfset Session.cart[item].productCount = ARGUMENTS.countValue />
+						<cfset cartItemCount = cartItemCount + Session.cart[item].productCount />
+						<cfset LOCAL.Response.Data = cartItemCount />
 					</cfif>
-					<cfset cartItemCount = cartItemCount + Session.cart[item].productCount />
+					<cfset LOCAL.Item = Session.cart[item] />
+				</cfif>
+	
 			</cfloop>
 
 		<!--- write log after success --->
-			<cfset message = "Product #LOCAL.Item.ProductName#[#LOCAL.Item.ProductId#] count updated to #LOCAL.Item.ProductCount#" />
+		<!--- 	 <cfset message = "Product #LOCAL.Item.ProductName#[#LOCAL.Item.ProductId#] count updated to #LOCAL.Item.ProductCount#" />
 			<cfset THIS.log("ERROR","Seller",getFunctionCalledName(),message) />
-
-			<cfset LOCAL.Response.Data = cartItemCount />
-		<!--- Retuen the response --->
+ 		 --->
+			
+		<!--- Return the response --->
 			<cfreturn LOCAL.Response />
 		</cffunction>
 </cfcomponent>

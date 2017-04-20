@@ -22,10 +22,10 @@
 	    	<cfdirectory action = "create" directory="#currentDirectory#" />
 		</cfif>
 		<cfif len(trim(form.productImageLocation))>
-			<cffile action="upload"
+			<cffile action="uploadall"
 				destination = "#currentDirectory#/default.jpg"
 				fileField = "productImageLocation"
-				nameconflict="overwrite">
+				nameconflict="makeUnique">
 		</cfif>
 		<cfset inventoryDetail = {
 			productId = productInfo.productId,

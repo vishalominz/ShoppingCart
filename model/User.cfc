@@ -12,6 +12,7 @@
 	persistent="false"
 	hint="Public API for User.">
 
+
 <!--- User switchUser() function --->
 	<cffunction name="switchUser"
 				access="remote"
@@ -443,86 +444,127 @@
 				) />
 		</cfif>
 
+
+		
 		<!--- Check if any error is present --->
 		<cfif NOT ArrayLen( LOCAL.Response.Errors)>
 
 		<!--- setting default variables --->
 			<cfset LOCAL.Item = {} />
 
-		<!--- Call database to write user info --->
-			<!--- <cftry> --->
+		<!--- check if email or mobile number already exists ---->
+			<cftry>
 				<cfinvoke
 					component="Database"
-					method="registerUser"
-					returnvariable="userId">
-
-					<cfinvokeargument
-						name="email"
-						value="#ARGUMENTS.email#" />
-
-					<cfinvokeargument
-						name="password"
-						value="#ARGUMENTS.password#" />
-
-					<cfinvokeargument
-						name="mobileNumber"
-						value="#ARGUMENTS.mobileNumber#" />
-
-					<cfinvokeargument
-							name="name"
-							value="#ARGUMENTS.name#" />
-				 </cfinvoke>
-			<!---	<cfset message = "Database user register success." />
+					method="retriveUserEmailMobile"
+					returnvariable="userInfo">
+					<cfinvokeargument name="email"
+									value="#ARGUMENTS.email#" />
+					<cfinvokeargument name="mobileNumber"
+									value="#ARGUMENTS.mobileNumber#" />
+				</cfinvoke>
+				<cfset message = "Database user info retrival success." />
 				<cfset THIS.log("SUCCESS","User",getFunctionCalledName(),message) />
 				<cfcatch>
-					<cfset message = "Database cart insert failed." />
+					<cfset message = "Database user info retrival failed." />
 					<cfset THIS.log("ERROR","User",getFunctionCalledName(),message) />
 				</cfcatch>
-			</cftry>	 --->
-			<cfif session.isSeller AND ARGUMENTS.company neq "">
-				
-					<cfinvoke component="Database"
-								method="retrieveSellingCompany"
-								returnvariable="sellingCompany">
-							<cfinvokeargument name = "companyName"
-										value = "#ARGUMENTS.company#" />
-					</cfinvoke>
+			</cftry>
 
-					<cfif sellingCompany.recordcount eq 1>
-						<cfloop query = "#sellingCompany#">
-							<cfset LOCAL.sellingCompanyId = #sellingCompanyId# />
-						</cfloop>
-					<cfelse>
+		<!--- if user info is not available --->
+			<cfif userInfo.recordcount gt 0>
+				<cfloop query = "#userInfo#">
+					<cfif #email# eq ARGUMENTS.email>
+						<cfset
+							ArrayAppend(
+								LOCAL.Response.Errors,
+								"Email already Exists"
+								) />
+					</cfif>
+					<cfif #mobileNumber# eq ARGUMENTS.mobileNumber>
+						<cfset
+							ArrayAppend(
+								LOCAL.Response.Errors,
+								"Mobile Number already Exists"
+								) />
+					</cfif>
+				</cfloop>
+			<cfelse>
+
+			<!--- Call database to write user info --->
+				<cftry>
+					<cfinvoke
+						component="Database"
+						method="registerUser"
+						returnvariable="userId">
+
+						<cfinvokeargument
+							name="email"
+							value="#ARGUMENTS.email#" />
+
+						<cfinvokeargument
+							name="password"
+							value="#ARGUMENTS.password#" />
+
+						<cfinvokeargument
+							name="mobileNumber"
+							value="#ARGUMENTS.mobileNumber#" />
+
+						<cfinvokeargument
+								name="name"
+								value="#ARGUMENTS.name#" />
+					 </cfinvoke>
+					<cfset message = "Database user register success." />
+					<cfset THIS.log("SUCCESS","User",getFunctionCalledName(),message) />
+					<cfcatch>
+						<cfset message = "Database cart insert failed." />
+						<cfset THIS.log("ERROR","User",getFunctionCalledName(),message) />
+					</cfcatch>
+				</cftry>
+					 
+				<cfif session.isSeller AND ARGUMENTS.company neq "">
 						<cfinvoke component="Database"
-									method="insertSellingCompany"
-									returnvariable="sellingCompanyId">
-								<cfinvokeargument name="sellingCompanyName"
-											value="#ARGUMENTS.company#" />
-								<cfinvokeargument name="shippingCompanyId"
-											value="" />
+									method="retrieveSellingCompany"
+									returnvariable="sellingCompany">
+								<cfinvokeargument name = "companyName"
+											value = "#ARGUMENTS.company#" />
 						</cfinvoke>
 
-						<cfset LOCAL.sellingCompanyId = sellingCompanyId />
-					</cfif>
+						<cfif sellingCompany.recordcount eq 1>
+							<cfloop query = "#sellingCompany#">
+								<cfset LOCAL.sellingCompanyId = #sellingCompanyId# />
+							</cfloop>
+						<cfelse>
+							<cfinvoke component="Database"
+										method="insertSellingCompany"
+										returnvariable="sellingCompanyId">
+									<cfinvokeargument name="sellingCompanyName"
+												value="#ARGUMENTS.company#" />
+									
+							</cfinvoke>
 
-					<cfinvoke component="Database"
-								method="insertIntoSeller"
-								returnvariable="sellerId">
-						<cfinvokeargument name="customerId"
-										value="#userId#" />
-						<cfinvokeargument name="sellingCompanyId"
-										value="#LOCAL.sellingCompanyId#">
-					</cfinvoke>
-				
+							<cfset LOCAL.sellingCompanyId = sellingCompanyId />
+						</cfif>
+
+						<cfinvoke component="Database"
+									method="insertIntoSeller"
+									returnvariable="sellerId">
+							<cfinvokeargument name="customerId"
+											value="#userId#" />
+							<cfinvokeargument name="sellingCompanyId"
+											value="#LOCAL.sellingCompanyId#">
+						</cfinvoke>
+					
+				</cfif>
+				<cfset LOCAL.Item ={
+					name = "#ARGUMENTS.name#",
+					email = "#ARGUMENTS.email#",
+					mobile = "#ARGUMENTS.mobileNumber#"
+					} />
+
+				<cfset LOCAL.Response.Data = LOCAL.Item />
 			</cfif>
-			<cfset LOCAL.Item ={
-				name = "#ARGUMENTS.name#",
-				email = "#ARGUMENTS.email#",
-				mobile = "#ARGUMENTS.mobileNumber#"
-				} />
-			<cfset LOCAL.Response.Data = LOCAL.Item />
 		</cfif>
-
 		<!--- check if any error is present --->
 		<cfif  ArrayLen( LOCAL.Response.Errors)>
 			<cfset LOCAL.Response.Success = false />
@@ -716,12 +758,12 @@
 			<cfset customerId = "#SESSION.user.userId#" />
 
 		<!--- retrieval of address from database --->
+		 	<cfparam name="address" default="" />
 			<cftry>
 				<cfinvoke
 					component="Database"
 					method="retrieveAddress"
 					returnvariable="address">
-
 					<cfinvokeargument
 							name="customerId"
 							value="#customerId#" />

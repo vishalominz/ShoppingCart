@@ -60,7 +60,10 @@ function Product(){
 	  $( "#price" ).val( "₹" + $( "#search-slider" ).slider( "values", 0 ) + 
 				"- ₹" + $( "#search-slider" ).slider( "values", 1 ));
 	
-}
+	  $("img").on("error", function(){
+        $(this).attr('src', '/assets/images/product/default.jpg');
+    });
+	}
 
 Product.prototype.search = function(searchBox){
 	var searchValue = $("#searchField").val();
@@ -117,25 +120,12 @@ Product.prototype.getSelectedValues = function(){
      		list = list + ",'"+allCheckedVals[val]+"'";
      }
    	 }
-     if(list != ""){
-     	var url = "http://www.shopsworld.net/view/searchProducts.cfm?search="+searchValue+"&brandList="+list+"&minPrice="+minPrice+"&maxPrice="+maxPrice;
-     	$.get( url, function( data ) {
-  			$( "div.searchProducts" ).html( data );  		
-		});
-     	/*$.ajax({
-     		url : "http://www.shopsworld.net/controller/controller.cfc",
-     		type : "get",
-     		dataType: "json",
-     		data: {
-     			method : "searchSuggestion",
-     			brandList : list,
-     			searchItem : searchValue
-     		},
-     		success : function(ResponseObj){
-     			
-     		}
-     	});*/
-     }
+   	 
+ 	var url = "http://www.shopsworld.net/view/searchProducts.cfm?search="+searchValue+"&brandList="+list+"&minPrice="+minPrice+"&maxPrice="+maxPrice;
+ 	$.get( url, function( data ) {
+			$( "div.searchProducts" ).html( data );  		
+	});
+     
 }
 
 

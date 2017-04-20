@@ -23,20 +23,23 @@
 		</script>
 	</cfoutput>	
 </cfif>
+
+	<!--- Website scritps js --->
+	<!---
+	<script src="CGI.HOST_NAME#/assets/script/cart.js"></script>
+	<script src="scripts/script.js"></script>
+	 --->
+	 <script src="/assets/script/common.js"></script>
+	 <cfif session.isSeller>
+		 <!--- seller script --->
+		<script src="/assets/script/seller.js"></script>
+	 </cfif>
+	<!--- user script --->
+	<script src="/assets/script/user.js"></script>
+	<!--- cart script --->
+	<script src="/assets/script/cart.js"></script>
+	<!--- product script --->
+	<script src="/assets/script/product.js"></script>
 </body>
-<!--- Website scritps js --->
-<!---
-<script src="CGI.HOST_NAME#/assets/script/cart.js"></script>
-<script src="scripts/script.js"></script>
- --->
- <cfif session.isSeller>
-	 <!--- seller script --->
-	<script src="/assets/script/seller.js"></script>
- </cfif>
-<!--- user script --->
-<script src="/assets/script/user.js"></script>
-<!--- cart script --->
-<script src="/assets/script/cart.js"></script>
-<!--- product script --->
-<script src="/assets/script/product.js"></script>
+
 </html>

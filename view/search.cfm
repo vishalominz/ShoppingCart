@@ -1,4 +1,4 @@
-
+<cfparam name="URL.search" default="" />
 
 <cfinclude template="header.cfm"/>
 <body>

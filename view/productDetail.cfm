@@ -3,7 +3,10 @@
 <cfparam name="URL.product" default=0 />
 <cfparam name="LOCAL.productDetail" default={} />
 <cfparam name="LOCAL.columnCount" default=1 />
-<cfset LOCAL.directory = DirectoryList(ExpandPath("/assets/images/product/"&Product),false,"name","*.jpg","" ) />
+<cfif directoryExists(ExpandPath("/assets/images/product/"&Product))>
+	<cfset LOCAL.directory = DirectoryList(ExpandPath("/assets/images/product/"&Product),false,"name","*.jpg","" ) />
+</cfif>
+
 <cfinvoke
 	component="controller.controller"
 	method="retrieveProductDetail"
@@ -14,8 +17,8 @@
 			value="#product#">
 </cfinvoke>
 
-<cfoutput>
-	
+<cfif product.recordCount gt 0 >
+	<cfoutput>
 		<cfloop query="#product#" >
 		<!--- Create a list to pass to unction --->
 		<cfset LOCAL.productDetail = { productId = #ProductId#,
@@ -85,7 +88,7 @@
 						</div>
 						<div class="col-lg-2">
 						</div>
-						<div class="col-lg-4">
+						<div class="col-lg-3">
 							<cfif !session.isSeller>
 								<div class="paymentMenu">
 									<button type="button" name="addToCart" id="addToCart" value="#URLEncodedFormat(SerializeJSON(LOCAL.productDetail))#">
@@ -98,6 +101,8 @@
 								</div>
 							</cfif>
 						</div>
+						<div class="col-lg-1">
+						</div>
 					</div>	
 				</div>
 				<div class="col-lg-2">
@@ -106,4 +111,7 @@
 		</cfif>
 	</cfloop>
 </cfoutput>
+<cfelse>
+	<p class="alert alert-info">No product found </p>
+</cfif>
 <cfinclude template="footer.cfm" />

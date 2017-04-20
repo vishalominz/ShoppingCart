@@ -26,7 +26,7 @@
 			</cfif>
 			<div class="form-group">
 				<input type="submit" name="login" id="login" class="btn btn-primary" value="Log In" />
-				<input type="button" name="resetPassword" id="resetPassword" class="btn btn-default" value="Forgot Your Password" />
+				<!--- <input type="button" name="resetPassword" id="resetPassword" class="btn btn-default" value="Forgot Your Password" /> --->
 			</div>
 			<cfoutput>
 				<input type="hidden" id="sellerValue" name="sellerValue" value="#Session.isSeller#">

@@ -7,7 +7,7 @@
 	<div class="form-group">
 		<label class="formLabel"> Name </label>
 		<input class="inputfield" name="name" id="name" type="text" />
-		<span class="error" id="name">Required</span>
+	
 	</div>
 	<div class="form-group">
 		<label class="formLabel"> Email </label>
@@ -17,22 +17,28 @@
 	<div class="form-group">
 		<label class="formLabel"> Mobile</label>
 		<input class="inputfield" name="mobileNumber" id="mobileNumber" type="text" maxlength="10"/>
-		<span class="error" id="mobileNumber">Required</span>
+		
 	</div>
 	<div class="form-group">
 		<label class="formLabel">Password</label>
 		<input class="inputfield" name="password" id="password" type="password" />
-		<span class="error" id="password">Required</span>
+	
+	</div>
+	<div class="form-group">
+		<label class="formLabel">Confirm Password</label>
+		<input class="inputfield" name="confirmPassword" id="confirmPassword" type="password" />
+		
 	</div>
 	<cfif session.isSeller>
 		<div class="form-group">
 			<label class="formLabel">Company</label>
 			<input class="inputfield" name="company" id="company" type="text" />
-			<span class="error" id="company">Required</span>
+			
 		</div>
 	</cfif>
 	<div class="form-group">
-		<input type="submit" name="register" id="register" class="btn btn-primary" value="Register">
+		<input type="submit" name="regis
+		ter" id="register" class="btn btn-primary" value="Register">
 		<input type="reset" name="reset" id="reset" class="btn" value="Reset">
 	</div>
 	<cfoutput>

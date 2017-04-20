@@ -30,7 +30,7 @@
 				<cfif count eq 1>
 					 <div class="item active">
 					 	  <a href="http://www.shopsworld.net/view/productDetail.cfm?product=#ProductId#">
-					      <img class="courselImage" src="/#ProductImageLocation#/default.jpg" alt="#ProductName#">
+					      <img class="courselImage" src="/#ProductImageLocation#/default.jpg" alt="#ProductName# image not found" onerror="this.onerror=null;this.src='/assets/images/product/default.jpg';">
 					      <div class="carousel-caption">
 					        <h3>#ProductName#</h3>
 					        <p>#ProductDescription#</p>
@@ -40,7 +40,7 @@
 				<cfelse>
 					  <div class="item">
 					  	 <a href="http://www.shopsworld.net/view/productDetail.cfm?product=#ProductId#">
-					      <img class="courselImage" src="/#ProductImageLocation#/default.jpg" alt="#ProductName#">
+					      <img class="courselImage" src="/#ProductImageLocation#/default.jpg" alt="#ProductName# image not found" onerror="this.onerror=null;this.src='/assets/images/product/default.jpg';">
 					      <div class="carousel-caption">
 					        <h3>#ProductName#</h3>
 					        <p>#ProductDescription#</p>

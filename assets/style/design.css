@@ -3,9 +3,7 @@
 }
 
 .container{
-	margin-top: 100px;
 	width: 100%;
-    margin-bottom: 50px;
 }
 /*---------- header design ----------------*/
 .navbar-default{
@@ -17,35 +15,35 @@
     border-color: #080808;
 }
 
-span#seller {
+#seller {
     position: absolute;
-    margin: 0 30%;
+    margin: 0 21em;
     font-size: 1.5em;
     font-variant: small-caps;
     font-weight: 700;
     font-style: italic;
     background: #ffc3c3;
-    padding: 5px;
-    border-radius: 0px;
-    color: brown;
+    padding: 0.3em;
+    /* border-radius: 0px; */
+    color: #a74341;
     cursor: pointer;
 }
 
-span#seller:hover{
-  box-shadow: 0px 0px 15px 10px #861919;
-  text-shadow: 1px 1px 0px #673b44;
+#seller:hover {
+    box-shadow: 0 0 0.7em 0.5em #861919;
+    text-shadow: 0.05em 0.05em 0 #673b44;
 }
 
 /* search bar design */
 .suggestionBox {
-    border: 1px solid black;
+    border: 0.1em solid #cccccc;
     display: none;
-    background-color: white;
-    color: black;
-    height: 200px;
+    background-color: #f1f0f0;
+    color: #0c0c0c;
+    height: 12em;
     position: absolute;
-    width: 91%;
-    margin-top: 35px;
+    width: 41em;
+    margin-top: 2.4em;
 }
 
 /*labels in form */
@@ -65,40 +63,42 @@ span#seller:hover{
     /* text-decoration: none; */
     list-style-type: none;
     text-align: left;
-    padding-left: 10px;
+    padding-left: 1em;
     font-size: 1.1em;
 }
 
 #searchBox {
-	width : 50%;
+	width : 45em;
 }
-.input-group-btn:last-child>.btn, .input-group-btn:last-child>.btn-group {
+
+#searchButton{
+    margin-left: -1.5em;
     z-index: 2;
-    margin-left: -22px;
 }
 /* search bar design */
 
 
 /* product and product description */
-
-p {
-	margin: 0px;
-	
+.thumbnails {
+    height: 8em;
+    width: 8em;
+    margin: 2em 2.5em;
+    display: inline-block;
 }
 
-
-img.productDetailImage{
-	width : 200px;
-	height : 200px;
+.productDetailImage {
+    width: 12em;
+    height: 12em;
 }
 
-img#productDetailImage {
-    width: 300px;
-    height: 300px;
-    margin: 15px;
-    border: 1px solid black;
-    box-shadow: 0px 0px 10px 5px saddlebrown;
+#productDetailImage {
+    width: 21em;
+    height: 20em;
+    margin: 1em;
+    border: 0.1em solid #040404;
+    box-shadow: 0 0 1em 0.5em #884413;
 }
+
 span.Message {
     color: red;
     background: greenyellow;
@@ -121,13 +121,12 @@ div#imageList {
     overflow-y: auto;
 }
 
-img.thumbnails {
-    height: 100px;
-    width: 100px;
-    margin: 10px;
-    display: inline-block;
-    margin-left: 45px;
 
+
+div#otherSellers {
+    text-align: right;
+    padding: 10px;
+    font-size: 1.2em;
 }
 
 /* product description end */
@@ -164,7 +163,7 @@ input#reset {
     width: 30em;
     height: 3em;
     color: #0e0101;
-    border: 1px solid rgb(212, 212, 212);
+    border: 0.1em solid #D4D4D4;
 }
 /*buttons in form */
 #register,#reset,#login,#resetPassword,#cardPay,#addressSubmit{
@@ -178,13 +177,12 @@ input#reset {
 }
 
 
-img.productImage{
-	display: inline;
+img.productImage {
+    display: inline;
     position: absolute;
-    margin-left: 0;
-    margin-top: 0px;
+    width: 10em;
+    height: 10em;
 }
-
 img.purchaseHistory{
 	width: 100px;
 	height: 100px;	
@@ -207,65 +205,60 @@ span#name,span#email,span#mobileNumber,span#password,span#company{
 
 /*----------------------------- cart ------------------------- */
 
-div.productItem {
-    margin-top: 25px;
-    margin-bottom: 25px;
-    border-bottom: 1px solid grey;
-    /* margin: 5px 0; */
-    height: 200px;
+.productItem {
+    margin-top: 1.5em;
+    margin-bottom: 1.5em;
+    border-bottom: 0.1em solid #848282;
+    height: 15em;
 }
-button.removeItem {
-    display: inline;
+.removeItem {
+    display: inline-block;
     position: absolute;
     background: lightgrey;
     color: #a913a9;
     border: none;
     font-weight: 600;
-    margin-top: 40px;
-    margin-left: 735px;
+    margin-top: 2.2em;
+    margin-left: 41em;
 }
-button.updateButton {
+
+.updateButton {
     position: absolute;
-    margin-left: 735px;
+    margin-left: 52.5em;
     height: 2em;
-    margin-top: -55px;
-    border: 1px solid transparent;
-    border-radius: 5px;
-    display:none;
+    margin-top: -4em;
+    border: 0.1em solid transparent;
+    display: none;
 }
 
-img.productImage{
-	width : 150px;
-	height : 150px;
-}
 
-input.productCount {
+.productCount {
     display: inline;
     float: none;
     position: absolute;
-    margin-top: -107px;
-    width: 135px;
-    height: 40px;
-    margin-left: 735px;
-    background-color: lightgray;
+    margin-top: -6em;
+    width: 8em;
+    height: 2.1em;
+    margin-left: 43.8em;
+    background-color: #d2d2d2;
     text-align: center;
     font-size: 1.2em;
-    border: 1px solid lightblue;
+    border: 0.1em solid #bae3f1;
     background: #dddbe2;
 }
 
-div.product{
+.product{
     font-size: 1.2em;
     color: black;
     text-decoration: none;
     margin-left: 0px;
 }
 
-div.cartProduct{
+.cartProduct {
     font-size: 1.2em;
-    color: black;
+    color: #080808;
     text-decoration: none;
-    margin-left: 200px;
+    margin-left: 12em; 
 }
 
 span.productName {
@@ -348,9 +341,6 @@ textarea{
 	width : 30em
 }
 
-div.col{
-	margin : 5px;
-}
 
 /*invoice design */
 	div.invoiceBox {
@@ -610,7 +600,13 @@ p.dialog-message,p#success-message {
     display: none;
 }
 
+.hide{
+    display: none;
+}
 
+.inherit{
+    display: inherit;
+}
 input.insert-quantity,input.insert-price,input.insert-discount{
     display: none;
     width: 75%;
@@ -678,21 +674,19 @@ div.addressBox {
     font-size: 1.2em;
      text-transform: capitalize;
 }
-p.itemPrice {
+
+.itemPrice {
     display: inline-block;
     position: absolute;
-    margin-left: 735px;
-    /*border: 1px solid red;*/
-    border-radius: 5px;
-    width: 140px;
-    height: 35px;
+    margin-left: 35em;
+    width: 7em;
+    height: 1.7em;
     font-size: 1.5em;
     text-align: center;
-    /* font-stretch: expanded; */
     line-height: 35px;
     font-style: italic;
     font-weight: bold;
-    color: darkblue;
+    color: #050592;
     background: #dddbe2;
 }
 
@@ -877,4 +871,16 @@ span#otherSellersHeader {
     background: lightblue;
     border-radius: 0px;
     line-height: 2.5em;
+}
+
+/*------ missingTemplate -----*/
+
+.countdown {
+    color: #dc5252;
+}
+
+.center {
+    color: #0f0f8c;
+    margin: 3.5em;
+    font-size: 3em;
 }

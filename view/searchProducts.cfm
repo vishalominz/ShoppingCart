@@ -17,8 +17,7 @@
 						value="#maxPrice#"	/>		
 </cfinvoke>
 
-<cfif arrayLen(#searchItems.DATA#)>
-			
+<cfif arrayLen(#searchItems.DATA#)>		
 	<cfloop array="#searchItems.DATA#" index="product">
 		<cfif columnCount eq 1>
 			<div class="row">
@@ -27,7 +26,7 @@
 				<cfoutput>
 					<a href="productDetail.cfm?product=#product.ProductId#">
 						<div id="#product.ProductId#" class="product">
-						<img class="productDetailImage" src="/#product.ProductImageLocation#/default.jpg" alt="#product.ProductName#"></br>
+						<img class="productDetailImage" src="/#product.ProductImageLocation#/default.jpg" alt="#product.ProductName# image not found" onerror="this.onerror=null;this.src='/assets/images/product/default.jpg';"></br>
 						<p>#product.ProductName#</p>
 						<p>#product.ProductBrand#</p>
 						<p>Selling Price : #NumberFormat(product.ProductSellingPrice,'9,99')#</p>
@@ -48,5 +47,5 @@
 
 	</cfloop>
 <cfelse>
-		
+	<p class="alert alert-info"> No Product Found </p>	
 </cfif>

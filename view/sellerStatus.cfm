@@ -9,17 +9,6 @@
 					value="#session.user.sellingCompanyId#" />
 </cfinvoke>
 
-
-
-	<!--- <input type="date" data-date-inline-picker="true" />
-	<cfchart> 
-    <cfchartseries type="bar"> 
-        <cfchartdata item="New Vehicle Sales" value=500000> 
-        <cfchartdata item="Used Vehicle Sales" value=250000> 
-        <cfchartdata item="Leasing" value=300000> 
-        <cfchartdata item="Service" value=400000> 
-    </cfchartseries> 
-	</cfchart> --->
 	<div class="row sellerStatusContent">
 		<div class="col-lg-3">
 			<div class="col-md-2">
@@ -47,6 +36,7 @@
 				</div>
 				<div calss="col-lg-8">
 					<div class="row" id="salesChart">
+						<p class="alert alert-info">No Date/Product Selected.</p>
 					</div>
 
 					<div class="row saleDateBox" >
@@ -54,9 +44,6 @@
    						 <input name="saleDate" id="saleDate" class="date-picker" />
 					</div>
 					
-						
-					
-				
 				</div>
 			</div>
 		</div>
