@@ -1,4 +1,4 @@
-<cfif structKeyExists(url,"orderId") AND url.orderId neq "">
+<cfif session.loggedIn AND structKeyExists(url,"orderId") AND url.orderId neq "">
 		
 	<cfinvoke component="controller.Controller"
 			method="retrieveOrderDetails"
@@ -74,5 +74,6 @@
 	</cfoutput>
 	</cfloop>
 	<cfinclude template="footer.cfm"/>
-
+<cfelse>
+	<cflocation url="/index.cfm" addtoken="false" />
 </cfif>

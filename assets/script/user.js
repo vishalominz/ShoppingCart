@@ -9,17 +9,6 @@ function User(){
 				objSelf.switchUser();
 				return false;
 			});
-	//Get a jQuery reference to the button
-	this.logInButton = $("form#loginUser");
-	
-	//Bind the on submit event on the login button
-	this.logInButton.submit(
-			function( objEvent ){
-				$(".error").hide();
-				objSelf.LogIn(objSelf); 
-				return false;
-			}
-		);
 	
 	//Get a jQuery reference for logout link
 	this.logOutLink = $("a#logout");
@@ -31,19 +20,15 @@ function User(){
 			})
 			
 	
-	//Validation of form data
+	//Validation of register form data
 	objSelf.validateData(objSelf,$("form#registerUser"),objSelf.RegisterUser);
 	
-	//Get a jQuery reference to Address submit Button
-	this.addressButton = $('input#addressSubmit');
-	
-	//bind the address submit button to addAddress()
-	this.addressButton.click(function(){
-		var formElement = document.getElementById("addressForm");
-		objSelf.addAddress( objSelf );
-		return false;
-	});
-	
+	//Validation of address form data
+	objSelf.validateData(objSelf,$("form#addressForm"),objSelf.addAddress);
+
+	//Validation for login form data
+	objSelf.validateData(objSelf,$("form#loginUser"),objSelf.LogIn);
+
 	///Get a jQuery reference to select address button
 	this.selectAddressButton = $("button.selectAddress");
 	
@@ -139,10 +124,6 @@ User.prototype.LogIn = function(objSelf){
 	var password = $("#password").val();
 	var sessionSeller = $("#sellerValue").val();
 	var company = sessionSeller == "true" ?  $("#company").val() : "" ;
-	var valid = false;
-	valid = objSelf.LogInValidate(email,password,company,sessionSeller);
-	//Call login controller
-	if(valid){
 		$.ajax(
 			{
 			url : "/controller/controller.cfc",		
@@ -173,11 +154,11 @@ User.prototype.LogIn = function(objSelf){
 							}
 			},
 			error: function(objRequest, strError){
-				alert("login error  "+strError);
+				window.open('http://www.shopsworld.net/view/error.cfm', "_self");
 			
 			}
 		});
-	}
+	
 }
 
 
@@ -204,32 +185,6 @@ User.prototype.LogOut = function(){
 }
 
 
-User.prototype.LogInValidate = function(email, password, company, sessionSeller){
-	var valid = true;
-	var email = email.trim();	
-	//check if email is null
-	if(email === ""){
-		valid = false;
-		$("#logInNameError").show();
-	}
-	
-	//check if password is null
-	if(password === ""){
-		valid = false;
-		$("#logInPasswordError").show();
-	}
-	if(sessionSeller == "true"){
-		company = company.trim();
-		if(company === ""){
-			valid = false;
-			$("#logInCompanyError").show();
-		}
-	}
-	
-
-	return valid;
-}
-
 //input validation for forms
 User.prototype.validateData = function(objSelf, formName ,submitAction){
 	jQuery.validator.addMethod("fullName", function(value, element) { 
@@ -254,6 +209,7 @@ User.prototype.validateData = function(objSelf, formName ,submitAction){
     	    return this.optional(element) || phoneNumber.length > 9 && 
     	    phoneNumber.match(/^((\+[1-9]{1,4}[ \-]*)|(\([0-9]{2,3}\)[ \-]*)|([0-9]{2,4})[ \-]*)*?[0-9]{3,4}?[ \-]*[0-9]{3,4}?$/);
     	}, "Please specify a valid phone number");
+	
 	//form validation
 	$(formName).validate({
     // Specify validation rules
@@ -323,7 +279,7 @@ User.prototype.validateData = function(objSelf, formName ,submitAction){
       	required: "Please enter company name"
       },
       addressLine1: {
-      	required: "Please enter address detail"
+      	required: "Please enter address line 1"
       },
       city: {
       	required: "Please enter the city name"
@@ -336,11 +292,11 @@ User.prototype.validateData = function(objSelf, formName ,submitAction){
       	number : "Only contains number"
       },
       addressType :{
-      	required: "Please select an address type"
+      	required: "Please enter an address type"
       }
     },
     submitHandler: function(form) {
-      objSelf.RegisterUser();
+      submitAction();
       return false;
     }
   });
@@ -391,8 +347,8 @@ User.prototype.RegisterUser = function(){
 				
 			},
 			error: function(objRequest, error){
-				//window.open('http://www.shopsworld.net/view/error.cfm', "_self");
-				alert(error);
+				window.open('http://www.shopsworld.net/view/error.cfm', "_self");
+			
 			}
 		});
 }
@@ -401,22 +357,22 @@ User.prototype.RegisterUser = function(){
 //addAddress of the user
 User.prototype.addAddress = function(objSelf){
 	$("span.error").hide();
-	var addressLine1 = $('[name="address1"]').val();
-	var addressLine2 = $('[name="address2"]').val();
+	var addressLine1 = $('[name="addressLine1"]').val();
+	var addressLine2 = $('[name="addressLine2"]').val();
     var city = $('[name="city"]').val();
     var state = $('[name="state"]').val();
     var addressType =  $('[name="adrressType"]').val();
     var pincode =  $('[name="pincode"]').val();
     var addressId = $('[name="addressId"]').val();
     var isUsed = $('[name="isUsed').val()
-    var isValid = objSelf.validateAddressData(addressLine1,addressLine2,city,state,addressType,pincode);
-    if(isValid && (addressId === "" || isUsed == 1 )){
+    // var isValid = objSelf.validateData(addressLine1,addressLine2,city,state,addressType,pincode);
+    var methodName = addressId === "" || isUsed == 1 ? "insertAddress":"updateAddress";
 	    $.ajax( 
 	    {
 	    	type: "get",
 	    	url : "/controller/controller.cfc",
 	    	data : {
-	    		method : "insertAddress",
+	    		method : methodName,
 	    		addressLine1 : addressLine1,
 	    		addressLine2 : addressLine2,
 	    		city : city,
@@ -432,70 +388,11 @@ User.prototype.addAddress = function(objSelf){
 	    		}
 	    	},    
 	    	error : function(objRequest , error){
-	    		alert("addAddress error " +error);
+	    		window.open('http://www.shopsworld.net/view/error.cfm', "_self");
 	    	}
 	    });
-    }
-    else if(isValid){
-    	 $.ajax( 
-	    {
-	    	type: "get",
-	    	url : "/controller/controller.cfc",
-	    	data : {
-	    		method : "updateAddress",
-	    		addressId : addressId,
-	    		addressLine1 : addressLine1,
-	    		addressLine2 : addressLine2,
-	    		city : city,
-	    		state : state,
-	    		addressType : addressType,
-	    		pincode : pincode
-	    		},
-	    	dataType: "json",
-	    	success : function(objResponse){  
-	    		if(objResponse.SUCCESS){
-	    			var url = window.location.origin+"/view/payment.cfm";
-	    			$(location).attr('href',url);
-	    		}
-	    	},    
-	    	error : function(objRequest , error){
-	    		alert("addAddress error " +error);
-	    	}
-	    });
-    }
+   
 }
-
-//validate addressInput
-User.prototype.validateAddressData =function(addressLine1,addressLine2,city,state,addressType,pincode){
-	var valid = true;
-	addressLine1 = addressLine1.trim();
-	if(addressLine1 === ""){
-		$("span#addressLine1").show();
-		valid = false;
-	}
-	city = city.trim();
-	if(city === ""){
-		$("span#city").show();
-		valid = false;
-	}
-	state = state.trim();
-	if(state === ""){
-		$("span#state").show();
-		valid = false;
-	}
-	addressType = addressType.trim();
-	if(addressType === ""){
-		$("span#addressType").show();
-		valid = false;
-	}
-	pincode = parseInt(pincode);
-	if((pincode < 10000 || pincode > 1000000) || isNaN(pincode)){
-		$("span#pincode").show();
-		valid = false;
-	}
-	return valid;	
-}
-
 
 //insert order details
 User.prototype.insertOrderDetail = function(objSelf){
@@ -516,8 +413,8 @@ User.prototype.insertOrderDetail = function(objSelf){
 			}
 		},
 		error: function(RequestObj, error){
-			alert("insertOrderDetail error "+error);
-			console.log(RequestObj);
+			window.open('http://www.shopsworld.net/view/error.cfm', "_self");
+			
 		}
 	}	
 	);
@@ -527,7 +424,7 @@ User.prototype.insertOrderDetail = function(objSelf){
 
 //Retrieve order history
 User.prototype.retrieveOrderHistory = function(){
-	var url = "http://www.shopsworld.net/view/orderHistory.cfm";
+	var url = "/view/orderHistory.cfm";
 	$(location).attr('href',url);
 }
 
@@ -555,7 +452,7 @@ User.prototype.removeAddress = function(address){
 	var addressId= $(address).find(".addressId").text();
 	
 	$.ajax({
-		url: "http://www.shopsworld.net/controller/controller.cfc",
+		url: "/controller/controller.cfc",
 		dataType: "json",
 		type: "get",
 		data :{
@@ -567,7 +464,7 @@ User.prototype.removeAddress = function(address){
 			
 		},
 		error: function(requestObj, error){
-			alert(error);
+			window.open('http://www.shopsworld.net/view/error.cfm', "_self");
 		}
 	});
 	
@@ -576,7 +473,7 @@ User.prototype.removeAddress = function(address){
 
 User.prototype.switchUser = function(){
 	$.ajax({
-		url: "http://www.shopsworld.net/controller/controller.cfc",
+		url: "/controller/controller.cfc",
 		dataType: "json",
 		type: "get",
 		data :{
@@ -588,7 +485,7 @@ User.prototype.switchUser = function(){
 			}
 		},
 		error : function(requestObj, error){
-			alert(error +" switchUser");
+			window.open('http://www.shopsworld.net/view/error.cfm', "_self");
 		}
 	});
 }

@@ -124,15 +124,18 @@
 							<div class="col-lg-2">
 								<span class="insert-quantity">#AvailableQuantity#</span>
 								<input type="number" class="insert-quantity" name="insert-quantity"	/>
+								
 							</div>
 							<div class="col-lg-2">
 								<span class="insert-price">#SellingPrice#</span>
 								<input type="number" class="insert-price" name="insert-price"/>
+								
 							</div>
 							<div class="col-lg-1">
 								
-								<span class="insert-discount">#DiscountPercent#</span>
+								<span class="insert-discount">#DiscountPercent#</p>
 								<input type="number" class="insert-discount" name="insert-discount"	/> %
+								
 							</div>
 							<div class="col-lg-2">
 								<p>#ProductCategory#</p>
@@ -145,7 +148,7 @@
 							</div>
 							<input type="hidden" class="inventoryId" name="inventoryId" value="#InventoryId#" />
 							<div id="dialog-confirm" title="Delete Product?">
-							  <p class=""><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Are you sure you want to Delete Product #ProductName#?</p>
+							  <p class="message"><span class="ui-icon ui-icon-alert" style="float:left; margin:12px 12px 20px 0;"></span>Are you sure you want to Delete Product #ProductName#?</p>
 							</div>
 						</div>
 					</cfoutput>
@@ -179,7 +182,7 @@
 					</div>
 				</fieldset>
 				<div id="dialog" title="Category Added">
-					  <p class="">
+					  <p class="message">
 					  Category Added Successfully.
 					 </p>
 				</div>
@@ -190,7 +193,7 @@
 		</div>
 		<div class="col-lg-1"></div>
 	</div>
-	<cfinclude template="footer.cfm"/>d
+	<cfinclude template="footer.cfm"/>
 	<cfif isDefined("URL.product")>
 		<cfdump var="#URL.product#"/>
 		<cfoutput>

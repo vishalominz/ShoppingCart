@@ -8,3 +8,6 @@
 
 <cfdump var="#cgi#" />
 
+<cfset password = hash("abcdEF123##") />
+
+<cfdump var = "#password#" />

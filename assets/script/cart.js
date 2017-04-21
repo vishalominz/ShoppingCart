@@ -12,21 +12,6 @@ function AddToCart(){
 	);
 }
 
-//Define a method to help display any errors.
-AddToCart.prototype.ShowErrors = function( arrErrors ){
-	var strError = "Please review the following : \n";
-	
-	//Loop over each error to build up the error string.
-	$.each(
-		arrErrors,
-		function( intI, strValue ){
-			strError += ("\n- " + strValue);
-		}
-		);
-	
-	//Alert the error.
-	alert( strError );
-}
 
 
 //Define a method to send Product Details via AJAX
@@ -69,13 +54,10 @@ AddToCart.prototype.OnClickAdd = function(element){
 				} else if(objResponse.SUCCESS && element.id === "buyNow"){
 					var url= "http://www.shopsworld.net/view/cart.cfm";
 					$(location).attr('href',url);
-				} else{
-					//Show error on unsuccessful response
-					objSelf.ShowErrors( objResponse.ERRORS );
-				}
+				} 
 			},
 			error : function( objRequest, strError ){
-				objSelf.ShowErrors( [ "An unknow connection error occurred."]);
+				window.open('http://www.shopsworld.net/view/error.cfm', "_self");
 			}
 		}
 		);
@@ -97,21 +79,6 @@ function DeleteFromCart(){
 	);
 }
 
-//Define a method to help display any errors.
-DeleteFromCart.prototype.ShowErrors = function( arrErrors ){
-	var strError = "Please review the following : \n";
-	
-	//Loop over each error to build up the error string.
-	$.each(
-		arrErrors,
-		function( intI, strValue ){
-			strError += ("\n- " + strValue);
-		}
-		);
-	
-	//Alert the error.
-	alert( strError );
-}
 
 DeleteFromCart.prototype.OnClickDelete = function(productId){
 	var objSelf = this;
@@ -151,13 +118,10 @@ DeleteFromCart.prototype.OnClickDelete = function(productId){
 						$("form#itemsToBuy").html("<span class='alert alert-info'>No Item Present in cart.	 </span>");
 					}
 
-				} else {
-					//Show error on unsuccessful response
-					objSelf.ShowErrors( objResponse.ERRORS );
-				}
+				} 
 			},
 			error : function( objRequest, strError ){
-				objSelf.ShowErrors( [ "An unknow connection error occurred."]);
+				window.open('http://www.shopsworld.net/view/error.cfm', "_self");
 			}
 		}
 		);
@@ -226,7 +190,7 @@ UpdateCart.prototype.OnClickUpdate = function( element ){
 				}
 			},
 			error: function(objRequest, error){
-				alert("error "+error);
+				window.open('http://www.shopsworld.net/view/error.cfm', "_self");
 			}
 		});
 	}

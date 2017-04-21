@@ -60,9 +60,6 @@ function Product(){
 	  $( "#price" ).val( "₹" + $( "#search-slider" ).slider( "values", 0 ) + 
 				"- ₹" + $( "#search-slider" ).slider( "values", 1 ));
 	
-	  $("img").on("error", function(){
-        $(this).attr('src', '/assets/images/product/default.jpg');
-    });
 	}
 
 Product.prototype.search = function(searchBox){
@@ -96,7 +93,7 @@ Product.prototype.search = function(searchBox){
 				}
 			},
 			error: function( RequestObj,error){
-				console.log("error searchBox "+error);
+				window.open('http://www.shopsworld.net/view/error.cfm', "_self");
 			}
 		});
 	}

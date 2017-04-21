@@ -10,17 +10,17 @@
 			<div class="row">
 				<div class="col-lg-1"></div>
 				<div class="col-lg-7">
-				<form id="addressForm" method="post" action="" >
+				<form id="addressForm" method="post" >
 						<input type="hidden" id="addressId" name="addressId" value=""/>
 						<input type="hidden" id="isUsed" name="isUsed" value="">
 					<div class="form-group">
 						<label class="formLabel"> Address Line 1 </label>
-						<textarea class="addressField" name="address1" id="addressLine1"></textarea>
+						<textarea class="addressField" name="addressLine1" id="addressLine1"></textarea>
 						<span class="error" id="addressLine1">Invalid</span>
 					</div>
 					<div class="form-group">
 						<label class="formLabel"> Address Line 2 </label>
-						<textarea class="addressField" name="address2" id="addressLine2"></textarea>
+						<textarea class="addressField" name="addressLine2" id="addressLine2"></textarea>
 						<span class="error" id="addressLine2">Invalid</span>
 					</div>
 					<div class="form-group">
@@ -45,7 +45,7 @@
 					</div>
 					<div class="form-group">
 						<label class="formLabel"></label>
-						<input type="button" name="addressSubmit" id="addressSubmit" class="btn btn-primary" value="Proceed To Pay">
+						<input type="submit" name="addressSubmit" id="addressSubmit" class="btn btn-primary" value="Proceed To Pay">
 						<input type="reset" name="reset" id="reset" class="btn" value="Reset">
 					</div>
 				</form>

@@ -10,4 +10,7 @@ $(window).resize(onResize);
 // call it also when the page is ready after load or reload
 $(function() {
   onResize();
+   $("img").on("error", function(){
+        $(this).attr('src', '/assets/images/product/default.jpg');
+    });
 });

@@ -81,6 +81,7 @@
 						type="numeric"
 						required = true />
 
+		<!--- insert user detail into seller table --->
 			<cfquery result = "seller">
 				INSERT INTO [dbo].[Seller]
 			           ([CustomerId]
@@ -91,6 +92,15 @@
 			           ,<cfqueryparam cfsqltype="cf_sql_integer" value="#ARGUMENTS.sellingCompanyId#"/>
 			           )
 			</cfquery>	
+
+		<cfset LOCAL.customerType = "seller" />
+		<!--- update customer type --->
+			<cfquery>
+				UPDATE [dbo].[Customer]
+				    SET [CustomerType] = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LOCAL.customerType#" />
+					WHERE 
+						customerId = 	<cfqueryparam cfsqltype="cf_sql_integer" value="#ARGUMENTS.customerId#" />
+			</cfquery>
 			<cfreturn seller.GENERATEDKEY />			
 	</cffunction>
 
@@ -539,8 +549,8 @@
 				returnType = "any">
 		<cfargument
 				name = "customerId"
-				required = "true">
-
+				required = "true" />
+		<cfset	LOCAL.isDeleted = false />
 		<cfquery name = "address">		
 			SELECT TOP 5 [AddressId]
 			      ,[CustomerId]
@@ -552,10 +562,14 @@
 			      ,[LastModifiedDate]
 			      ,[pincode]
 			      ,[isUsed]
+			      ,[isDeleted]
 			  FROM [dbo].[Address]
 			  WHERE
 			  	[CustomerId]  =  <cfqueryparam cfsqltype="cf_sql_integer"
 			  								value = "#ARGUMENTS.customerId#" />
+			  	AND
+			  	[isDeleted] = <cfqueryparam cfsqltype="cf_sql_bit"
+			  								value = "#LOCAL.isDeleted#" />
 			  ORDER BY
 			  	[LastModifiedDate] DESC;
 		</cfquery>
@@ -569,14 +583,24 @@
 				returntype = "any">
 			<cfargument name = "addressId"
 						required = "true"/>
-
+			<cfset	LOCAL.isUsed = false />
+			<cfset LOCAL.isDeleted = true />
 			<cfquery>
-
-					DELETE FROM [dbo].[Address]
-      				WHERE addressId  =  <cfqueryparam cfsqltype="cf_sql_integer"
-      													value = "#ARGUMENTS.addressId#" />
-      				AND <cfqueryparam cfsqltype="cf_sql_bit" value = false />
+				UPDATE [dbo].[Address]
+				   SET [isDeleted] = <cfqueryparam cfsqltype="cf_sql_bit" 
+  													value = "#LOCAL.isDeleted#" />
+				 WHERE 
+					addressId  =  <cfqueryparam cfsqltype="cf_sql_integer"
+  													value = "#ARGUMENTS.addressId#" />
 			</cfquery>
+			<cfquery>
+				DELETE FROM [dbo].[Address]
+  				WHERE addressId  =  <cfqueryparam cfsqltype="cf_sql_integer"
+  													value = "#ARGUMENTS.addressId#" />
+  				AND 
+  					isUsed = <cfqueryparam cfsqltype="cf_sql_bit" 
+  													value = "#LOCAL.isUsed#" />
+  			</cfquery>
 	</cffunction>
 
 <!--- Insert Order into Order Table --->
@@ -662,6 +686,7 @@
 					name = "discountPercent"
 					required = "true" />
 			<cfset LOCAL.datetime  =  now() />
+			<cfset LOCAL.isUsed = true />
 		<!--- insert order detail in database --->
 			<cfquery>
 				INSERT INTO [dbo].[OrderDetail]
@@ -685,6 +710,17 @@
 			           , <cfqueryparam cfsqltype="cf_sql_tinyint" value = "#ARGUMENTS.discountPercent#" />
 			           )
 			</cfquery>
+
+		<!--- update address as used --->
+			<cfquery>
+				UPDATE [dbo].[Address]
+				  	SET [isUsed] = <cfqueryparam cfsqltype="cf_sql_bit" 
+  													value = "#LOCAL.isUsed#" />
+				 	WHERE 
+						addressId  =  <cfqueryparam cfsqltype="cf_sql_integer"
+  													value = "#ARGUMENTS.shippingAddressId#" />
+			</cfquery>
+
 	</cffunction>
 
 
@@ -1333,6 +1369,15 @@
 				returntype="void">
 			<cfargument name = "inventoryId"
 						required = "true"/>
+
+			<cfquery>
+				DELETE 
+				FROM [dbo].[CartItem]
+      			WHERE
+      				InventoryId  = 
+      					 <cfqueryparam cfsqltype="cf_sql_integer"
+      									value="#ARGUMENTS.inventoryId#" />
+			</cfquery>
 			<cfquery>
 				DELETE 
 				FROM [dbo].[Inventory]
@@ -1644,7 +1689,6 @@
 				SELECT TOP 10
 					od.[ProductId],
 					SUM(od.OrderQuantity) as TotalSale,
-					CONVERT(DATE,od.[LastModifiedDate]) as SaleDate,
 					p.[ProductName]
 				  FROM [MyShoppingZone].[dbo].[Order] o
 				  INNER JOIN 
@@ -1660,7 +1704,6 @@
 						<cfqueryparam cfsqltype="cf_sql_integer"
 										value="#ARGUMENTS.sellingCompanyId#" />
 				 GROUP BY 
-					CONVERT(DATE,od.[LastModifiedDate]),
 					od.[ProductId],p.[productName]
 				ORDER BY
 					TotalSale DESC

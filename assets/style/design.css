@@ -71,7 +71,7 @@
 	width : 45em;
 }
 
-#searchButton{
+#searchButton,#sellerSearchButton{
     margin-left: -1.5em;
     z-index: 2;
 }
@@ -596,7 +596,7 @@ div#productUpdateDelete{
 div#productInsert{
     display: none;
 }
-p.dialog-message,p#success-message {
+p.dialog-message,p#success-message,.message {
     display: none;
 }
 
